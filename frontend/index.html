@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Big-O</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" crossorigin>
+    <link rel="stylesheet" href="assets/css/styles.css?v=6">
+    <script>
+      window.__ENV__ = { API_BASE_URL: "http://localhost:8080/api" };
+    </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+<body x-data="dashboardApp()" x-init="init()">
+    <div class="layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="index.html" class="sidebar-brand"><img src="assets/logo.png" alt="Big-O" class="h-8 w-auto"></a>
+            </div>
+            <nav class="sidebar-nav" x-data="{ active: 'dashboard' }">
+                <div class="nav-section-title">Main</div>
+                <a href="index.html" class="nav-item" :class="{ active: active === 'dashboard' }" @click="active = 'dashboard'">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                    <span>Dashboard</span>
+                </a>
+                <a href="problems.html" class="nav-item" :class="{ active: active === 'problems' }" @click="active = 'problems'">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+                    <span>Problems</span>
+                </a>
+                <a href="leaderboard.html" class="nav-item" :class="{ active: active === 'leaderboard' }" @click="active = 'leaderboard'">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                    <span>Leaderboard</span>
+                </a>
+                <template x-if="user && user.role === 'faculty'">
+                    <a href="faculty.html" class="nav-item" :class="{ active: active === 'faculty' }" @click="active = 'faculty'">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                        <span>Faculty</span>
+                    </a>
+                </template>
+                <template x-if="user && user.role === 'admin'">
+                    <a href="admin.html" class="nav-item" :class="{ active: active === 'admin' }" @click="active = 'admin'">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                        <span>Admin</span>
+                    </a>
+                </template>
+                <div class="nav-divider"></div>
+                <div class="nav-section-title">Account</div>
+                <template x-if="!user">
+                    <a href="login.html" class="nav-item" :class="{ active: active === 'login' }" @click="active = 'login'">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v4"/></svg>
+                        <span>Sign In</span>
+                    </a>
+                    <a href="login.html?mode=register" class="nav-item" :class="{ active: active === 'register' }" @click="active = 'register'">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
+                        <span>Sign Up</span>
+                    </a>
+                </template>
+                <template x-if="user">
+                    <a href="profile.html" class="nav-item" :class="{ active: active === 'profile' }" @click="active = 'profile'">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                        <span>Profile</span>
+                    </a>
+                </template>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="flex items-center gap-3" x-data="{ open: false }">
+                    <div class="w-8 h-8 rounded-full bg-[var(--primary)] flex items-center justify-center text-white font-medium text-sm" x-text="user ? user.username.charAt(0).toUpperCase() : '?'"></div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium truncate" x-text="user?.username || 'Guest'"></p>
+                        <p class="text-xs text-[var(--text-muted)] truncate" x-text="user?.email || 'Not signed in'"></p>
+                    </div>
+                    <button @click="open = !open" class="btn btn-ghost btn-icon" aria-label="Menu">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/></svg>
+                    </button>
+                    <div x-show="open" @click.outside="open = false" class="dropdown-menu w-48 mt-2">
+                        <template x-if="user">
+                            <a href="profile.html" class="dropdown-item">Profile</a>
+                            <template x-if="user.role === 'admin'">
+                                <a href="admin.html" class="dropdown-item">Admin Panel</a>
+                            </template>
+                            <div class="dropdown-divider"></div>
+                            <button @click="logout()" class="dropdown-item danger">Sign Out</button>
+                        </template>
+                        <template x-if="!user">
+                            <a href="login.html" class="dropdown-item">Sign In</a>
+                            <a href="login.html?mode=register" class="dropdown-item">Sign Up</a>
+                        </template>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <header class="header">
+                <div class="flex items-center justify-between w-full">
+<div class="flex items-center gap-4">
+    <a href="index.html" class="flex items-center gap-2">
+        <img src="assets/logo.png" alt="Big-O" class="h-7 w-auto">
+    </a>
+    <h1 class="text-xl font-semibold" x-text="pageTitle"></h1>
+</div>
+                    <div class="flex items-center gap-2">
+                        <div class="relative" x-data="{ open: false }">
+                            <button @click="open = !open" class="btn btn-ghost btn-icon" aria-label="Theme">
+                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" x-show="!isDark"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" x-show="isDark"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+                            </button>
+                            <div x-show="open" @click.outside="open = false" class="dropdown-menu">
+                                <button @click="setTheme('light'); open = false" class="dropdown-item" :class="{ 'font-medium': !isDark }">Light</button>
+                                <button @click="setTheme('dark'); open = false" class="dropdown-item" :class="{ 'font-medium': isDark }">Dark</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="page-content">
+                <!-- Stats Cards -->
+                <div class="grid gap-4 mb-6" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+                    <div class="card">
+                        <div class="card-body">
+                            <p class="text-sm text-[var(--text-secondary)] mb-1">Problems Solved</p>
+                            <p class="text-3xl font-bold" x-text="stats?.solved_count || 0"></p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <p class="text-sm text-[var(--text-secondary)] mb-1">Total Submissions</p>
+                            <p class="text-3xl font-bold" x-text="stats?.total_submissions || 0"></p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <p class="text-sm text-[var(--text-secondary)] mb-1">Current Streak</p>
+                            <p class="text-3xl font-bold" x-text="user?.streak_count || 0"></p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <p class="text-sm text-[var(--text-secondary)] mb-1">Acceptance Rate</p>
+                            <p class="text-3xl font-bold" x-text="stats?.acceptance_rate || '0%'"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Difficulty Breakdown -->
+                <div class="card mb-6">
+                    <div class="card-header">
+                        <h2 class="card-title">Progress by Difficulty</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="grid gap-4" style="grid-template-columns: repeat(3, 1fr);">
+                            <div class="text-center p-4" style="background: var(--success-soft); border-radius: var(--radius-md);">
+                                <p class="text-2xl font-bold text-[var(--success)]" x-text="stats?.easy_count || 0"></p>
+                                <p class="text-sm text-[var(--text-secondary)] mt-1">Easy</p>
+                            </div>
+                            <div class="text-center p-4" style="background: var(--warning-soft); border-radius: var(--radius-md);">
+                                <p class="text-2xl font-bold text-[var(--warning)]" x-text="stats?.medium_count || 0"></p>
+                                <p class="text-sm text-[var(--text-secondary)] mt-1">Medium</p>
+                            </div>
+                            <div class="text-center p-4" style="background: var(--danger-soft); border-radius: var(--radius-md);">
+                                <p class="text-2xl font-bold text-[var(--danger)]" x-text="stats?.hard_count || 0"></p>
+                                <p class="text-sm text-[var(--text-secondary)] mt-1">Hard</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Submissions -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Recent Submissions</h2>
+                        <a href="profile.html" class="btn btn-ghost btn-sm">View All</a>
+                    </div>
+                    <div class="card-body p-0" x-show="loading">
+                        <div class="p-6 text-center text-[var(--text-secondary)]">Loading...</div>
+                    </div>
+                    <template x-if="!loading && recentSubmissions.length === 0">
+                        <div class="card-body text-center py-12">
+                            <svg class="h-12 w-12 mx-auto text-[var(--text-muted)] mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+                            <p class="text-[var(--text-secondary)] mb-4">No submissions yet</p>
+                            <a href="problems.html" class="btn btn-primary">Start Solving</a>
+                        </div>
+                    </template>
+                    <template x-if="!loading && recentSubmissions.length > 0">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 60px;">#</th>
+                                    <th>Problem</th>
+                                    <th style="width: 140px;">Status</th>
+                                    <th style="width: 120px;">Language</th>
+                                    <th style="width: 100px;">Runtime</th>
+                                    <th style="width: 180px;">Time</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template x-for="(sub, idx) in recentSubmissions" :key="sub.id">
+                                    <tr>
+                                        <td class="text-[var(--text-muted)]" x-text="idx + 1"></td>
+                                        <td>
+                                            <a :href="'problem.html?id=' + sub.problem_id" class="font-medium hover:underline" x-text="sub.problem_title"></a>
+                                        </td>
+                                        <td>
+                                            <span class="badge" :class="
+                                                sub.status === 'Accepted' ? 'badge-success' :
+                                                sub.status === 'Wrong Answer' ? 'badge-danger' :
+                                                sub.status === 'Compilation Error' ? 'badge-warning' :
+                                                sub.status === 'Runtime Error' ? 'badge-danger' :
+                                                'badge-neutral'
+                                            " x-text="sub.status"></span>
+                                        </td>
+                                        <td><span class="text-[var(--text-secondary)]" x-text="sub.language"></span></td>
+                                        <td><span class="text-[var(--text-secondary)]" x-text="sub.runtime_ms + ' ms'"></span></td>
+                                        <td><span class="text-[var(--text-secondary)]" x-text="formatDate(sub.created_at)"></span></td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </template>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="assets/js/app.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script>
+        function dashboardApp() {
+            return {
+                user: null,
+                stats: null,
+                recentSubmissions: [],
+                loading: true,
+                pageTitle: 'Dashboard',
+                get isDark() { return document.documentElement.classList.contains('dark'); },
+
+                async init() {
+                    await this.loadUser();
+                    await this.loadStats();
+                    await this.loadRecentSubmissions();
+                },
+
+                async loadUser() {
+                    try {
+                        const token = localStorage.getItem('token');
+                        if (!token) return;
+                        const res = await fetch(`${API_BASE_URL}/auth/profile`, {
+                            headers: { 'Authorization': `Bearer ${token}` }
+                        });
+                        if (res.ok) this.user = await res.json();
+                    } catch (e) { console.error(e); }
+                },
+
+                async loadStats() {
+                    if (!this.user) return;
+                    try {
+                        const res = await fetch(`${API_BASE_URL}/users/${this.user.id}/stats`, {
+                            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+                        });
+                        if (res.ok) {
+                            const data = await res.json();
+                            this.stats = data;
+                            if (data.solved_count && data.total_submissions) {
+                                this.stats.acceptance_rate = ((data.solved_count / data.total_submissions) * 100).toFixed(1) + '%';
+                            }
+                        }
+                    } catch (e) { console.error(e); }
+                },
+
+                async loadRecentSubmissions() {
+                    if (!this.user) { this.loading = false; return; }
+                    try {
+                        const res = await fetch(`${API_BASE_URL}/submissions/history`, {
+                            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+                        });
+                        if (res.ok) {
+                            const data = await res.json();
+                            this.recentSubmissions = data.slice(0, 20);
+                        }
+                    } catch (e) { console.error(e); }
+                    this.loading = false;
+                },
+
+                logout() {
+                    localStorage.removeItem('token');
+                    window.location.href = 'index.html';
+                },
+
+                setTheme(theme) {
+                    document.documentElement.classList.remove('dark');
+                    if (theme === 'dark') document.documentElement.classList.add('dark');
+                    localStorage.setItem('theme', theme);
+                },
+
+                formatDate(dateString) {
+                    return new Date(dateString).toLocaleDateString(undefined, {
+                        month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                    });
+                }
+            }
+        }
+    </script>
+</body>
+</html>

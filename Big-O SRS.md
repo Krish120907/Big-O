@@ -1,0 +1,172 @@
+Big-O — Software Requirements Specification (SRS)
+
+================================================================================
+
+1. INTRODUCTION
+
+1.1 Purpose
+This document specifies the software requirements for Big-O, a minimal,
+beautiful, and secure coding practice platform built for programmers.
+The system provides server-side code compilation and execution, with
+authentication, problem management, community features, and global leaderboards
+managed centrally.
+
+1.2 System Overview
+Big-O is a web-based practice platform where users write code in the browser and submit
+it for server-side evaluation. The central server handles compilation, execution,
+and result storage, providing a seamless experience without any client-side
+setup.
+
+1.3 Intended Audience
+- Developers who use Big-O to practice DSA problems
+- Administrators who manage the problem library and user approvals
+- Contributors referencing this document for development or extension
+
+================================================================================
+
+2. SCOPE
+
+In-Scope Functionality
+- Server-Side Code Execution: the backend runner compiles and executes submitted
+  code in a sandboxed environment and returns results to the client.
+- Central Data Orchestration: a PHP REST API serving the problem bank, storing
+  submission history, issuing JWTs, and managing user rankings.
+- Dynamic Client Dashboard: a browser-based UI with Monaco Editor, live test
+  execution, grading reports, a problem submission workflow, comments, and
+  notifications.
+- Community Features: problem submission by users (pending admin approval),
+  threaded comments with upvote/downvote, user profiles with avatars and
+  submission streaks.
+- Admin Console: full problem CRUD, approval/rejection workflow with
+  notifications to submitters, and visibility into who submitted each problem.
+
+Out of Scope
+- Mobile-native applications
+- Payment or subscription management
+
+================================================================================
+
+3. SYSTEM FEATURES
+
+3.1 Code Execution
+- The frontend submits the user's source code and selected language to the
+  backend runner via the /api/run endpoint.
+- The runner compiles and executes the code server-side against the problem's
+  test cases and returns per-test results, runtimes, and output deltas.
+- The frontend displays results and submits the result metadata to the backend
+  for persistence.
+
+3.2 Problem Management
+- Problems carry: title, difficulty (Easy / Medium / Hard), topic tags,
+  description, constraints, time limit, memory limit, sample test cases
+  (visible), and hidden test cases (used for evaluation only).
+- Users can submit problems for approval from the problem bank page.
+- Admins can create, edit, approve (setting difficulty), reject (with reason),
+  or delete problems from the Admin Console.
+- The Admin Console displays the username of the user who submitted each
+  problem alongside its approval status.
+- Approval and rejection trigger in-app notifications to the submitting user.
+
+3.3 Submission Log & Leaderboard
+- Every run result is persisted as a submission record containing: user, problem,
+  status, passed/total count, runtime in ms, code content, and timestamp.
+- The global leaderboard ranks users by number of distinct accepted problems,
+  with ties broken by total runtime and submission timestamp.
+
+3.4 User Profiles & Social Features
+- Each user has a public profile showing their username, avatar, submission
+  streak, solve count, and accepted problem history.
+- Users can update their username and upload a profile picture (JPEG/PNG).
+- Problems have a comment section supporting threaded discussion, editing,
+  deletion, and upvote/downvote voting.
+
+3.5 Notifications
+- Users receive in-app notifications when their submitted problem is approved
+  or rejected, including any admin comment or rejection reason.
+- Unread notification count is shown in the navbar badge.
+
+================================================================================
+
+4. USER ROLES
+
+Role                Responsibilities                          Permissions
+--------------------------------------------------------------------------------
+Anonymous Visitor   Browse login/signup screens.              Read-only access
+                                                              to public pages.
+
+Developer (User)    Solve problems, track progress, submit    View problems,
+                    new problems for approval, comment,       submit code,
+                    vote, manage profile.                     log submissions,
+                                                              post comments,
+                                                              submit problems.
+
+Administrator       Manage problem library, approve/reject    Full CRUD on
+                    user-submitted problems, monitor all      problems and test
+                    submissions and users.                    cases; approve /
+                                                              reject workflow;
+                                                              delete any comment.
+
+================================================================================
+
+5. REQUIREMENTS
+
+5.1 Functional Requirements
+- FR-01: The system must register users with a unique username and email, storing
+  bcrypt-hashed passwords.
+- FR-02: Authenticated sessions must use JWTs issued on login and validated on
+  every protected request via the Authorization header.
+- FR-03: The frontend must dynamically resolve the backend API URL from
+  window.location.hostname so the system works across devices without hardcoded
+  IPs.
+- FR-04: Admins must be able to approve a pending problem (setting its difficulty)
+  or reject it (providing a reason); both actions must trigger a notification to
+  the submitting user.
+- FR-05: The Admin Console problems table must display the username of the user
+  who submitted each problem.
+- FR-06: The leaderboard must be publicly accessible without authentication.
+- FR-07: Comments must support create, edit, delete, and vote operations;
+  admins can delete any comment.
+
+5.2 Non-Functional Requirements
+- NFR-01 Performance: The backend must process list endpoints (problem bank,
+  leaderboard) in under 200 ms under normal load.
+- NFR-02 Security: All submission payloads must be validated server-side before
+  persistence. Code execution must be sandboxed to prevent system abuse.
+- NFR-03 Usability: The UI must support both light and dark themes with
+  persistent preference storage, and render correctly on desktop browsers.
+- NFR-04 Portability: The system must run on Linux, macOS, and Windows using
+  only PHP 8.3 and MySQL 8.
+
+================================================================================
+
+6. TECHNOLOGY STACK
+
+6.1 Frontend
+- Structure & Styling: HTML5 + Tailwind CSS (utility-first, dark-mode support)
+- Editor: Monaco Editor (browser-based IDE with syntax highlighting)
+- Reactivity: Alpine.js for component state; Vanilla JS for global utilities
+- Pages: login, dashboard, problems, problem workspace, leaderboard, profile,
+  public profile, admin console
+
+6.2 Backend
+- Runtime: PHP 8.3 (OOP, front-controller pattern, manual routing)
+- Auth: JWT (HS256) issued and validated in PHP
+- Database: MySQL 8 (users, problems, test_cases, submissions, notifications,
+  comments, comment_votes)
+- File uploads: avatar images stored under backend/public/avatars/
+- Runner: server-side code execution via the /api/run endpoint
+
+================================================================================
+
+7. FUTURE ENHANCEMENTS
+
+- Multi-Language Support: extend the backend runner to support additional
+  languages (Python, Java, Rust) without changes to the frontend or problem
+  data model.
+- Anti-Cheat Engine: AST-based structural similarity analyser on the backend to
+  detect copied solutions and flag leaderboard manipulation.
+- Editorial System: Allow admins and problem setters to attach written editorials
+  and solution hints to problems, unlocked after a user's first accepted
+  submission.
+- Contest Mode: Time-boxed competitive sessions with a live scoreboard,
+  restricted problem visibility, and a post-contest replay view.

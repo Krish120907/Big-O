@@ -1,0 +1,46 @@
+# Zone.Identifier files (Windows alternate data streams)
+*:Zone.Identifier
+
+# Logs
+*.log
+
+# Environment files
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Dependencies
+node_modules/
+vendor/
+
+# Build outputs
+dist/
+build/
+*.min.css
+*.min.js
+
+# Cache
+.cache/
+.eslintcache
+
+# PHP
+.php-cs-fixer.cache
+.phpunit.result.cache
+
+# Testing
+coverage/
+*.lcov
+
+# Misc
+*.pid
+*.seed
+*.pid.lock
