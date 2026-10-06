@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" crossorigin>
-    <link rel="stylesheet" href="assets/css/styles.css?v=6">
+    <link rel="stylesheet" href="assets/css/styles.css?v=8">
     <script>
       window.__ENV__ = { API_BASE_URL: "http://localhost:8080/api" };
     </script>
@@ -15,13 +15,11 @@
 </head>
 <body x-data="dashboardApp()" x-init="init()">
     <div class="layout">
-        <!-- Sidebar -->
-        <aside class="sidebar">
+        <aside class="sidebar chrome">
             <div class="sidebar-header">
-                <a href="index.html" class="sidebar-brand"><img src="assets/logo.png" alt="Big-O" class="h-8 w-auto"></a>
+                <a href="index.html" class="sidebar-brand"><img src="assets/logo.png" alt="Big-O"></a>
             </div>
             <nav class="sidebar-nav" x-data="{ active: 'dashboard' }">
-                <div class="nav-section-title">Main</div>
                 <a href="index.html" class="nav-item" :class="{ active: active === 'dashboard' }" @click="active = 'dashboard'">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
                     <span>Dashboard</span>
@@ -93,16 +91,15 @@
             </div>
         </aside>
 
-        <!-- Main Content -->
         <div class="main-content">
-            <header class="header">
+            <header class="header chrome">
                 <div class="flex items-center justify-between w-full">
-<div class="flex items-center gap-4">
-    <a href="index.html" class="flex items-center gap-2">
-        <img src="assets/logo.png" alt="Big-O" class="h-7 w-auto">
-    </a>
-    <h1 class="text-xl font-semibold" x-text="pageTitle"></h1>
-</div>
+                    <div class="flex items-center gap-4">
+                        <a href="index.html" class="flex items-center gap-2">
+                            <img src="assets/logo.png" alt="Big-O" class="h-7 w-auto">
+                        </a>
+                        <h1 class="text-xl font-semibold" x-text="pageTitle"></h1>
+                    </div>
                     <div class="flex items-center gap-2">
                         <div class="relative" x-data="{ open: false }">
                             <button @click="open = !open" class="btn btn-ghost btn-icon" aria-label="Theme">
@@ -119,7 +116,6 @@
             </header>
 
             <main class="page-content">
-                <!-- Stats Cards -->
                 <div class="grid gap-4 mb-6" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
                     <div class="card">
                         <div class="card-body">
@@ -147,22 +143,21 @@
                     </div>
                 </div>
 
-                <!-- Difficulty Breakdown -->
                 <div class="card mb-6">
                     <div class="card-header">
                         <h2 class="card-title">Progress by Difficulty</h2>
                     </div>
                     <div class="card-body">
                         <div class="grid gap-4" style="grid-template-columns: repeat(3, 1fr);">
-                            <div class="text-center p-4" style="background: var(--success-soft); border-radius: var(--radius-md);">
+                            <div class="text-center p-4" style="background: var(--success-soft); border-radius: var(--radius);">
                                 <p class="text-2xl font-bold text-[var(--success)]" x-text="stats?.easy_count || 0"></p>
                                 <p class="text-sm text-[var(--text-secondary)] mt-1">Easy</p>
                             </div>
-                            <div class="text-center p-4" style="background: var(--warning-soft); border-radius: var(--radius-md);">
+                            <div class="text-center p-4" style="background: var(--warning-soft); border-radius: var(--radius);">
                                 <p class="text-2xl font-bold text-[var(--warning)]" x-text="stats?.medium_count || 0"></p>
                                 <p class="text-sm text-[var(--text-secondary)] mt-1">Medium</p>
                             </div>
-                            <div class="text-center p-4" style="background: var(--danger-soft); border-radius: var(--radius-md);">
+                            <div class="text-center p-4" style="background: var(--danger-soft); border-radius: var(--radius);">
                                 <p class="text-2xl font-bold text-[var(--danger)]" x-text="stats?.hard_count || 0"></p>
                                 <p class="text-sm text-[var(--text-secondary)] mt-1">Hard</p>
                             </div>
@@ -170,7 +165,6 @@
                     </div>
                 </div>
 
-                <!-- Recent Submissions -->
                 <div class="card">
                     <div class="card-header">
                         <h2 class="card-title">Recent Submissions</h2>
