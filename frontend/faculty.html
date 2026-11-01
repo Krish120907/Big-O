@@ -19,63 +19,58 @@
 <body class="bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen transition-colors duration-200"
       x-data="facultyDashboard()" x-init="init()">
 
-    <!-- Navbar -->
-    <nav class="border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <div class="flex items-center">
-                    <a href="index.html" class="flex items-center gap-2 shrink-0">
-                        <div class="flex items-center justify-center w-8 h-8 rounded-lg shrink-0"
-                             style="background:linear-gradient(135deg,#3b82f6,#6366f1);box-shadow:0 3px 10px rgba(99,102,241,0.4);">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16M7 8l-4 4 4 4M17 8l4 4-4 4"/>
-                            </svg>
-                        </div>
-                        <span class="text-xl font-extrabold tracking-tight text-slate-900 dark:text-white" style="letter-spacing:-0.3px;">Big-O</span>
-                    </a>
-                    <div class="hidden md:block ml-10 flex items-baseline space-x-4">
-                        <a href="index.html" class="text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Dashboard</a>
-                        <a href="problems.html" class="text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Problems</a>
-                        <a href="leaderboard.html" class="text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Leaderboard</a>
+    <!-- Top LeetCode Navigation Bar -->
+    <nav class="h-14 bg-[var(--bg-surface)] border-b border-[var(--border)] sticky top-0 z-50 shrink-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
+            <!-- Left: Logo & Nav Links -->
+            <div class="flex items-center space-x-8">
+                <a href="index.html" class="flex items-center gap-2 shrink-0 group">
+                    <div class="w-8 h-8 rounded-lg bg-[#ffa116] flex items-center justify-center text-[#1a1a1a] shadow-sm">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="16 18 22 12 16 6"></polyline>
+                            <polyline points="8 6 2 12 8 18"></polyline>
+                        </svg>
+                    </div>
+                    <span class="text-lg font-bold tracking-tight text-[var(--text)]">Big-O</span>
+                </a>
 
-                        <a href="faculty.html" class="bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 px-3 py-2 rounded-md text-sm font-medium">Faculty</a>
-                        <template x-if="user && user.role === 'admin'">
-                            <a href="admin.html" class="text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 px-3 py-2 rounded-md text-sm font-medium transition-colors">Admin</a>
-                        </template>
+                <div class="hidden md:flex items-center space-x-1">
+                    <a href="index.html" class="px-3 py-1.5 rounded-md text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text)] hover:bg-[var(--bg-hover)] transition-colors">Dashboard</a>
+                    <a href="problems.html" class="px-3 py-1.5 rounded-md text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text)] hover:bg-[var(--bg-hover)] transition-colors">Problems</a>
+                    <a href="leaderboard.html" class="px-3 py-1.5 rounded-md text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text)] hover:bg-[var(--bg-hover)] transition-colors">Leaderboard</a>
+                    
+                    <a href="faculty.html" class="px-3 py-1.5 rounded-md text-sm font-semibold text-[#10b981] border-b-2 border-[#10b981]">Faculty</a>
+                    <template x-if="user && user.role === 'admin'">
+                        <a href="admin.html" class="px-3 py-1.5 rounded-md text-sm font-medium text-[#ff375f] hover:bg-[#ff375f]/10 transition-colors">Admin</a>
+                    </template>
+                </div>
+            </div>
+
+            <!-- Right: Theme, User Avatar -->
+            <div class="flex items-center space-x-3">
+                <div class="relative" x-data="{ open: false, current: localStorage.getItem('theme') || 'dark', setTheme(t) { this.current = t; const h = document.documentElement; h.classList.remove('dark'); if (t === 'dark') h.classList.add('dark'); localStorage.setItem('theme', t); this.open = false; } }" @keydown.escape.window="open = false">
+                    <button @click="open = !open" class="p-2 rounded-lg bg-[var(--bg-elevated)] border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text)] transition-colors" title="Theme">
+                        <svg x-show="current === 'dark'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+                        <svg x-show="current === 'light'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                    </button>
+                    <div x-show="open" @click.outside="open = false" x-transition class="absolute right-0 mt-2 w-36 bg-[var(--bg-surface)] border border-[var(--border)] rounded-lg shadow-xl z-50 py-1 text-xs">
+                        <button @click="setTheme('dark')" class="w-full flex items-center gap-2 px-3 py-2 text-[var(--text-secondary)] hover:text-[var(--text)] hover:bg-[var(--bg-hover)]" :class="current === 'dark' ? 'font-semibold text-[#ffa116]' : ''">Dark</button>
+                        <button @click="setTheme('light')" class="w-full flex items-center gap-2 px-3 py-2 text-[var(--text-secondary)] hover:text-[var(--text)] hover:bg-[var(--bg-hover)]" :class="current === 'light' ? 'font-semibold text-[#ffa116]' : ''">Light</button>
                     </div>
                 </div>
-                <div class="flex items-center space-x-4">
-                    <div class="relative" x-data="{ open: false, current: localStorage.getItem('theme') || 'dark', setTheme(t) { this.current = t; const h = document.documentElement; h.classList.remove('dark'); if (t === 'dark') h.classList.add('dark'); localStorage.setItem('theme', t); this.open = false; } }" @keydown.escape.window="open = false">
-                        <button @click="open = !open" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white focus:outline-none flex items-center gap-1" title="Choose theme">
-                            <svg x-show="current === 'dark'" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
-                            <svg x-show="current === 'light'" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                            <svg class="h-3 w-3 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
-                        </button>
-                        <div x-show="open" @click.outside="open = false" x-transition class="absolute right-0 mt-2 w-40 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg z-50 py-1">
-                            <button @click="setTheme('dark')" class="w-full flex items-center gap-2 px-3 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" :class="current === 'dark' ? 'font-semibold text-blue-600 dark:text-blue-400' : ''">
-                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
-                                Dark
-                            </button>
-                            <button @click="setTheme('light')" class="w-full flex items-center gap-2 px-3 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" :class="current === 'light' ? 'font-semibold text-blue-600 dark:text-blue-400' : ''">
-                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                                Light
-                            </button>
-                        </div>
-                    </div>
-                    <div class="flex items-center space-x-3 pl-4 border-l border-slate-200 dark:border-slate-700">
-                        <a href="profile.html" class="flex items-center gap-2 hover:opacity-80 transition-opacity">
-                            <template x-if="profile && profile.avatar_url">
-                                <img :src="API_BASE_URL.replace('/api', '') + profile.avatar_url" alt="Profile" class="w-8 h-8 rounded-full object-cover">
-                            </template>
-                            <template x-if="!profile || !profile.avatar_url">
-                                <div class="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center text-white font-bold text-sm shrink-0" x-text="user ? user.username.charAt(0).toUpperCase() : '?'"></div>
-                            </template>
-                            <span class="text-sm font-semibold text-slate-600 dark:text-slate-300" x-text="user ? user.username : ''"></span>
-                        </a>
-                        <span class="text-xs bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 px-2 py-0.5 rounded font-semibold">Faculty</span>
-                    </div>
-                    <button @click="Auth.logout()" class="text-sm bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg font-semibold transition-colors">Logout</button>
-                </div>
+
+                <a href="profile.html" class="flex items-center gap-2 hover:opacity-90 transition-opacity">
+                    <template x-if="profile && profile.avatar_url">
+                        <img :src="API_BASE_URL.replace('/api', '') + profile.avatar_url" alt="Profile" class="w-8 h-8 rounded-full object-cover border border-[var(--border)]">
+                    </template>
+                    <template x-if="!profile || !profile.avatar_url">
+                        <div class="w-8 h-8 rounded-full bg-[#10b981] flex items-center justify-center text-white font-bold text-xs" x-text="user ? user.username.charAt(0).toUpperCase() : '?'"></div>
+                    </template>
+                    <span class="text-sm font-semibold text-[var(--text)] hidden sm:inline" x-text="user ? user.username : ''"></span>
+                    <span class="text-[10px] bg-[#10b981]/20 text-[#10b981] px-1.5 py-0.5 rounded font-semibold">Faculty</span>
+                </a>
+
+                <button @click="Auth.logout()" class="text-xs bg-[var(--bg-elevated)] hover:bg-[var(--danger-soft)] text-[var(--text-secondary)] hover:text-[var(--danger)] border border-[var(--border)] px-3 py-1.5 rounded-lg font-medium transition-colors">Sign Out</button>
             </div>
         </div>
     </nav>

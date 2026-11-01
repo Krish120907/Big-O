@@ -1,16 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Problems - Big-O</title>
-    <!-- Tailwind CSS CDN -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" crossorigin>
     <link rel="stylesheet" href="assets/css/tailwind.min.css">
-    <link rel="stylesheet" href="assets/css/styles.css?v=3">
-    <!-- Alpine.js -->
+    <link rel="stylesheet" href="assets/css/styles.css?v=10">
     <script>
       window.__ENV__ = {
         API_BASE_URL: "http://localhost:8080/api"
@@ -18,180 +16,243 @@
     </script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
-<body class="bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-100 min-h-screen transition-colors duration-200" x-data="problemsApp()">
+<body class="bg-[var(--bg)] text-[var(--text)] min-h-screen flex flex-col font-sans transition-colors duration-150" x-data="problemsApp()" x-init="init()">
     
-    <!-- Navbar -->
-    <nav class="border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <div class="flex items-center">
-                    <a href="index.html" class="flex items-center gap-2 shrink-0">
-                        <div class="flex items-center justify-center w-8 h-8 rounded-lg shrink-0"
-                             style="background:linear-gradient(135deg,#3b82f6,#6366f1);box-shadow:0 3px 10px rgba(99,102,241,0.4);">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16M7 8l-4 4 4 4M17 8l4 4-4 4"/>
-                            </svg>
-                        </div>
-                        <span class="text-xl font-extrabold tracking-tight text-slate-900 dark:text-white" style="letter-spacing:-0.3px;">Big-O</span>
-                    </a>
-                    <div class="hidden md:block ml-10 flex items-baseline space-x-4">
-                        <a href="index.html" class="text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Dashboard</a>
-                        <a href="problems.html" class="bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-white px-3 py-2 rounded-md text-sm font-medium">Problems</a>
-                        <a href="leaderboard.html" class="text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Leaderboard</a>
+    <!-- Top LeetCode Navigation Bar -->
+    <nav class="h-14 bg-[var(--bg-surface)] border-b border-[var(--border)] sticky top-0 z-50 shrink-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
+            <!-- Left: Logo & Nav Links -->
+            <div class="flex items-center space-x-8">
+                <a href="index.html" class="flex items-center gap-2 shrink-0 group">
+                    <div class="w-8 h-8 rounded-lg bg-[#ffa116] flex items-center justify-center text-[#1a1a1a] shadow-sm">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="16 18 22 12 16 6"></polyline>
+                            <polyline points="8 6 2 12 8 18"></polyline>
+                        </svg>
+                    </div>
+                    <span class="text-lg font-bold tracking-tight text-[var(--text)]">Big-O</span>
+                </a>
 
-                        <template x-if="user && user.role === 'faculty'">
-                            <a href="faculty.html" class="text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 px-3 py-2 rounded-md text-sm font-medium transition-colors">Faculty</a>
-                        </template>
-                        <template x-if="user && user.role === 'admin'">
-                            <a href="admin.html" class="text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Admin</a>
-                        </template>
+                <div class="hidden md:flex items-center space-x-1">
+                    <a href="index.html" class="px-3 py-1.5 rounded-md text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text)] hover:bg-[var(--bg-hover)] transition-colors">Dashboard</a>
+                    <a href="problems.html" class="px-3 py-1.5 rounded-md text-sm font-semibold text-[var(--text)] border-b-2 border-[#ffa116]">Problems</a>
+                    <a href="leaderboard.html" class="px-3 py-1.5 rounded-md text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text)] hover:bg-[var(--bg-hover)] transition-colors">Leaderboard</a>
+                    
+                    <template x-if="user && user.role === 'faculty'">
+                        <a href="faculty.html" class="px-3 py-1.5 rounded-md text-sm font-medium text-[#10b981] hover:bg-[#10b981]/10 transition-colors">Faculty</a>
+                    </template>
+                    <template x-if="user && user.role === 'admin'">
+                        <a href="admin.html" class="px-3 py-1.5 rounded-md text-sm font-medium text-[#ff375f] hover:bg-[#ff375f]/10 transition-colors">Admin</a>
+                    </template>
+                </div>
+            </div>
+
+            <!-- Right: Theme, User Avatar, Logout -->
+            <div class="flex items-center space-x-3">
+                <!-- Theme Switch -->
+                <div class="relative" x-data="{ open: false, current: localStorage.getItem('theme') || 'dark', setTheme(t) { this.current = t; const h = document.documentElement; h.classList.remove('dark'); if (t === 'dark') h.classList.add('dark'); localStorage.setItem('theme', t); this.open = false; } }" @keydown.escape.window="open = false">
+                    <button @click="open = !open" class="p-2 rounded-lg bg-[var(--bg-elevated)] border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text)] transition-colors" title="Theme">
+                        <svg x-show="current === 'dark'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+                        <svg x-show="current === 'light'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                    </button>
+                    <div x-show="open" @click.outside="open = false" x-transition class="absolute right-0 mt-2 w-36 bg-[var(--bg-surface)] border border-[var(--border)] rounded-lg shadow-xl z-50 py-1 text-xs">
+                        <button @click="setTheme('dark')" class="w-full flex items-center gap-2 px-3 py-2 text-[var(--text-secondary)] hover:text-[var(--text)] hover:bg-[var(--bg-hover)]" :class="current === 'dark' ? 'font-semibold text-[#ffa116]' : ''">Dark</button>
+                        <button @click="setTheme('light')" class="w-full flex items-center gap-2 px-3 py-2 text-[var(--text-secondary)] hover:text-[var(--text)] hover:bg-[var(--bg-hover)]" :class="current === 'light' ? 'font-semibold text-[#ffa116]' : ''">Light</button>
                     </div>
                 </div>
-                <div class="flex items-center space-x-4">
-                    <div class="relative" x-data="{ open: false, get current() { const h = document.documentElement; if (h.classList.contains('dark')) return 'dark'; if (h.classList.contains('earth')) return 'earth'; return 'light'; }, setTheme(t) { setTheme(t); this.open = false; } }" @keydown.escape.window="open = false">
-                        <button @click="open = !open" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white focus:outline-none flex items-center gap-1" title="Choose theme">
-                            <svg x-show="current === 'dark'" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
-                            <svg x-show="current === 'light'" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                            <svg x-show="current === 'earth'" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                            <svg class="h-3 w-3 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
-                        </button>
-                        <div x-show="open" @click.outside="open = false" x-transition class="absolute right-0 mt-2 w-40 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg z-50 py-1">
-                            <button @click="setTheme('dark')" class="w-full flex items-center gap-2 px-3 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" :class="current === 'dark' ? 'font-semibold text-blue-600 dark:text-blue-400' : ''">
-                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
-                                Dark
-                            </button>
-                            <button @click="setTheme('light')" class="w-full flex items-center gap-2 px-3 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" :class="current === 'light' ? 'font-semibold text-blue-600 dark:text-blue-400' : ''">
-                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                                Light
-                            </button>
-                            <button @click="setTheme('earth')" class="w-full flex items-center gap-2 px-3 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" :class="current === 'earth' ? 'font-semibold text-blue-600 dark:text-blue-400' : ''">
-                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                                Earth
-                            </button>
-                        </div>
-                    </div>
-                    <div class="flex items-center space-x-3 pl-4 border-l border-slate-200 dark:border-slate-700">
-                        <a href="profile.html" class="flex items-center gap-2 hover:opacity-80 transition-opacity">
-                            <template x-if="profile && profile.avatar_url">
-                                <img :src="API_BASE_URL.replace('/api', '') + profile.avatar_url" alt="Profile" class="w-8 h-8 rounded-full object-cover">
-                            </template>
-                            <template x-if="!profile || !profile.avatar_url">
-                                <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-sm shrink-0" x-text="user ? user.username.charAt(0).toUpperCase() : '?'"></div>
-                            </template>
-                            <span class="text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white" x-text="user ? user.username : ''"></span>
-                        </a>
-                    </div>
-                    <button @click="Auth.logout()" class="text-sm bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg font-semibold transition-colors">Logout</button>
-                </div>
+
+                <!-- User Profile -->
+                <a href="profile.html" class="flex items-center gap-2 hover:opacity-90 transition-opacity">
+                    <template x-if="profile && profile.avatar_url">
+                        <img :src="API_BASE_URL.replace('/api', '') + profile.avatar_url" alt="Profile" class="w-8 h-8 rounded-full object-cover border border-[var(--border)]">
+                    </template>
+                    <template x-if="!profile || !profile.avatar_url">
+                        <div class="w-8 h-8 rounded-full bg-[#ffa116] flex items-center justify-center text-[#1a1a1a] font-bold text-xs" x-text="user ? user.username.charAt(0).toUpperCase() : '?'"></div>
+                    </template>
+                    <span class="text-sm font-semibold text-[var(--text)] hidden sm:inline" x-text="user ? user.username : ''"></span>
+                </a>
+
+                <button @click="Auth.logout()" class="text-xs bg-[var(--bg-elevated)] hover:bg-[var(--danger-soft)] text-[var(--text-secondary)] hover:text-[var(--danger)] border border-[var(--border)] px-3 py-1.5 rounded-lg font-medium transition-colors">Sign Out</button>
             </div>
         </div>
     </nav>
 
-    <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <!-- Main Content Area -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
         
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
-            <div>
-                <h1 class="text-3xl font-extrabold tracking-tight">Problem Library</h1>
-                <p class="text-slate-500 dark:text-slate-400 mt-2">Challenge yourself with curated coding problems.</p>
+        <!-- Header & Stats Overview -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <!-- Left 2 Cols: Welcome / Heading -->
+            <div class="lg:col-span-2 flex flex-col justify-center">
+                <h1 class="text-2xl font-bold tracking-tight text-[var(--text)] mb-2">Problem Set</h1>
+                <p class="text-sm text-[var(--text-secondary)]">Practice algorithms and data structures locally with lightning-fast execution.</p>
+                
+                <!-- Quick Topic Pills (LeetCode style) -->
+                <div class="flex flex-wrap items-center gap-2 mt-4">
+                    <button @click="selectedTopic = ''; filterProblems()" 
+                            :class="selectedTopic === '' ? 'bg-[#ffa116] text-[#1a1a1a] font-semibold' : 'bg-[var(--bg-surface)] text-[var(--text-secondary)] hover:text-[var(--text)] border border-[var(--border)]'"
+                            class="px-3 py-1 rounded-full text-xs transition-colors">
+                        All Topics
+                    </button>
+                    <template x-for="top in ['Array', 'String', 'Hash Table', 'Dynamic Programming', 'Math', 'Sorting', 'Greedy', 'Tree']" :key="top">
+                        <button @click="selectedTopic = (selectedTopic === top ? '' : top); filterProblems()"
+                                :class="selectedTopic === top ? 'bg-[#ffa116] text-[#1a1a1a] font-semibold' : 'bg-[var(--bg-surface)] text-[var(--text-secondary)] hover:text-[var(--text)] border border-[var(--border)]'"
+                                class="px-3 py-1 rounded-full text-xs transition-colors"
+                                x-text="top">
+                        </button>
+                    </template>
+                </div>
+            </div>
+
+            <!-- Right Col: Solved Problems Stats Card (LeetCode Style) -->
+            <div class="bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl p-5 flex flex-col justify-between shadow-sm">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">Solved Problems</span>
+                    <span class="text-xs font-mono text-[var(--text-muted)]" x-text="`${solvedCount} / ${problems.length}`"></span>
+                </div>
+                
+                <!-- Stats Progress Bars -->
+                <div class="space-y-2.5">
+                    <!-- Easy -->
+                    <div>
+                        <div class="flex justify-between text-xs font-medium mb-1">
+                            <span class="text-[#00b8a3]">Easy</span>
+                            <span class="font-mono text-[var(--text-secondary)]" x-text="`${solvedEasy} / ${totalEasy}`"></span>
+                        </div>
+                        <div class="w-full bg-[var(--bg-elevated)] h-1.5 rounded-full overflow-hidden">
+                            <div class="bg-[#00b8a3] h-full rounded-full transition-all duration-300" :style="`width: ${totalEasy ? (solvedEasy / totalEasy) * 100 : 0}%`"></div>
+                        </div>
+                    </div>
+                    <!-- Medium -->
+                    <div>
+                        <div class="flex justify-between text-xs font-medium mb-1">
+                            <span class="text-[#ffc01e]">Medium</span>
+                            <span class="font-mono text-[var(--text-secondary)]" x-text="`${solvedMed} / ${totalMed}`"></span>
+                        </div>
+                        <div class="w-full bg-[var(--bg-elevated)] h-1.5 rounded-full overflow-hidden">
+                            <div class="bg-[#ffc01e] h-full rounded-full transition-all duration-300" :style="`width: ${totalMed ? (solvedMed / totalMed) * 100 : 0}%`"></div>
+                        </div>
+                    </div>
+                    <!-- Hard -->
+                    <div>
+                        <div class="flex justify-between text-xs font-medium mb-1">
+                            <span class="text-[#ff375f]">Hard</span>
+                            <span class="font-mono text-[var(--text-secondary)]" x-text="`${solvedHard} / ${totalHard}`"></span>
+                        </div>
+                        <div class="w-full bg-[var(--bg-elevated)] h-1.5 rounded-full overflow-hidden">
+                            <div class="bg-[#ff375f] h-full rounded-full transition-all duration-300" :style="`width: ${totalHard ? (solvedHard / totalHard) * 100 : 0}%`"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- Filter Bar -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
-            <!-- Search -->
-            <div class="col-span-1 md:col-span-1">
-                <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Search</label>
-                <input type="text" x-model="search" @input="filterProblems()" placeholder="Search title..." 
-                       class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg py-2 px-3 text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <!-- Filter & Search Bar -->
+        <div class="bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl p-3 mb-6 flex flex-wrap items-center justify-between gap-3 shadow-sm">
+            <!-- Search Input -->
+            <div class="relative flex-1 min-w-[220px]">
+                <svg class="w-4 h-4 text-[var(--text-muted)] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+                <input type="text" x-model="search" @input="filterProblems()" placeholder="Search questions..." 
+                       class="w-full bg-[var(--bg-elevated)] border border-[var(--border)] rounded-lg py-1.5 pl-9 pr-3 text-xs text-[var(--text)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[#ffa116]">
             </div>
 
-            <!-- Difficulty Filter -->
-            <div>
-                <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Difficulty</label>
+            <!-- Filters -->
+            <div class="flex items-center space-x-2">
+                <!-- Difficulty Dropdown -->
                 <select x-model="selectedDifficulty" @change="filterProblems()"
-                        class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg py-2 px-3 text-sm text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option value="">All Difficulties</option>
+                        class="bg-[var(--bg-elevated)] border border-[var(--border)] rounded-lg py-1.5 px-3 text-xs text-[var(--text)] focus:outline-none focus:border-[#ffa116]">
+                    <option value="">Difficulty: All</option>
                     <option value="Easy">Easy</option>
                     <option value="Medium">Medium</option>
                     <option value="Hard">Hard</option>
                 </select>
-            </div>
 
-            <!-- Topic Filter -->
-            <div>
-                <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Topic Tag</label>
-                <input type="text" x-model="selectedTopic" @input="filterProblems()" placeholder="e.g. Arrays, Strings..." 
-                       class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg py-2 px-3 text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
-            </div>
-
-            <!-- Status Filter -->
-            <div>
-                <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Status</label>
+                <!-- Status Dropdown -->
                 <select x-model="selectedStatus" @change="filterProblems()"
-                        class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg py-2 px-3 text-sm text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option value="">All Statuses</option>
+                        class="bg-[var(--bg-elevated)] border border-[var(--border)] rounded-lg py-1.5 px-3 text-xs text-[var(--text)] focus:outline-none focus:border-[#ffa116]">
+                    <option value="">Status: All</option>
                     <option value="Solved">Solved</option>
-                    <option value="Unsolved">Unsolved</option>
+                    <option value="Unsolved">Todo</option>
                 </select>
+
+                <!-- Clear Filters -->
+                <button x-show="search || selectedDifficulty || selectedTopic || selectedStatus"
+                        @click="search = ''; selectedDifficulty = ''; selectedTopic = ''; selectedStatus = ''; filterProblems()"
+                        class="p-1.5 rounded-lg text-xs text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-[var(--bg-hover)] transition-colors" title="Clear Filters">
+                    ✕
+                </button>
             </div>
         </div>
 
-        <!-- Problems Table -->
-        <div class="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden">
-            <table class="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
-                <thead class="bg-slate-50 dark:bg-slate-800">
-                    <tr>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-16">Status</th>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Title</th>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Difficulty</th>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Topic Tags</th>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Actions</th>
+        <!-- Problems Table (LeetCode Style) -->
+        <div class="bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl overflow-hidden shadow-sm">
+            <table class="w-full border-collapse text-left text-xs">
+                <thead>
+                    <tr class="border-b border-[var(--border)] text-[var(--text-secondary)] font-semibold uppercase tracking-wider text-[11px] bg-[var(--bg-surface)]">
+                        <th class="py-3 px-4 w-12 text-center">Status</th>
+                        <th class="py-3 px-4">Title</th>
+                        <th class="py-3 px-4 w-28">Difficulty</th>
+                        <th class="py-3 px-4 hidden md:table-cell">Tags</th>
+                        <th class="py-3 px-4 w-24 text-right">Action</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
-                    <template x-for="prob in filteredProblems" :key="prob.id">
-                        <tr class="hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-                            <td class="px-6 py-4 text-sm font-semibold">
+                <tbody class="divide-y divide-[var(--border)]">
+                    <template x-for="(prob, idx) in filteredProblems" :key="prob.id">
+                        <tr class="hover:bg-[var(--bg-hover)] transition-colors group">
+                            <!-- Status Icon -->
+                            <td class="py-3 px-4 text-center">
                                 <template x-if="solvedMap[prob.id]">
-                                    <span class="text-green-600 dark:text-green-500">
-                                        <svg class="w-5.5 h-5.5 inline" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                                    <span class="inline-flex text-[#2cbb5d]" title="Solved">
+                                        <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                        </svg>
                                     </span>
                                 </template>
                                 <template x-if="attemptedMap[prob.id] && !solvedMap[prob.id]">
-                                    <span class="text-yellow-600 dark:text-yellow-500">
-                                        <svg class="w-5.5 h-5.5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    <span class="inline-flex text-[#ffc01e]" title="Attempted">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                     </span>
                                 </template>
                             </td>
-                            <td class="px-6 py-4 text-sm font-bold text-slate-800 dark:text-slate-100">
-                                <a :href="`problem.html?id=${prob.id}`" class="hover:text-blue-700 dark:hover:text-blue-400 transition-colors" x-text="prob.title"></a>
+
+                            <!-- Title -->
+                            <td class="py-3 px-4">
+                                <a :href="`problem.html?id=${prob.id}`" 
+                                   class="font-medium text-[var(--text)] group-hover:text-[#ffa116] transition-colors"
+                                   x-text="`${prob.id}. ${prob.title}`"></a>
                             </td>
-                            <td class="px-6 py-4 text-sm font-semibold">
-                                <span class="px-2.5 py-0.5 rounded text-xs font-bold"
-                                      :class="prob.difficulty === 'Easy' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 
-                                              prob.difficulty === 'Medium' ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400' : 
-                                              'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'"
+
+                            <!-- Difficulty Badge -->
+                            <td class="py-3 px-4 font-medium">
+                                <span :class="prob.difficulty === 'Easy' ? 'lc-badge-easy' : (prob.difficulty === 'Medium' ? 'lc-badge-medium' : 'lc-badge-hard')"
                                       x-text="prob.difficulty"></span>
                             </td>
-                            <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-300">
+
+                            <!-- Topic Tags -->
+                            <td class="py-3 px-4 hidden md:table-cell">
                                 <div class="flex flex-wrap gap-1">
-                                    <template x-for="tag in prob.topic_tags.split(',')" :key="tag">
-                                        <span class="bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400 text-xs px-2 py-0.5 rounded font-medium" x-text="tag.trim()"></span>
+                                    <template x-for="tag in (prob.topic_tags ? prob.topic_tags.split(',') : [])" :key="tag">
+                                        <span class="lc-tag text-[11px] py-0.5 px-2" x-text="tag.trim()"></span>
                                     </template>
                                 </div>
                             </td>
-                            <td class="px-6 py-4 text-sm">
+
+                            <!-- Action Button -->
+                            <td class="py-3 px-4 text-right">
                                 <a :href="`problem.html?id=${prob.id}`" 
-                                   class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-3.5 py-1.5 rounded-lg text-xs transition-all">
-                                    Solve Code
+                                   class="lc-btn-run text-xs py-1 px-3 group-hover:border-[#ffa116] group-hover:text-[#ffa116] transition-colors">
+                                    Solve
                                 </a>
                             </td>
                         </tr>
                     </template>
                     <template x-if="filteredProblems.length === 0">
                         <tr>
-                            <td colspan="5" class="px-6 py-10 text-center text-slate-400 text-sm">No problems match the current filter selection.</td>
+                            <td colspan="5" class="py-12 text-center text-[var(--text-muted)]">
+                                No questions found matching the selected filters.
+                            </td>
                         </tr>
                     </template>
                 </tbody>
@@ -217,6 +278,28 @@
                 selectedTopic: '',
                 selectedStatus: '',
 
+                get solvedCount() {
+                    return Object.keys(this.solvedMap).length;
+                },
+                get totalEasy() {
+                    return this.problems.filter(p => p.difficulty === 'Easy').length;
+                },
+                get solvedEasy() {
+                    return this.problems.filter(p => p.difficulty === 'Easy' && this.solvedMap[p.id]).length;
+                },
+                get totalMed() {
+                    return this.problems.filter(p => p.difficulty === 'Medium').length;
+                },
+                get solvedMed() {
+                    return this.problems.filter(p => p.difficulty === 'Medium' && this.solvedMap[p.id]).length;
+                },
+                get totalHard() {
+                    return this.problems.filter(p => p.difficulty === 'Hard').length;
+                },
+                get solvedHard() {
+                    return this.problems.filter(p => p.difficulty === 'Hard' && this.solvedMap[p.id]).length;
+                },
+
                 init() {
                     Auth.checkAuthGuard();
                     this.user = Auth.getUser();
@@ -231,7 +314,6 @@
                         });
                         if (response.ok) {
                             this.profile = await response.json();
-                            // Update user object with latest profile data
                             if (this.user) {
                                 this.user.username = this.profile.username;
                             }
@@ -279,7 +361,7 @@
                     this.filteredProblems = this.problems.filter(prob => {
                         const matchesSearch = prob.title.toLowerCase().includes(this.search.toLowerCase());
                         const matchesDiff = this.selectedDifficulty === '' || prob.difficulty === this.selectedDifficulty;
-                        const matchesTopic = this.selectedTopic === '' || prob.topic_tags.toLowerCase().includes(this.selectedTopic.toLowerCase());
+                        const matchesTopic = this.selectedTopic === '' || (prob.topic_tags && prob.topic_tags.toLowerCase().includes(this.selectedTopic.toLowerCase()));
                         
                         let matchesStatus = true;
                         if (this.selectedStatus === 'Solved') {

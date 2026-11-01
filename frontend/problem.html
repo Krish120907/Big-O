@@ -1,16 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Problem Workspace - Big-O</title>
-    <!-- Tailwind CSS CDN -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" crossorigin>
     <link rel="stylesheet" href="assets/css/tailwind.min.css">
-    <link rel="stylesheet" href="assets/css/styles.css?v=3">
-    <!-- Alpine.js -->
+    <link rel="stylesheet" href="assets/css/styles.css?v=10">
     <script>
       window.__ENV__ = {
         API_BASE_URL: "http://localhost:8080/api"
@@ -20,184 +18,235 @@
     <!-- Monaco Editor AMD Loader -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script>
 </head>
-<body class="bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200" x-data="workspaceApp()">
+<body class="bg-[var(--bg)] text-[var(--text)] min-h-screen flex flex-col font-sans transition-colors duration-150 select-none overflow-hidden" x-data="workspaceApp()" x-init="init()">
     
-    <!-- Navbar -->
-    <nav class="border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 h-14 flex items-center justify-between px-6 z-50">
-        <div class="flex items-center space-x-4">
-            <a href="problems.html" class="text-slate-500 hover:text-slate-800 dark:hover:text-white transition-colors">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-            </a>
-            <!-- Logo -->
-            <a href="index.html" class="flex items-center gap-1.5 shrink-0">
-                <div class="flex items-center justify-center w-7 h-7 rounded-lg"
-                     style="background:linear-gradient(135deg,#3b82f6,#6366f1);box-shadow:0 2px 8px rgba(99,102,241,0.4);">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16M7 8l-4 4 4 4M17 8l4 4-4 4"/>
+    <!-- Top LeetCode Navigation Bar -->
+    <header class="h-12 bg-[var(--bg-surface)] border-b border-[var(--border)] flex items-center justify-between px-4 z-50 shrink-0">
+        <!-- Left: Logo & Problem Title Navigation -->
+        <div class="flex items-center space-x-3 min-w-0">
+            <!-- Brand Logo -->
+            <a href="problems.html" class="flex items-center gap-2 shrink-0 group">
+                <div class="w-7 h-7 rounded-md bg-[#ffa116] flex items-center justify-center text-[#1a1a1a] shadow-sm">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="16 18 22 12 16 6"></polyline>
+                        <polyline points="8 6 2 12 8 18"></polyline>
                     </svg>
                 </div>
-                <span class="text-base font-extrabold tracking-tight text-slate-900 dark:text-white" style="letter-spacing:-0.3px;">Big-O</span>
+                <span class="text-base font-bold tracking-tight text-[var(--text)] hidden sm:inline">Big-O</span>
             </a>
-            <span class="text-slate-300 dark:text-slate-600">|</span>
-            <span class="text-sm font-semibold text-slate-700 dark:text-slate-300" x-text="problem.title"></span>
-            <span class="px-2 py-0.5 rounded text-[10px] font-bold"
-                  :class="problem.difficulty === 'Easy' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 
-                          problem.difficulty === 'Medium' ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400' : 
-                          'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'"
-                  x-text="problem.difficulty"></span>
+
+            <div class="h-4 w-px bg-[var(--border)] mx-1"></div>
+
+            <!-- Problem List Link -->
+            <a href="problems.html" class="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--text)] hover:bg-[var(--bg-hover)] transition-colors" title="Problem List">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path>
+                </svg>
+                <span class="hidden md:inline">Problem List</span>
+            </a>
+
+            <!-- Problem Navigation Prev/Next -->
+            <div class="flex items-center text-[var(--text-secondary)]">
+                <button @click="navigateProblem(-1)" class="p-1 rounded hover:bg-[var(--bg-hover)] hover:text-[var(--text)] transition-colors" title="Previous Question">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                </button>
+                <button @click="navigateProblem(1)" class="p-1 rounded hover:bg-[var(--bg-hover)] hover:text-[var(--text)] transition-colors" title="Next Question">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                </button>
+            </div>
+
+            <div class="h-4 w-px bg-[var(--border)] mx-1 hidden sm:block"></div>
+
+            <!-- Problem Title & Badge -->
+            <div class="flex items-center space-x-2 truncate">
+                <span class="text-sm font-semibold text-[var(--text)] truncate" x-text="`${problem.id ? problem.id + '.' : ''} ${problem.title || 'Loading...'}`"></span>
+                <template x-if="problem.difficulty">
+                    <span :class="problem.difficulty === 'Easy' ? 'lc-badge-easy' : (problem.difficulty === 'Medium' ? 'lc-badge-medium' : 'lc-badge-hard')"
+                          x-text="problem.difficulty"></span>
+                </template>
+            </div>
         </div>
-        <div class="flex items-center space-x-4">
-            <!-- Font Size -->
-            <div class="flex items-center space-x-2">
-                <span class="text-xs text-slate-500">Font</span>
+
+        <!-- Center: Action Buttons (Run & Submit) -->
+        <div class="flex items-center space-x-2">
+            <!-- Run Button -->
+            <button @click="runCode()" 
+                    :disabled="running"
+                    class="lc-btn-run"
+                    title="Run code against sample test cases (Ctrl + ')" >
+                <svg class="w-3.5 h-3.5 fill-current text-[var(--text-secondary)]" viewBox="0 0 24 24">
+                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                </svg>
+                <span class="font-medium">Run</span>
+            </button>
+
+            <!-- Submit Button -->
+            <button @click="submitCode()" 
+                    :disabled="running"
+                    class="lc-btn-submit"
+                    title="Submit solution (Ctrl + Enter)">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+                </svg>
+                <span>Submit</span>
+            </button>
+        </div>
+
+        <!-- Right: Settings, Theme & User Profile -->
+        <div class="flex items-center space-x-3">
+            <!-- Font Size Selector -->
+            <div class="flex items-center space-x-1.5 text-xs text-[var(--text-secondary)]">
                 <select x-model="fontSize" @change="updateFontSize()"
-                        class="bg-slate-100 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-xs rounded px-2 py-1 text-slate-700 dark:text-slate-200 focus:outline-none">
+                        class="bg-[var(--bg-elevated)] border border-[var(--border)] text-xs rounded px-2 py-1 text-[var(--text)] focus:outline-none focus:border-[#ffa116]">
                     <option value="12">12px</option>
+                    <option value="13">13px</option>
                     <option value="14">14px</option>
                     <option value="16">16px</option>
                     <option value="18">18px</option>
                 </select>
             </div>
-            
+
+            <!-- Theme Toggle -->
             <div class="relative" x-data="{ open: false, current: localStorage.getItem('theme') || 'dark', setTheme(t) { this.current = t; const h = document.documentElement; h.classList.remove('dark'); if (t === 'dark') h.classList.add('dark'); localStorage.setItem('theme', t); this.open = false; } }" @keydown.escape.window="open = false">
-                <button @click="open = !open" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white focus:outline-none flex items-center gap-1" title="Choose theme">
-                    <svg x-show="current === 'dark'" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
-                    <svg x-show="current === 'light'" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                    <svg class="h-3 w-3 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+                <button @click="open = !open" class="p-1.5 rounded-md hover:bg-[var(--bg-hover)] text-[var(--text-secondary)] hover:text-[var(--text)] transition-colors" title="Toggle Theme">
+                    <svg x-show="current === 'dark'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+                    <svg x-show="current === 'light'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
                 </button>
-                <div x-show="open" @click.outside="open = false" x-transition class="absolute right-0 mt-2 w-40 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg z-50 py-1">
-                    <button @click="setTheme('dark')" class="w-full flex items-center gap-2 px-3 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" :class="current === 'dark' ? 'font-semibold text-blue-600 dark:text-blue-400' : ''">
-                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+                <div x-show="open" @click.outside="open = false" x-transition class="absolute right-0 mt-2 w-36 bg-[var(--bg-surface)] border border-[var(--border)] rounded-lg shadow-xl z-50 py-1 text-xs">
+                    <button @click="setTheme('dark')" class="w-full flex items-center gap-2 px-3 py-2 text-[var(--text-secondary)] hover:text-[var(--text)] hover:bg-[var(--bg-hover)]" :class="current === 'dark' ? 'font-semibold text-[#ffa116]' : ''">
+                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
                         Dark
                     </button>
-                    <button @click="setTheme('light')" class="w-full flex items-center gap-2 px-3 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" :class="current === 'light' ? 'font-semibold text-blue-600 dark:text-blue-400' : ''">
-                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                    <button @click="setTheme('light')" class="w-full flex items-center gap-2 px-3 py-2 text-[var(--text-secondary)] hover:text-[var(--text)] hover:bg-[var(--bg-hover)]" :class="current === 'light' ? 'font-semibold text-[#ffa116]' : ''">
+                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
                         Light
                     </button>
                 </div>
             </div>
-            <div class="flex items-center space-x-3 pl-4 border-l border-slate-200 dark:border-slate-700">
-                <a href="profile.html" class="flex items-center gap-2 hover:opacity-80 transition-opacity">
+
+            <!-- User Avatar & Dropdown -->
+            <div class="relative" x-data="{ userMenu: false }">
+                <button @click="userMenu = !userMenu" class="flex items-center gap-2 hover:opacity-90 transition-opacity">
                     <template x-if="profile && profile.avatar_url">
-                        <img :src="API_BASE_URL.replace('/api', '') + profile.avatar_url" alt="Profile" class="w-7 h-7 rounded-full object-cover">
+                        <img :src="API_BASE_URL.replace('/api', '') + profile.avatar_url" alt="Profile" class="w-7 h-7 rounded-full object-cover border border-[var(--border)]">
                     </template>
                     <template x-if="!profile || !profile.avatar_url">
-                        <div class="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-xs shrink-0" x-text="user ? user.username.charAt(0).toUpperCase() : '?'"></div>
+                        <div class="w-7 h-7 rounded-full bg-[#ffa116] flex items-center justify-center text-[#1a1a1a] font-bold text-xs shrink-0" x-text="user ? user.username.charAt(0).toUpperCase() : '?'"></div>
                     </template>
-                    <span class="text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white" x-text="user ? user.username : ''"></span>
-                </a>
+                </button>
+                <div x-show="userMenu" @click.outside="userMenu = false" x-transition class="absolute right-0 mt-2 w-44 bg-[var(--bg-surface)] border border-[var(--border)] rounded-lg shadow-xl z-50 py-1 text-xs">
+                    <div class="px-3 py-2 border-b border-[var(--border)]">
+                        <p class="font-semibold text-[var(--text)] truncate" x-text="user ? user.username : 'Guest'"></p>
+                        <p class="text-[var(--text-muted)] truncate" x-text="user ? user.email : ''"></p>
+                    </div>
+                    <a href="profile.html" class="flex items-center gap-2 px-3 py-2 text-[var(--text-secondary)] hover:text-[var(--text)] hover:bg-[var(--bg-hover)]">Profile</a>
+                    <a href="problems.html" class="flex items-center gap-2 px-3 py-2 text-[var(--text-secondary)] hover:text-[var(--text)] hover:bg-[var(--bg-hover)]">Problems</a>
+                    <a href="leaderboard.html" class="flex items-center gap-2 px-3 py-2 text-[var(--text-secondary)] hover:text-[var(--text)] hover:bg-[var(--bg-hover)]">Leaderboard</a>
+                    <div class="border-t border-[var(--border)] my-1"></div>
+                    <button @click="Auth.logout()" class="w-full text-left px-3 py-2 text-[var(--danger)] hover:bg-[var(--danger-soft)]">Sign Out</button>
+                </div>
             </div>
         </div>
-    </nav>
+    </header>
 
-    <!-- Workspace Split Container -->
-    <div class="flex-1 flex overflow-hidden">
+    <!-- Main Workspace Container: Modern LeetCode Split View -->
+    <main class="flex-1 flex p-2 gap-2 overflow-hidden bg-[var(--bg)]" style="height: calc(100vh - 48px);">
         
-        <!-- Left Pane: Tabbed Content -->
-        <div class="w-1/2 border-r border-slate-200 dark:border-slate-700 flex flex-col bg-white dark:bg-slate-900 overflow-hidden">
+        <!-- Left Panel: Problem Statement / Discussion -->
+        <div class="w-1/2 h-full flex flex-col bg-[var(--bg-surface)] border border-[var(--border)] rounded-lg overflow-hidden shadow-sm">
             
-            <!-- Tab Headers -->
-            <div class="border-b border-slate-200 dark:border-slate-700 px-6 pt-4">
-                <div class="flex space-x-1">
-                    <button 
-                        @click="activeTab = 'problem'" 
-                        :class="activeTab === 'problem' ? 'border-blue-600 text-blue-700 dark:text-blue-400' : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'"
-                        class="border-b-2 py-2 px-3 text-sm font-semibold transition-colors">
-                        Problem
+            <!-- Tab Headers (LeetCode Style) -->
+            <div class="h-10 bg-[var(--bg-surface)] border-b border-[var(--border)] px-3 flex items-center justify-between shrink-0">
+                <div class="flex items-center space-x-1">
+                    <button @click="activeTab = 'problem'" 
+                            :class="activeTab === 'problem' ? 'active' : ''"
+                            class="lc-tab">
+                        <svg class="w-4 h-4 text-[#3b82f6]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                        <span>Description</span>
                     </button>
-                    <button 
-                        @click="activeTab = 'discussion'" 
-                        :class="activeTab === 'discussion' ? 'border-blue-600 text-blue-700 dark:text-blue-400' : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'"
-                        class="border-b-2 py-2 px-3 text-sm font-semibold transition-colors">
-                        Discussion
+                    <button @click="activeTab = 'discussion'" 
+                            :class="activeTab === 'discussion' ? 'active' : ''"
+                            class="lc-tab">
+                        <svg class="w-4 h-4 text-[#10b981]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                        </svg>
+                        <span>Discussion</span>
+                        <span x-show="comments.length > 0" class="text-[11px] px-1.5 py-0.2 rounded-full bg-[var(--bg-elevated)] text-[var(--text-secondary)]" x-text="comments.length"></span>
                     </button>
                 </div>
             </div>
 
-            <!-- Tab Content -->
-            <div class="flex-1 overflow-y-auto">
+            <!-- Tab Content Body -->
+            <div class="flex-1 overflow-y-auto p-5 select-text">
                 
-                <!-- Problem Tab -->
-                <div x-show="activeTab === 'problem'" class="p-6 space-y-6">
+                <!-- Description Tab -->
+                <div x-show="activeTab === 'problem'" class="space-y-6">
                     <div>
-                        <h1 class="text-2xl font-bold tracking-tight" x-text="problem.title"></h1>
+                        <h1 class="text-xl font-bold tracking-tight text-[var(--text)] mb-3" x-text="`${problem.id ? problem.id + '.' : ''} ${problem.title}`"></h1>
                         
-                        <!-- Topic tags -->
-                        <div class="flex flex-wrap gap-2 mt-3">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <!-- Difficulty Chip -->
+                            <span :class="problem.difficulty === 'Easy' ? 'lc-badge-easy' : (problem.difficulty === 'Medium' ? 'lc-badge-medium' : 'lc-badge-hard')"
+                                  x-text="problem.difficulty"></span>
+
+                            <!-- Topic Tags -->
                             <template x-for="tag in (problem.topic_tags ? problem.topic_tags.split(',') : [])" :key="tag">
-                                <span class="bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400 text-xs px-2.5 py-0.5 rounded font-medium" x-text="tag.trim()"></span>
+                                <span class="lc-tag" x-text="tag.trim()"></span>
                             </template>
                         </div>
-
-                        <!-- Difficulty Badge -->
-                        <div class="flex items-center space-x-2 mt-3">
-                            <span class="px-2.5 py-0.5 rounded text-xs font-bold"
-                                  :class="problem.difficulty === 'Easy' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 
-                                          problem.difficulty === 'Medium' ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400' : 
-                                          'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'"
-                                  x-text="problem.difficulty"></span>
-                        </div>
                     </div>
 
-                    <!-- Problem Description -->
-                    <div class="max-w-none text-slate-600 dark:text-slate-300 space-y-4">
-                        <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-500">Description</h3>
-                        <div class="text-sm leading-relaxed whitespace-pre-wrap font-sans" x-text="problem.description"></div>
-                    </div>
+                    <!-- Problem Statement -->
+                    <div class="text-[13.5px] leading-relaxed text-[var(--text)] whitespace-pre-wrap font-sans" x-text="problem.description"></div>
 
-                    <!-- Constraints -->
-                    <div class="space-y-2">
-                        <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-500">Constraints</h3>
-                        <div class="bg-slate-50 dark:bg-slate-800 p-4 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-mono text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-wrap" x-text="problem.constraints"></div>
-                    </div>
-
-                    <!-- Examples -->
-                    <div class="space-y-4">
-                        <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-500">Sample Test Cases</h3>
+                    <!-- Sample Examples -->
+                    <div class="space-y-4 pt-2">
                         <template x-for="(sample, idx) in sampleCases" :key="sample.id">
-                            <div class="border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden bg-slate-50 dark:bg-slate-800">
-                                <div class="bg-slate-100 dark:bg-slate-700 px-4 py-2 text-xs font-bold text-slate-500 border-b border-slate-200 dark:border-slate-700 flex justify-between">
-                                    <span x-text="`Example ${idx + 1}`"></span>
-                                </div>
-                                <div class="p-4 grid grid-cols-2 gap-4 text-xs font-mono">
-                                    <div>
-                                        <span class="text-slate-500 font-semibold block mb-1">Input</span>
-                                        <pre class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 p-2 rounded text-slate-700 dark:text-slate-300 overflow-x-auto" x-text="sample.input"></pre>
-                                    </div>
-                                    <div>
-                                        <span class="text-slate-500 font-semibold block mb-1">Expected Output</span>
-                                        <pre class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 p-2 rounded text-slate-700 dark:text-slate-300 overflow-x-auto" x-text="sample.expected"></pre>
-                                    </div>
+                            <div class="space-y-1.5">
+                                <h3 class="text-sm font-semibold text-[var(--text)]" x-text="`Example ${idx + 1}:`"></h3>
+                                <div class="lc-example-box">
+                                    <p><span class="font-bold text-[var(--text)]">Input:</span> <span class="text-[var(--text-secondary)] font-mono text-xs" x-text="sample.input"></span></p>
+                                    <p class="mt-1"><span class="font-bold text-[var(--text)]">Output:</span> <span class="text-[var(--text-secondary)] font-mono text-xs" x-text="sample.expected"></span></p>
                                 </div>
                             </div>
                         </template>
                     </div>
+
+                    <!-- Constraints -->
+                    <div class="space-y-2 pt-2 border-t border-[var(--border)]" x-show="problem.constraints">
+                        <h3 class="text-sm font-semibold text-[var(--text)]">Constraints:</h3>
+                        <div class="lc-example-box text-xs whitespace-pre-wrap" x-text="problem.constraints"></div>
+                    </div>
                 </div>
 
                 <!-- Discussion Tab -->
-                <div x-show="activeTab === 'discussion'" class="p-6">
-                    <div class="mb-6">
-                        <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 mb-2">Discussion</h2>
-                        <p class="text-slate-500 dark:text-slate-400 text-sm">Share your thoughts, ask questions, and discuss solutions with the community.</p>
+                <div x-show="activeTab === 'discussion'" class="space-y-6">
+                    <div class="flex items-center justify-between border-b border-[var(--border)] pb-3">
+                        <div>
+                            <h2 class="text-base font-bold text-[var(--text)]">Community Discussion</h2>
+                            <p class="text-xs text-[var(--text-secondary)]">Discuss approaches, edge cases, and insights.</p>
+                        </div>
                     </div>
 
-                    <!-- Comment Form -->
-                    <div class="mb-8 bg-slate-50 dark:bg-slate-800 rounded-lg p-4 border border-slate-200 dark:border-slate-700">
+                    <!-- Comment Composer -->
+                    <div class="bg-[var(--bg-elevated)] rounded-lg p-3.5 border border-[var(--border)]">
                         <div class="flex items-start space-x-3">
-                            <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-semibold" x-text="user ? user.username.charAt(0).toUpperCase() : '?'"></div>
+                            <div class="w-7 h-7 bg-[#ffa116] rounded-full flex items-center justify-center text-[#1a1a1a] text-xs font-bold shrink-0" x-text="user ? user.username.charAt(0).toUpperCase() : '?'"></div>
                             <div class="flex-1">
                                 <textarea 
                                     x-model="newComment" 
-                                    placeholder="Share your thoughts or ask a question..."
-                                    class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg p-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    placeholder="Type comment here... (Markdown supported)"
+                                    class="w-full bg-[var(--bg-surface)] border border-[var(--border)] rounded-md p-2.5 text-xs text-[var(--text)] resize-none focus:outline-none focus:border-[#ffa116]"
                                     rows="3"></textarea>
-                                <div class="flex items-center justify-between mt-3">
-                                    <span class="text-xs text-slate-500" x-text="`${newComment.length}/2000 characters`"></span>
+                                <div class="flex items-center justify-between mt-2">
+                                    <span class="text-[11px] text-[var(--text-muted)]" x-text="`${newComment.length}/2000`"></span>
                                     <button 
                                         @click="postComment()" 
                                         :disabled="!newComment.trim() || newComment.length > 2000 || postingComment"
-                                        class="bg-blue-600 hover:bg-blue-700 disabled:bg-slate-400 text-white font-semibold px-4 py-2 rounded-lg text-sm transition-colors">
-                                        <span x-show="!postingComment">Post Comment</span>
+                                        class="lc-btn-submit text-xs py-1 px-3">
+                                        <span x-show="!postingComment">Post</span>
                                         <span x-show="postingComment">Posting...</span>
                                     </button>
                                 </div>
@@ -206,232 +255,100 @@
                     </div>
 
                     <!-- Comments List -->
-                    <div class="space-y-4">
+                    <div class="space-y-3">
                         <template x-for="comment in comments" :key="comment.id">
-                            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-4">
-                                <!-- Main Comment -->
+                            <div class="bg-[var(--bg-surface)] border border-[var(--border)] rounded-lg p-3.5">
                                 <div class="flex items-start space-x-3">
                                     <a :href="'public-profile.html?id=' + comment.user_id" class="shrink-0">
                                         <template x-if="comment.avatar_url">
-                                            <img :src="API_BASE_URL.replace('/api', '') + comment.avatar_url" class="w-8 h-8 rounded-full object-cover" :alt="comment.username">
+                                            <img :src="API_BASE_URL.replace('/api', '') + comment.avatar_url" class="w-7 h-7 rounded-full object-cover" :alt="comment.username">
                                         </template>
                                         <template x-if="!comment.avatar_url">
-                                            <div class="w-8 h-8 bg-slate-600 rounded-full flex items-center justify-center text-white text-sm font-semibold" x-text="comment.username.charAt(0).toUpperCase()"></div>
+                                            <div class="w-7 h-7 bg-[var(--bg-hover)] text-[var(--text)] rounded-full flex items-center justify-center text-xs font-bold" x-text="comment.username.charAt(0).toUpperCase()"></div>
                                         </template>
                                     </a>
                                     <div class="flex-1 min-w-0">
-                                        <div class="flex items-center space-x-2 mb-2">
-                                            <a :href="'public-profile.html?id=' + comment.user_id" class="font-semibold text-blue-600 dark:text-blue-400 hover:underline" x-text="comment.username"></a>
+                                        <div class="flex items-center space-x-2 mb-1.5">
+                                            <a :href="'public-profile.html?id=' + comment.user_id" class="font-semibold text-xs text-[var(--text)] hover:text-[#ffa116]" x-text="comment.username"></a>
                                             <template x-if="comment.role === 'faculty'">
-                                                <span class="px-1.5 py-0.5 rounded text-xs font-bold bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">Faculty</span>
+                                                <span class="px-1.5 py-0.2 rounded text-[10px] font-bold bg-[#10b981]/20 text-[#10b981]">Faculty</span>
                                             </template>
                                             <template x-if="comment.role === 'admin'">
-                                                <span class="px-1.5 py-0.5 rounded text-xs font-bold bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">Admin</span>
+                                                <span class="px-1.5 py-0.2 rounded text-[10px] font-bold bg-[#ff375f]/20 text-[#ff375f]">Admin</span>
                                             </template>
-                                            <span class="text-xs text-slate-500" x-text="formatDate(comment.created_at)"></span>
-                                            <template x-if="comment.updated_at !== comment.created_at">
-                                                <span class="text-xs text-slate-400">(edited)</span>
-                                            </template>
+                                            <span class="text-[11px] text-[var(--text-muted)]" x-text="formatDate(comment.created_at)"></span>
                                         </div>
                                         
-                                        <!-- Comment Content -->
+                                        <!-- Content -->
                                         <div x-show="editingComment !== comment.id">
-                                            <p class="text-slate-700 dark:text-slate-300 text-sm leading-relaxed whitespace-pre-wrap" x-text="comment.content"></p>
+                                            <p class="text-xs text-[var(--text)] leading-relaxed whitespace-pre-wrap select-text" x-text="comment.content"></p>
                                         </div>
-                                        
-                                        <!-- Edit Form -->
-                                        <div x-show="editingComment === comment.id">
-                                            <textarea 
-                                                x-model="editContent" 
-                                                class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded p-2 text-sm"
-                                                rows="3"></textarea>
+
+                                        <!-- Edit Comment -->
+                                        <div x-show="editingComment === comment.id" class="mt-2">
+                                            <textarea x-model="editContent" class="w-full bg-[var(--bg-elevated)] border border-[var(--border)] rounded p-2 text-xs" rows="3"></textarea>
                                             <div class="flex space-x-2 mt-2">
-                                                <button @click="saveEdit(comment.id)" class="bg-blue-600 text-white px-3 py-1 rounded text-xs">Save</button>
-                                                <button @click="cancelEdit()" class="bg-slate-500 text-white px-3 py-1 rounded text-xs">Cancel</button>
+                                                <button @click="saveEdit(comment.id)" class="lc-btn-submit text-xs py-1 px-3">Save</button>
+                                                <button @click="cancelEdit()" class="lc-btn-run text-xs py-1 px-3">Cancel</button>
                                             </div>
                                         </div>
 
-                                        <!-- Comment Actions -->
-                                        <div class="flex items-center space-x-4 mt-3">
+                                        <!-- Actions (Vote, Reply, Delete) -->
+                                        <div class="flex items-center space-x-4 mt-2.5 text-xs text-[var(--text-secondary)]">
                                             <!-- Voting -->
                                             <div class="flex items-center space-x-1">
-                                                <button 
-                                                    @click="voteComment(comment.id, 'upvote')"
-                                                    :class="comment.user_vote === 'upvote' ? 'text-green-500' : 'text-slate-400 hover:text-green-500'"
-                                                    class="p-1 transition-colors">
-                                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                                                        <path d="M2 20h2a1 1 0 001-1v-8a1 1 0 00-1-1H2v10zm19.394-9.447A2 2 0 0019.5 10H14V6a3 3 0 00-3-3 1 1 0 00-.894.553L7 10H5v10h12.5a2 2 0 001.964-1.625l1.5-7A2 2 0 0019.394 10.553z"/>
-                                                    </svg>
+                                                <button @click="voteComment(comment.id, 'upvote')"
+                                                        :class="comment.user_vote === 'upvote' ? 'text-[#10b981]' : 'hover:text-[#10b981]'" class="p-0.5">
+                                                    ▲
                                                 </button>
-                                                <span class="text-sm font-semibold text-slate-600 dark:text-slate-400 min-w-[1.25rem] text-center" x-text="comment.vote_score"></span>
-                                                <button 
-                                                    @click="voteComment(comment.id, 'downvote')"
-                                                    :class="comment.user_vote === 'downvote' ? 'text-red-500' : 'text-slate-400 hover:text-red-500'"
-                                                    class="p-1 transition-colors">
-                                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                                                        <path d="M22 4h-2a1 1 0 00-1 1v8a1 1 0 001 1h2V4zM2.606 13.447A2 2 0 004.5 14H10v4a3 3 0 003 3 1 1 0 00.894-.553L17 14h2V4H4.5a2 2 0 00-1.964 1.625l-1.5 7a2 2 0 00.57 1.822z"/>
-                                                    </svg>
+                                                <span class="font-mono text-xs" x-text="comment.vote_score"></span>
+                                                <button @click="voteComment(comment.id, 'downvote')"
+                                                        :class="comment.user_vote === 'downvote' ? 'text-[#ff375f]' : 'hover:text-[#ff375f]'" class="p-0.5">
+                                                    ▼
                                                 </button>
                                             </div>
 
-                                            <!-- Reply Button -->
-                                            <button 
-                                                @click="toggleReply(comment.id)"
-                                                class="text-slate-500 hover:text-blue-600 text-sm font-medium transition-colors">
-                                                Reply
-                                            </button>
+                                            <button @click="toggleReply(comment.id)" class="hover:text-[var(--text)]">Reply</button>
 
-                                            <!-- Edit/Delete (for comment author) -->
-                                            <template x-if="user && comment.user_id === user.id">
-                                                <div class="flex space-x-2">
-                                                    <button 
-                                                        @click="startEdit(comment.id, comment.content)"
-                                                        class="text-slate-500 hover:text-blue-600 text-sm font-medium transition-colors">
-                                                        Edit
-                                                    </button>
-                                                    <button 
-                                                        @click="deleteComment(comment.id)"
-                                                        class="text-slate-500 hover:text-red-600 text-sm font-medium transition-colors">
-                                                        Delete
-                                                    </button>
+                                            <template x-if="user && user.id === comment.user_id">
+                                                <div class="flex items-center space-x-2">
+                                                    <button @click="startEdit(comment.id, comment.content)" class="hover:text-[var(--text)]">Edit</button>
+                                                    <button @click="deleteComment(comment.id)" class="hover:text-[#ff375f]">Delete</button>
                                                 </div>
                                             </template>
                                         </div>
 
-                                        <!-- Reply Form -->
-                                        <div x-show="replyingTo === comment.id" class="mt-4 ml-4 border-l-2 border-slate-200 dark:border-slate-700 pl-4">
-                                            <div class="flex items-start space-x-3">
-                                                <div class="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center text-white text-xs font-semibold" x-text="user ? user.username.charAt(0).toUpperCase() : '?'"></div>
-                                                <div class="flex-1">
-                                                    <textarea 
-                                                        x-model="replyContent" 
-                                                        placeholder="Write a reply..."
-                                                        class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded p-2 text-sm resize-none"
-                                                        rows="2"></textarea>
-                                                    <div class="flex space-x-2 mt-2">
-                                                        <button 
-                                                            @click="postReply()" 
-                                                            :disabled="!replyContent.trim()"
-                                                            class="bg-blue-600 hover:bg-blue-700 disabled:bg-slate-400 text-white px-3 py-1 rounded text-xs">
-                                                            Reply
-                                                        </button>
-                                                        <button 
-                                                            @click="cancelReply()"
-                                                            class="bg-slate-500 text-white px-3 py-1 rounded text-xs">
-                                                            Cancel
-                                                        </button>
-                                                    </div>
-                                                </div>
+                                        <!-- Inline Reply Box -->
+                                        <div x-show="replyingTo === comment.id" class="mt-3 pl-3 border-l-2 border-[var(--border)]">
+                                            <textarea x-model="replyContent" placeholder="Write a reply..." class="w-full bg-[var(--bg-elevated)] border border-[var(--border)] rounded p-2 text-xs" rows="2"></textarea>
+                                            <div class="flex space-x-2 mt-1.5">
+                                                <button @click="postReply()" class="lc-btn-submit text-xs py-1 px-3">Post Reply</button>
+                                                <button @click="cancelReply()" class="lc-btn-run text-xs py-1 px-3">Cancel</button>
                                             </div>
                                         </div>
 
-                                        <!-- Replies -->
+                                        <!-- Nested Replies -->
                                         <template x-if="comment.replies && comment.replies.length > 0">
-                                            <div class="mt-4 ml-4 border-l-2 border-slate-200 dark:border-slate-700 pl-4 space-y-4">
+                                            <div class="mt-3 pl-3 border-l border-[var(--border)] space-y-3">
                                                 <template x-for="reply in comment.replies" :key="reply.id">
-                                                    <div class="flex items-start space-x-3">
-                                                        <a :href="'public-profile.html?id=' + reply.user_id" class="shrink-0">
-                                                            <template x-if="reply.avatar_url">
-                                                                <img :src="API_BASE_URL.replace('/api', '') + reply.avatar_url" class="w-6 h-6 rounded-full object-cover" :alt="reply.username">
-                                                            </template>
-                                                            <template x-if="!reply.avatar_url">
-                                                                <div class="w-6 h-6 bg-slate-500 rounded-full flex items-center justify-center text-white text-xs font-semibold" x-text="reply.username.charAt(0).toUpperCase()"></div>
-                                                            </template>
-                                                        </a>
-                                                        <div class="flex-1 min-w-0">
-                                                            <div class="flex items-center space-x-2 mb-1">
-                                                                <a :href="'public-profile.html?id=' + reply.user_id" class="font-medium text-blue-600 dark:text-blue-400 hover:underline text-sm" x-text="reply.username"></a>
-                                                                <template x-if="reply.role === 'faculty'">
-                                                                    <span class="px-1.5 py-0.5 rounded text-xs font-bold bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">Faculty</span>
-                                                                </template>
-                                                                <template x-if="reply.role === 'admin'">
-                                                                    <span class="px-1.5 py-0.5 rounded text-xs font-bold bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">Admin</span>
-                                                                </template>
-                                                                <span class="text-xs text-slate-500" x-text="formatDate(reply.created_at)"></span>
-                                                            </div>
-                                                            <p class="text-slate-700 dark:text-slate-300 text-sm leading-relaxed whitespace-pre-wrap" x-text="reply.content"></p>
-                                                            
-                                                            <div class="flex items-center space-x-4 mt-2">
-                                                                <!-- Reply Voting -->
-                                                                <div class="flex items-center space-x-1">
-                                                                    <button 
-                                                                        @click="voteComment(reply.id, 'upvote')"
-                                                                        :class="reply.user_vote === 'upvote' ? 'text-green-600' : 'text-slate-400 hover:text-green-600'"
-                                                                        class="p-0.5 transition-colors">
-                                                                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                                                            <path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L10 4.414 4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
-                                                                        </svg>
-                                                                    </button>
-                                                                    <span class="text-xs font-medium text-slate-600 dark:text-slate-400" x-text="reply.vote_score"></span>
-                                                                    <button 
-                                                                        @click="voteComment(reply.id, 'downvote')"
-                                                                        :class="reply.user_vote === 'downvote' ? 'text-red-600' : 'text-slate-400 hover:text-red-600'"
-                                                                        class="p-0.5 transition-colors">
-                                                                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                                                            <path fill-rule="evenodd" d="M16.707 10.293a1 1 0 010 1.414l-6 6a1 1 0 01-1.414 0l-6-6a1 1 0 111.414-1.414L10 15.586l5.293-5.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                                                        </svg>
-                                                                    </button>
-                                                                </div>
-
-                                                                <!-- Reply to reply button -->
-                                                                <button
-                                                                    @click="toggleReply(reply.id, reply.username, comment.id)"
-                                                                    class="text-slate-500 hover:text-blue-600 text-xs font-medium transition-colors">
-                                                                    Reply
-                                                                </button>
-
-                                                                <!-- Reply Edit/Delete (for reply author) -->
-                                                                <template x-if="user && reply.user_id === user.id">
-                                                                    <button 
-                                                                        @click="deleteComment(reply.id)"
-                                                                        class="text-slate-500 hover:text-red-600 text-xs font-medium transition-colors">
-                                                                        Delete
-                                                                    </button>
-                                                                </template>
-                                                            </div>
-
-                                                            <!-- Inline reply-to-reply form -->
-                                                            <div x-show="replyingTo === reply.id" class="mt-3 flex items-start space-x-2">
-                                                                <div class="w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center text-white text-xs font-semibold shrink-0" x-text="user ? user.username.charAt(0).toUpperCase() : '?'"></div>
-                                                                <div class="flex-1">
-                                                                    <textarea
-                                                                        x-model="replyContent"
-                                                                        placeholder="Write a reply..."
-                                                                        class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded p-2 text-xs resize-none focus:outline-none focus:ring-1 focus:ring-blue-500"
-                                                                        rows="2"></textarea>
-                                                                    <div class="flex space-x-2 mt-1">
-                                                                        <button
-                                                                            @click="postReply()"
-                                                                            :disabled="!replyContent.trim()"
-                                                                            class="bg-blue-600 hover:bg-blue-700 disabled:bg-slate-400 text-white px-3 py-1 rounded text-xs">
-                                                                            Post
-                                                                        </button>
-                                                                        <button
-                                                                            @click="cancelReply()"
-                                                                            class="bg-slate-500 text-white px-3 py-1 rounded text-xs">
-                                                                            Cancel
-                                                                        </button>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
+                                                    <div class="pt-2">
+                                                        <div class="flex items-center space-x-2 mb-1">
+                                                            <a :href="'public-profile.html?id=' + reply.user_id" class="font-semibold text-xs text-[var(--text)] hover:text-[#ffa116]" x-text="reply.username"></a>
+                                                            <span class="text-[10px] text-[var(--text-muted)]" x-text="formatDate(reply.created_at)"></span>
                                                         </div>
+                                                        <p class="text-xs text-[var(--text-secondary)] whitespace-pre-wrap select-text" x-text="reply.content"></p>
                                                     </div>
                                                 </template>
                                             </div>
                                         </template>
+
                                     </div>
                                 </div>
                             </div>
                         </template>
 
-                        <!-- Empty State -->
-                        <div x-show="comments.length === 0" class="text-center py-8">
-                            <div class="text-slate-400 dark:text-slate-500 mb-2">
-                                <svg class="w-12 h-12 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
-                                </svg>
-                            </div>
-                            <p class="text-slate-500 dark:text-slate-400">No comments yet. Be the first to start the discussion!</p>
+                        <div x-show="comments.length === 0" class="text-center py-8 text-xs text-[var(--text-muted)]">
+                            No comments yet. Start the discussion!
                         </div>
                     </div>
                 </div>
@@ -439,49 +356,194 @@
             </div>
         </div>
 
-        <!-- Right Pane: Code Editor & Console -->
-        <div class="w-1/2 flex flex-col overflow-hidden bg-slate-50 dark:bg-slate-800">
-            <!-- Code Editor Container -->
-            <div class="flex-1 relative border-b border-slate-200 dark:border-slate-700">
-                <div id="monaco-container" class="absolute inset-0"></div>
-            </div>
-
-            <!-- Console and Run Actions Panel -->
-            <div class="h-64 flex flex-col bg-white dark:bg-slate-900">
-                <!-- Tabs and Action buttons -->
-                <div class="border-b border-slate-200 dark:border-slate-700 px-6 py-2 flex items-center justify-between">
-                    <div class="flex space-x-4">
-                        <button class="text-sm font-bold border-b-2 border-blue-600 pb-1 text-slate-800 dark:text-slate-100">Console Output</button>
+        <!-- Right Panel: Code Editor & Testcase Console -->
+        <div class="w-1/2 h-full flex flex-col gap-2 min-w-0">
+            
+            <!-- Code Editor Panel -->
+            <div class="flex-1 bg-[var(--bg-surface)] border border-[var(--border)] rounded-lg overflow-hidden flex flex-col min-h-0 shadow-sm">
+                <!-- Editor Top Bar -->
+                <div class="h-10 bg-[var(--bg-surface)] border-b border-[var(--border)] px-3 flex items-center justify-between shrink-0">
+                    <div class="flex items-center space-x-2">
+                        <!-- Language Selector -->
+                        <div class="flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded bg-[var(--bg-elevated)] border border-[var(--border)] text-[var(--text)]">
+                            <span class="text-[#00b8a3]">C++</span>
+                        </div>
                     </div>
-                    <div class="flex space-x-3">
-                        <button @click="runCode()" 
-                                class="bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-semibold px-4 py-1.5 rounded-lg text-sm transition-colors"
-                                :disabled="running">
-                            Run Samples
-                        </button>
-                        <button @click="submitCode()" 
-                                class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-1.5 rounded-lg text-sm transition-colors"
-                                :disabled="running">
-                            Submit Solution
+
+                    <div class="flex items-center space-x-2">
+                        <!-- Reset to Template Button -->
+                        <button @click="resetTemplate()" class="p-1 rounded text-[var(--text-secondary)] hover:text-[var(--text)] hover:bg-[var(--bg-hover)] transition-colors" title="Reset Code to Default Template">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
                         </button>
                     </div>
                 </div>
 
-                <!-- Console Display -->
-                <div class="flex-1 p-4 overflow-y-auto font-mono text-xs text-slate-600 dark:text-slate-300">
-                    <div x-show="running" class="text-blue-600 dark:text-blue-400 font-semibold flex items-center space-x-2">
-                        <svg class="animate-spin h-4 w-4 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                        <span>Compiling and running…</span>
+                <!-- Monaco Container -->
+                <div class="flex-1 relative w-full h-full min-h-0">
+                    <div id="monaco-container" class="absolute inset-0"></div>
+                </div>
+            </div>
+
+            <!-- Testcase & Test Result Panel (LeetCode Style) -->
+            <div class="h-64 bg-[var(--bg-surface)] border border-[var(--border)] rounded-lg overflow-hidden flex flex-col shrink-0 shadow-sm">
+                
+                <!-- Console Panel Header with Tabs -->
+                <div class="h-10 bg-[var(--bg-surface)] border-b border-[var(--border)] px-3 flex items-center justify-between shrink-0">
+                    <div class="flex items-center space-x-1">
+                        <!-- Testcase Tab -->
+                        <button @click="consoleTab = 'testcase'" 
+                                :class="consoleTab === 'testcase' ? 'active' : ''"
+                                class="lc-tab text-xs">
+                            <svg class="w-3.5 h-3.5 text-[#00b8a3]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                            </svg>
+                            <span>Testcase</span>
+                        </button>
+                        <!-- Test Result Tab -->
+                        <button @click="consoleTab = 'result'" 
+                                :class="consoleTab === 'result' ? 'active' : ''"
+                                class="lc-tab text-xs">
+                            <svg class="w-3.5 h-3.5 text-[#ffa116]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                            <span>Test Result</span>
+                        </button>
                     </div>
 
-                    <div x-show="!running && consoleText" class="whitespace-pre-wrap leading-relaxed" x-html="consoleText"></div>
-                    <div x-show="!running && !consoleText" class="text-slate-400 italic">No output. Click "Run Samples" to test against example inputs.</div>
+                    <!-- Compact Run/Submit in console bar -->
+                    <div class="flex items-center space-x-2">
+                        <button @click="runCode()" :disabled="running" class="lc-btn-run text-xs py-1 px-2.5">
+                            Run
+                        </button>
+                        <button @click="submitCode()" :disabled="running" class="lc-btn-submit text-xs py-1 px-3">
+                            Submit
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Console Panel Body -->
+                <div class="flex-1 overflow-y-auto p-4 select-text font-mono text-xs">
+                    
+                    <!-- 1. Testcase Tab View -->
+                    <div x-show="consoleTab === 'testcase'" class="h-full flex flex-col">
+                        <!-- Case Pills (Case 1, Case 2...) -->
+                        <div class="flex items-center space-x-2 mb-3 shrink-0">
+                            <template x-for="(sample, idx) in sampleCases" :key="sample.id">
+                                <button @click="selectedCaseIdx = idx"
+                                        :class="selectedCaseIdx === idx ? 'bg-[var(--bg-hover)] text-[var(--text)] font-semibold border-[var(--border)]' : 'bg-[var(--bg-elevated)] text-[var(--text-secondary)] border-transparent hover:text-[var(--text)]'"
+                                        class="px-3 py-1 rounded-md text-xs border transition-colors"
+                                        x-text="`Case ${idx + 1}`">
+                                </button>
+                            </template>
+                        </div>
+
+                        <!-- Selected Case Input & Expected Display -->
+                        <template x-if="sampleCases[selectedCaseIdx]">
+                            <div class="space-y-3 flex-1 overflow-y-auto">
+                                <div>
+                                    <div class="text-[11px] font-sans font-semibold text-[var(--text-secondary)] mb-1">Input =</div>
+                                    <div class="bg-[var(--bg-elevated)] border border-[var(--border)] rounded-md p-2.5 text-[var(--text)] whitespace-pre overflow-x-auto" x-text="sampleCases[selectedCaseIdx].input"></div>
+                                </div>
+                                <div>
+                                    <div class="text-[11px] font-sans font-semibold text-[var(--text-secondary)] mb-1">Expected Output =</div>
+                                    <div class="bg-[var(--bg-elevated)] border border-[var(--border)] rounded-md p-2.5 text-[var(--text)] whitespace-pre overflow-x-auto" x-text="sampleCases[selectedCaseIdx].expected"></div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+
+                    <!-- 2. Test Result Tab View -->
+                    <div x-show="consoleTab === 'result'" class="h-full flex flex-col">
+                        <!-- Running Spinner -->
+                        <div x-show="running" class="flex items-center space-x-2 text-[#ffa116] py-4">
+                            <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                            <span class="font-sans font-medium text-xs">Compiling & executing code...</span>
+                        </div>
+
+                        <!-- Result Display -->
+                        <div x-show="!running">
+                            <template x-if="lastRunResult">
+                                <div>
+                                    <!-- Status Header (Accepted / Wrong Answer / Compile Error) -->
+                                    <div class="flex items-center justify-between mb-3 pb-2 border-b border-[var(--border)]">
+                                        <div class="flex items-center space-x-3">
+                                            <span class="text-base font-bold font-sans"
+                                                  :class="lastRunResult.status === 'Accepted' ? 'text-[#2cbb5d]' : 'text-[#ff375f]'"
+                                                  x-text="lastRunResult.status"></span>
+                                            <span class="text-[11px] font-sans text-[var(--text-secondary)]" x-show="lastRunResult.runtime_ms !== undefined" x-text="`Runtime: ${lastRunResult.runtime_ms} ms`"></span>
+                                        </div>
+                                        <span class="text-[11px] font-sans text-[var(--text-muted)]" x-text="lastRunResult.isSubmission ? 'Submission' : 'Run Samples'"></span>
+                                    </div>
+
+                                    <!-- Error or Compile Error Output -->
+                                    <template x-if="lastRunResult.compile_stderr">
+                                        <div class="mt-2">
+                                            <div class="text-[11px] font-sans text-[#ff375f] font-semibold mb-1">Compilation Details:</div>
+                                            <pre class="bg-[var(--danger-soft)] border border-[#ff375f]/30 text-[#ff375f] p-3 rounded-md text-xs overflow-x-auto whitespace-pre-wrap font-mono" x-text="lastRunResult.compile_stderr"></pre>
+                                        </div>
+                                    </template>
+
+                                    <!-- Test Case Pills for results -->
+                                    <template x-if="lastRunResult.test_cases && lastRunResult.test_cases.length > 0">
+                                        <div>
+                                            <div class="flex items-center space-x-2 mb-3">
+                                                <template x-for="(tc, idx) in lastRunResult.test_cases" :key="tc.id || idx">
+                                                    <button @click="selectedResultIdx = idx"
+                                                            :class="selectedResultIdx === idx ? 'bg-[var(--bg-hover)] text-[var(--text)] font-semibold border-[var(--border)]' : 'bg-[var(--bg-elevated)] text-[var(--text-secondary)] border-transparent hover:text-[var(--text)]'"
+                                                            class="flex items-center gap-1.5 px-3 py-1 rounded-md text-xs border transition-colors">
+                                                        <span :class="tc.passed ? 'text-[#2cbb5d]' : 'text-[#ff375f]'">●</span>
+                                                        <span x-text="`Case ${idx + 1}`"></span>
+                                                    </button>
+                                                </template>
+                                            </div>
+
+                                            <!-- Selected Result Case Detail -->
+                                            <template x-if="lastRunResult.test_cases[selectedResultIdx]">
+                                                <div class="space-y-3 font-mono">
+                                                    <div>
+                                                        <div class="text-[11px] font-sans font-semibold text-[var(--text-secondary)] mb-1">Input =</div>
+                                                        <div class="bg-[var(--bg-elevated)] border border-[var(--border)] rounded-md p-2.5 text-[var(--text)] whitespace-pre overflow-x-auto" x-text="lastRunResult.test_cases[selectedResultIdx].input"></div>
+                                                    </div>
+                                                    <div>
+                                                        <div class="text-[11px] font-sans font-semibold text-[var(--text-secondary)] mb-1">Output =</div>
+                                                        <div class="bg-[var(--bg-elevated)] border border-[var(--border)] rounded-md p-2.5 whitespace-pre overflow-x-auto"
+                                                             :class="lastRunResult.test_cases[selectedResultIdx].passed ? 'text-[var(--text)]' : 'text-[#ff375f]'"
+                                                             x-text="lastRunResult.test_cases[selectedResultIdx].actual || '[Empty Output]'"></div>
+                                                    </div>
+                                                    <div>
+                                                        <div class="text-[11px] font-sans font-semibold text-[var(--text-secondary)] mb-1">Expected =</div>
+                                                        <div class="bg-[var(--bg-elevated)] border border-[var(--border)] rounded-md p-2.5 text-[var(--text)] whitespace-pre overflow-x-auto" x-text="lastRunResult.test_cases[selectedResultIdx].expected"></div>
+                                                    </div>
+                                                    <template x-if="lastRunResult.test_cases[selectedResultIdx].stderr">
+                                                        <div>
+                                                            <div class="text-[11px] font-sans font-semibold text-[#ff375f] mb-1">Stderr:</div>
+                                                            <div class="bg-[var(--danger-soft)] border border-[#ff375f]/30 rounded-md p-2.5 text-[#ff375f] whitespace-pre overflow-x-auto" x-text="lastRunResult.test_cases[selectedResultIdx].stderr"></div>
+                                                        </div>
+                                                    </template>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </template>
+                                </div>
+                            </template>
+
+                            <template x-if="!lastRunResult && !consoleText">
+                                <div class="text-[var(--text-muted)] italic py-4 font-sans text-xs">
+                                    You must run your code first. Click "Run" to test with example testcases.
+                                </div>
+                            </template>
+                            
+                            <!-- Fallback raw console text if any -->
+                            <div x-show="consoleText" class="mt-2 text-xs" x-html="consoleText"></div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
         </div>
 
-    </div>
+    </main>
 
     <!-- Scripts -->
     <script src="assets/js/app.js"></script>
@@ -500,6 +562,10 @@
                 running: false,
                 consoleText: '',
                 activeTab: 'problem',
+                consoleTab: 'testcase',
+                selectedCaseIdx: 0,
+                selectedResultIdx: 0,
+                lastRunResult: null,
                 
                 // Comments functionality
                 comments: [],
@@ -515,7 +581,6 @@
                     Auth.checkAuthGuard();
                     this.user = Auth.getUser();
                     
-                    // Parse query parameters
                     const urlParams = new URLSearchParams(window.location.search);
                     this.problemId = urlParams.get('id');
                     
@@ -531,6 +596,31 @@
                     
                     // Load Monaco Code Editor
                     await initMonacoEditor('monaco-container', this.problem.default_template);
+
+                    // Keyboard shortcuts: Ctrl+Enter to Submit, Ctrl+' to Run
+                    window.addEventListener('keydown', (e) => {
+                        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                            e.preventDefault();
+                            this.submitCode();
+                        } else if ((e.ctrlKey || e.metaKey) && e.key === "'") {
+                            e.preventDefault();
+                            this.runCode();
+                        }
+                    });
+                },
+
+                navigateProblem(delta) {
+                    const currentId = parseInt(this.problemId, 10);
+                    if (!isNaN(currentId)) {
+                        const nextId = Math.max(1, currentId + delta);
+                        window.location.href = `problem.html?id=${nextId}`;
+                    }
+                },
+
+                resetTemplate() {
+                    if (confirm('Reset code to default starting template?')) {
+                        setEditorCode(this.problem.default_template || '');
+                    }
                 },
 
                 async fetchProfile() {
@@ -540,7 +630,6 @@
                         });
                         if (response.ok) {
                             this.profile = await response.json();
-                            // Update user object with latest profile data
                             if (this.user) {
                                 this.user.username = this.profile.username;
                             }
@@ -583,9 +672,9 @@
                 async runCode() {
                     this.running = true;
                     this.consoleText = '';
+                    this.consoleTab = 'result';
                     const code = getEditorCode();
 
-                    // Convert sampleCases format to match compiler runner
                     const tests = this.sampleCases.map(tc => ({
                         input: tc.input,
                         expected: tc.expected
@@ -595,19 +684,34 @@
                     this.running = false;
 
                     if (!res.success) {
-                        this.renderError(res);
+                        this.lastRunResult = {
+                            status: res.error || "Compilation Error",
+                            compile_stderr: res.compile_stderr,
+                            isSubmission: false,
+                            test_cases: []
+                        };
                         return;
                     }
 
-                    this.renderRunnerOutput(res.test_cases, false);
+                    const allPassed = res.test_cases.every(tc => tc.passed);
+                    const maxRuntime = Math.max(...res.test_cases.map(tc => tc.runtime_ms || 0), 0);
+
+                    this.lastRunResult = {
+                        status: allPassed ? "Accepted" : "Wrong Answer",
+                        runtime_ms: maxRuntime,
+                        isSubmission: false,
+                        test_cases: res.test_cases
+                    };
+                    this.selectedResultIdx = 0;
                 },
 
                 async submitCode() {
                     this.running = true;
                     this.consoleText = '';
+                    this.consoleTab = 'result';
                     const code = getEditorCode();
 
-                    // 1. Fetch ALL test cases (both sample and hidden) from backend
+                    // 1. Fetch ALL test cases from backend
                     let allTestCases = [];
                     try {
                         const response = await fetch(`${API_BASE_URL}/problems/${this.problemId}/testcases`, {
@@ -620,30 +724,39 @@
                         }
                     } catch (e) {
                         this.running = false;
-                        this.consoleText = `<span class="text-red-500">Error: Could not retrieve tests from the remote database backend.</span>`;
+                        this.lastRunResult = {
+                            status: "Submission Error",
+                            compile_stderr: "Could not retrieve test cases from backend server.",
+                            isSubmission: true,
+                            test_cases: []
+                        };
                         return;
                     }
 
-                    // 2. Execute compilation and testing locally on the user's host
+                    // 2. Execute compilation and testing locally
                     const res = await RunnerClient.executeLocally(code, allTestCases, parseFloat(this.problem.time_limit_sec || 2.0));
                     
                     if (!res.success) {
                         this.running = false;
-                        this.renderError(res);
+                        this.lastRunResult = {
+                            status: res.error || "Compilation Error",
+                            compile_stderr: res.compile_stderr,
+                            isSubmission: true,
+                            test_cases: []
+                        };
                         return;
                     }
 
                     // Calculate metrics
                     const totalCount = res.test_cases.length;
                     const passedCount = res.test_cases.filter(tc => tc.passed).length;
-                    const allPassed = res.all_passed;
                     
                     let overallStatus = "Accepted";
                     let maxRuntime = 0;
                     
                     for (const tc of res.test_cases) {
                         if (!tc.passed) {
-                            overallStatus = tc.status; // First failing status (Wrong Answer, Time Limit, Runtime Error)
+                            overallStatus = tc.status || "Wrong Answer";
                             break;
                         }
                         if (tc.runtime_ms > maxRuntime) {
@@ -651,80 +764,28 @@
                         }
                     }
 
-                    // 3. Send ONLY the final aggregated stats back to backend
-                    const report = await RunnerClient.submitResultToBackend(
-                        this.problemId,
-                        overallStatus,
-                        passedCount,
-                        totalCount,
-                        maxRuntime,
-                        code
-                    );
+                    // 3. Send final aggregated stats back to backend
+                    try {
+                        await RunnerClient.submitResultToBackend(
+                            this.problemId,
+                            overallStatus,
+                            passedCount,
+                            totalCount,
+                            maxRuntime,
+                            code
+                        );
+                    } catch (e) {
+                        console.error('Failed to report submission to backend', e);
+                    }
 
                     this.running = false;
-
-                    if (report.message) {
-                        this.consoleText += `<span class="text-blue-600 dark:text-blue-400 font-bold">[Backend Status]: ${report.message}</span>\n\n`;
-                    }
-
-                    this.renderRunnerOutput(res.test_cases, true);
-                },
-
-                renderError(res) {
-                    if (res.error === "Compilation Error") {
-                        this.consoleText = `<span class="text-red-600 dark:text-red-400 font-bold">Compilation Error:</span>\n<pre class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 text-red-700 dark:text-red-400 p-4 rounded mt-2 overflow-x-auto">${res.compile_stderr}</pre>`;
-                    } else {
-                        this.consoleText = `<span class="text-red-600 dark:text-red-400 font-bold">Runner Error:</span>\n<p class="text-slate-500 dark:text-slate-400 mt-2 whitespace-pre-wrap">${res.error}</p>`;
-                    }
-                },
-
-                renderRunnerOutput(testCases, isSubmission) {
-                    let html = '';
-                    const title = isSubmission ? "Submission Evaluation Summary" : "Sample Run Evaluation Summary";
-                    html += `<span class="text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider text-xs">${title}</span>\n\n`;
-
-                    const allPassed = testCases.every(tc => tc.passed);
-                    if (allPassed) {
-                        html += `<span class="text-green-600 dark:text-green-400 font-bold text-lg">✔ All Test Cases Passed!</span>\n\n`;
-                    } else {
-                        html += `<span class="text-red-600 dark:text-red-400 font-bold text-lg">✘ Some Test Cases Failed</span>\n\n`;
-                    }
-
-                    testCases.forEach((tc) => {
-                        const icon = tc.passed ? '✔' : '✘';
-                        const color = tc.passed ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400';
-                        const badgeColor = tc.status === 'Accepted'
-                            ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400'
-                            : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400';
-
-                        html += `<div class="mb-4 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 rounded-lg p-3">`;
-                        html += `  <div class="flex items-center justify-between mb-2">`;
-                        html += `    <span class="font-bold ${color}">${icon} Case #${tc.id}</span>`;
-                        html += `    <span class="px-2 py-0.5 rounded text-[10px] font-bold ${badgeColor}">${tc.status} (${tc.runtime_ms} ms)</span>`;
-                        html += `  </div>`;
-
-                        if (!tc.passed) {
-                            html += `  <div class="grid grid-cols-2 gap-4 mt-2 text-xs text-slate-500 dark:text-slate-400 font-mono">`;
-                            html += `    <div>`;
-                            html += `      <span class="text-slate-400 dark:text-slate-500 block mb-1">Expected Output</span>`;
-                            html += `      <pre class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 p-2 rounded text-slate-700 dark:text-slate-300 overflow-x-auto">${tc.expected}</pre>`;
-                            html += `    </div>`;
-                            html += `    <div>`;
-                            html += `      <span class="text-slate-400 dark:text-slate-500 block mb-1">Actual Output</span>`;
-                            html += `      <pre class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 p-2 rounded text-slate-700 dark:text-slate-300 overflow-x-auto">${tc.actual || '[Empty/Crash]'}</pre>`;
-                            html += `    </div>`;
-                            html += `  </div>`;
-                            if (tc.stderr) {
-                                html += `  <div class="mt-2 text-xs font-mono">`;
-                                html += `    <span class="text-slate-400 dark:text-slate-500 block mb-1">Stderr / Crash Logs</span>`;
-                                html += `    <pre class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 text-red-600 dark:text-red-400 p-2 rounded overflow-x-auto">${tc.stderr}</pre>`;
-                                html += `  </div>`;
-                            }
-                        }
-                        html += `</div>`;
-                    });
-
-                    this.consoleText += html;
+                    this.lastRunResult = {
+                        status: overallStatus,
+                        runtime_ms: maxRuntime,
+                        isSubmission: true,
+                        test_cases: res.test_cases
+                    };
+                    this.selectedResultIdx = 0;
                 },
 
                 // Comments functionality

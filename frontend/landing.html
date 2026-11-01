@@ -18,19 +18,19 @@
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         :root {
-            --bg:        #060d1f;
-            --surface:   #080f24;
-            --card:      #0c1630;
-            --border:    rgba(99,130,200,0.15);
-            --border-h:  rgba(99,130,246,0.45);
-            --text:      #e2e8f0;
-            --muted:     #7a8fa8;
-            --accent:    #3b82f6;
-            --accent2:   #7c3aed;
-            --green:     #10b981;
-            --amber:     #f59e0b;
-            --pink:      #ec4899;
-            --sky:       #0ea5e9;
+            --bg:        #1a1a1a;
+            --surface:   #282828;
+            --card:      #282828;
+            --border:    rgba(255,255,255,0.08);
+            --border-h:  rgba(255,161,22,0.45);
+            --text:      #eff1f6;
+            --muted:     #9ca3af;
+            --accent:    #ffa116;
+            --accent2:   #ffb84d;
+            --green:     #2cbb5d;
+            --amber:     #ffc01e;
+            --pink:      #ff375f;
+            --sky:       #00b8a3;
         }
 
         html { scroll-behavior: smooth; }
@@ -254,7 +254,7 @@
             color: #f1f5f9;
         }
         .grad-text {
-            background: linear-gradient(130deg, #60a5fa 0%, #a78bfa 60%, #f472b6 100%);
+            background: linear-gradient(130deg, #ffa116 0%, #ffc01e 60%, #ffffff 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -280,21 +280,21 @@
             align-items: center;
             gap: 8px;
             padding: 13px 28px;
-            border-radius: 12px;
-            background: linear-gradient(135deg, #2563eb, #6d28d9);
-            color: #fff;
+            border-radius: 10px;
+            background: #ffa116;
+            color: #1a1a1a;
             font-size: 0.9rem;
             font-weight: 700;
             text-decoration: none;
             border: none;
             cursor: pointer;
             transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
-            box-shadow: 0 4px 24px rgba(99,102,241,0.4);
+            box-shadow: 0 4px 20px rgba(255,161,22,0.3);
         }
         .btn-primary:hover {
-            opacity: 0.9;
+            opacity: 0.92;
             transform: translateY(-2px);
-            box-shadow: 0 8px 32px rgba(99,102,241,0.6);
+            box-shadow: 0 8px 28px rgba(255,161,22,0.45);
         }
         .btn-ghost {
             display: inline-flex;
@@ -587,13 +587,14 @@
         }
         .btn-faculty:hover { background: rgba(59,130,246,0.13); border-color: rgba(59,130,246,0.7); }
         .btn-login-primary {
-            background: linear-gradient(135deg, #2563eb, #6d28d9);
+            background: #ffa116;
+            color: #1a1a1a;
             border: none;
-            box-shadow: 0 4px 20px rgba(99,102,241,0.4);
+            box-shadow: 0 4px 20px rgba(255,161,22,0.3);
             transition: opacity 0.15s, transform 0.1s, box-shadow 0.15s;
             font-size: 14px; font-weight: 700;
             width: 100%; padding: 13px; border-radius: 10px;
-            color: #fff; cursor: pointer;
+            cursor: pointer;
             display: flex; align-items: center; justify-content: center; gap: 8px;
             letter-spacing: 0.01em;
             margin-top: 6px;
@@ -601,7 +602,7 @@
         .btn-login-primary:hover:not(:disabled) {
             opacity: 0.92;
             transform: translateY(-1px);
-            box-shadow: 0 8px 28px rgba(99,102,241,0.5);
+            box-shadow: 0 8px 28px rgba(255,161,22,0.45);
         }
         .btn-login-primary:disabled { opacity: 0.4; cursor: not-allowed; }
         .login-input {
