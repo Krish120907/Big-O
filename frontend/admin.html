@@ -1,77 +1,102 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel - Big-O</title>
-    <!-- Tailwind CSS CDN -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" crossorigin>
     <link rel="stylesheet" href="assets/css/tailwind.min.css">
-    <link rel="stylesheet" href="assets/css/styles.css?v=3">
-    <!-- Alpine.js -->
+    <link rel="stylesheet" href="assets/css/styles.css?v=14">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              lc: {
+                bg: '#1a1a1a',
+                surface: '#282828',
+                elevated: '#323232',
+                hover: '#373737',
+                border: 'rgba(255, 255, 255, 0.08)',
+                brand: '#ffa116',
+                easy: '#00b8a3',
+                medium: '#ffc01e',
+                hard: '#ff375f',
+                submit: '#2cbb5d'
+              }
+            }
+          }
+        }
+      }
+    </script>
     <script>
       window.__ENV__ = {
         API_BASE_URL: "http://localhost:8080/api"
       };
     </script>
+    <script src="assets/js/app.js"></script>
+    <script src="assets/js/auth.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
-<body class="bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-100 min-h-screen transition-colors duration-200" x-data="adminApp()">
+<body class="bg-[#1a1a1a] text-[#eff1f6] min-h-screen flex flex-col font-sans transition-colors duration-150" x-data="adminApp()" x-init="init()">
     
     <!-- Top LeetCode Navigation Bar -->
-    <nav class="h-14 bg-[var(--bg-surface)] border-b border-[var(--border)] sticky top-0 z-50 shrink-0">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
+    <nav class="lc-navbar">
+        <div class="lc-navbar-inner">
             <!-- Left: Logo & Nav Links -->
-            <div class="flex items-center space-x-8">
-                <a href="index.html" class="flex items-center gap-2 shrink-0 group">
-                    <div class="w-8 h-8 rounded-lg bg-[#ffa116] flex items-center justify-center text-[#1a1a1a] shadow-sm">
-                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <div class="flex items-center space-x-6">
+                <a href="index.html" class="lc-brand">
+                    <div class="lc-brand-icon">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <polyline points="16 18 22 12 16 6"></polyline>
                             <polyline points="8 6 2 12 8 18"></polyline>
                         </svg>
                     </div>
-                    <span class="text-lg font-bold tracking-tight text-[var(--text)]">Big-O</span>
+                    <span>Big-O</span>
                 </a>
 
                 <div class="hidden md:flex items-center space-x-1">
-                    <a href="index.html" class="px-3 py-1.5 rounded-md text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text)] hover:bg-[var(--bg-hover)] transition-colors">Dashboard</a>
-                    <a href="problems.html" class="px-3 py-1.5 rounded-md text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text)] hover:bg-[var(--bg-hover)] transition-colors">Problems</a>
-                    <a href="leaderboard.html" class="px-3 py-1.5 rounded-md text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text)] hover:bg-[var(--bg-hover)] transition-colors">Leaderboard</a>
+                    <a href="index.html" class="lc-nav-link">Dashboard</a>
+                    <a href="problems.html" class="lc-nav-link">Problems</a>
+                    <a href="leaderboard.html" class="lc-nav-link">Leaderboard</a>
                     
                     <template x-if="user && user.role === 'faculty'">
-                        <a href="faculty.html" class="px-3 py-1.5 rounded-md text-sm font-medium text-[#10b981] hover:bg-[#10b981]/10 transition-colors">Faculty</a>
+                        <a href="faculty.html" class="lc-nav-link text-[#10b981]">Faculty</a>
                     </template>
-                    <a href="admin.html" class="px-3 py-1.5 rounded-md text-sm font-semibold text-[#ff375f] border-b-2 border-[#ff375f]">Admin</a>
+                    <a href="admin.html" class="lc-nav-link active text-[#ff375f]">Admin</a>
                 </div>
             </div>
 
-            <!-- Right: Theme, User Avatar -->
+            <!-- Right: Theme, User Avatar & Actions -->
             <div class="flex items-center space-x-3">
+                <!-- Theme Switch -->
                 <div class="relative" x-data="{ open: false, current: localStorage.getItem('theme') || 'dark', setTheme(t) { this.current = t; const h = document.documentElement; h.classList.remove('dark'); if (t === 'dark') h.classList.add('dark'); localStorage.setItem('theme', t); this.open = false; } }" @keydown.escape.window="open = false">
-                    <button @click="open = !open" class="p-2 rounded-lg bg-[var(--bg-elevated)] border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text)] transition-colors" title="Theme">
+                    <button @click="open = !open" class="p-1.5 rounded-md bg-[#323232] hover:bg-[#3e3e3e] border border-[rgba(255,255,255,0.08)] text-[#9ca3af] hover:text-[#eff1f6] transition-colors" title="Theme">
                         <svg x-show="current === 'dark'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
                         <svg x-show="current === 'light'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
                     </button>
-                    <div x-show="open" @click.outside="open = false" x-transition class="absolute right-0 mt-2 w-36 bg-[var(--bg-surface)] border border-[var(--border)] rounded-lg shadow-xl z-50 py-1 text-xs">
-                        <button @click="setTheme('dark')" class="w-full flex items-center gap-2 px-3 py-2 text-[var(--text-secondary)] hover:text-[var(--text)] hover:bg-[var(--bg-hover)]" :class="current === 'dark' ? 'font-semibold text-[#ffa116]' : ''">Dark</button>
-                        <button @click="setTheme('light')" class="w-full flex items-center gap-2 px-3 py-2 text-[var(--text-secondary)] hover:text-[var(--text)] hover:bg-[var(--bg-hover)]" :class="current === 'light' ? 'font-semibold text-[#ffa116]' : ''">Light</button>
+                    <div x-show="open" @click.outside="open = false" x-transition class="absolute right-0 mt-2 w-32 bg-[#282828] border border-[rgba(255,255,255,0.1)] rounded-lg shadow-2xl z-50 py-1 text-xs">
+                        <button @click="setTheme('dark')" class="w-full flex items-center gap-2 px-3 py-2 text-[#9ca3af] hover:text-[#eff1f6] hover:bg-[#373737]" :class="current === 'dark' ? 'font-semibold text-[#ffa116]' : ''">Dark</button>
+                        <button @click="setTheme('light')" class="w-full flex items-center gap-2 px-3 py-2 text-[#9ca3af] hover:text-[#eff1f6] hover:bg-[#373737]" :class="current === 'light' ? 'font-semibold text-[#ffa116]' : ''">Light</button>
                     </div>
                 </div>
 
                 <a href="profile.html" class="flex items-center gap-2 hover:opacity-90 transition-opacity">
                     <template x-if="profile && profile.avatar_url">
-                        <img :src="API_BASE_URL.replace('/api', '') + profile.avatar_url" alt="Profile" class="w-8 h-8 rounded-full object-cover border border-[var(--border)]">
+                        <img :src="API_BASE_URL.replace('/api', '') + profile.avatar_url" alt="Profile" class="w-7 h-7 rounded-full object-cover border border-[rgba(255,255,255,0.15)]">
                     </template>
                     <template x-if="!profile || !profile.avatar_url">
-                        <div class="w-8 h-8 rounded-full bg-[#ff375f] flex items-center justify-center text-white font-bold text-xs" x-text="user ? user.username.charAt(0).toUpperCase() : '?'"></div>
+                        <div class="w-7 h-7 rounded-full bg-[#ff375f] flex items-center justify-center text-white font-bold text-xs" x-text="user ? user.username.charAt(0).toUpperCase() : '?'"></div>
                     </template>
-                    <span class="text-sm font-semibold text-[var(--text)] hidden sm:inline" x-text="user ? user.username : ''"></span>
+                    <span class="text-sm font-semibold text-[#eff1f6] hidden sm:inline" x-text="user ? user.username : ''"></span>
                     <span class="text-[10px] bg-[#ff375f]/20 text-[#ff375f] px-1.5 py-0.5 rounded font-semibold">Admin</span>
                 </a>
 
-                <button @click="Auth.logout()" class="text-xs bg-[var(--bg-elevated)] hover:bg-[var(--danger-soft)] text-[var(--text-secondary)] hover:text-[var(--danger)] border border-[var(--border)] px-3 py-1.5 rounded-lg font-medium transition-colors">Sign Out</button>
+                <button @click="Auth.logout()" class="lc-btn-signout">Sign Out</button>
             </div>
         </div>
     </nav>
@@ -82,11 +107,11 @@
         <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
             <div>
                 <h1 class="text-3xl font-extrabold tracking-tight">Admin Console</h1>
-                <p class="text-slate-500 dark:text-slate-400 mt-2">Create, modify, and delete problems or manage testing parameters.</p>
+                <p class="text-[#9ca3af] mt-2">Create, modify, and delete problems or manage testing parameters.</p>
             </div>
             <div class="mt-4 md:mt-0">
                 <button @click="openAddModal()" 
-                        class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg transition-all text-sm flex items-center">
+                        class="bg-[#ffa116] hover:bg-[#ffb340] text-[#1a1a1a] font-semibold px-4 py-2 rounded-lg transition-all text-sm flex items-center">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                     Add Problem
                 </button>
@@ -94,25 +119,25 @@
         </div>
 
         <!-- Tabs -->
-        <div class="flex space-x-1 bg-slate-200 dark:bg-slate-800 rounded-xl p-1 mb-6 w-fit">
+        <div class="flex space-x-1 bg-[#323232] rounded-xl p-1 mb-6 w-fit">
             <button @click="adminTab = 'problems'"
-                    :class="adminTab === 'problems' ? 'bg-white dark:bg-slate-700 shadow text-slate-800 dark:text-white' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'"
+                    :class="adminTab === 'problems' ? 'bg-[#282828] shadow text-[#eff1f6]' : 'text-[#9ca3af] hover:text-[#eff1f6]'"
                     class="px-4 py-2 rounded-lg text-sm font-semibold transition-all">
                 Problems
             </button>
             <button @click="adminTab = 'faculty'; loadFacultyRequests()"
-                    :class="adminTab === 'faculty' ? 'bg-white dark:bg-slate-700 shadow text-slate-800 dark:text-white' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'"
+                    :class="adminTab === 'faculty' ? 'bg-[#282828] shadow text-[#eff1f6]' : 'text-[#9ca3af] hover:text-[#eff1f6]'"
                     class="px-4 py-2 rounded-lg text-sm font-semibold transition-all flex items-center gap-2">
                 Faculty Requests
                 <span x-show="pendingFacultyCount > 0" class="bg-purple-600 text-white text-xs rounded-full px-1.5 py-0.5 font-bold" x-text="pendingFacultyCount"></span>
             </button>
             <button @click="adminTab = 'users'; loadUsers()"
-                    :class="adminTab === 'users' ? 'bg-white dark:bg-slate-700 shadow text-slate-800 dark:text-white' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'"
+                    :class="adminTab === 'users' ? 'bg-[#282828] shadow text-[#eff1f6]' : 'text-[#9ca3af] hover:text-[#eff1f6]'"
                     class="px-4 py-2 rounded-lg text-sm font-semibold transition-all">
                 Users
             </button>
             <button @click="adminTab = 'support'; loadSupportMessages()"
-                    :class="adminTab === 'support' ? 'bg-white dark:bg-slate-700 shadow text-slate-800 dark:text-white' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'"
+                    :class="adminTab === 'support' ? 'bg-[#282828] shadow text-[#eff1f6]' : 'text-[#9ca3af] hover:text-[#eff1f6]'"
                     class="px-4 py-2 rounded-lg text-sm font-semibold transition-all flex items-center gap-2">
                 Support Inbox
                 <span x-show="openSupportCount > 0" class="bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5 font-bold" x-text="openSupportCount"></span>
@@ -123,31 +148,31 @@
         <div x-show="adminTab === 'problems'">
 
         <!-- Problems list -->
-        <div class="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden">
-            <table class="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
-                <thead class="bg-slate-50 dark:bg-slate-800">
+        <div class="rounded-xl border border-[rgba(255,255,255,0.08)] bg-[#282828] overflow-hidden">
+            <table class="min-w-full divide-y divide-[rgba(255,255,255,0.08)]">
+                <thead class="bg-[#323232]">
                     <tr>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-16">#</th>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Title</th>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Submitted By</th>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Difficulty</th>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Topic Tags</th>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Status</th>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Actions</th>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-[#9ca3af] uppercase tracking-wider w-16">#</th>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-[#9ca3af] uppercase tracking-wider">Title</th>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-[#9ca3af] uppercase tracking-wider">Submitted By</th>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-[#9ca3af] uppercase tracking-wider">Difficulty</th>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-[#9ca3af] uppercase tracking-wider">Topic Tags</th>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-[#9ca3af] uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-[#9ca3af] uppercase tracking-wider">Actions</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
+                <tbody class="divide-y divide-[rgba(255,255,255,0.08)]">
                     <template x-for="(prob, idx) in problems" :key="prob.id">
-                        <tr class="hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-                            <td class="px-6 py-4 text-sm font-semibold text-slate-500" x-text="idx + 1"></td>
-                            <td class="px-6 py-4 text-sm font-bold text-slate-800 dark:text-slate-100" x-text="prob.title"></td>
-                            <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-300">
+                        <tr class="hover:bg-[#323232]/50 transition-colors">
+                            <td class="px-6 py-4 text-sm font-semibold text-[#9ca3af]" x-text="idx + 1"></td>
+                            <td class="px-6 py-4 text-sm font-bold text-[#eff1f6]" x-text="prob.title"></td>
+                            <td class="px-6 py-4 text-sm text-[#9ca3af]">
                                 <div class="flex items-center space-x-2">
                                     <template x-if="prob.author_avatar">
                                         <img :src="API_BASE_URL.replace('/api', '') + prob.author_avatar" class="w-7 h-7 rounded-full object-cover flex-shrink-0">
                                     </template>
                                     <template x-if="!prob.author_avatar">
-                                        <div class="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-xs flex-shrink-0"
+                                        <div class="w-7 h-7 rounded-full bg-[#ffa116] flex items-center justify-center text-white font-bold text-xs flex-shrink-0"
                                              x-text="prob.author ? prob.author.charAt(0).toUpperCase() : '?'"></div>
                                     </template>
                                     <span x-text="prob.author || '—'"></span>
@@ -162,10 +187,10 @@
                                           x-text="prob.difficulty"></span>
                                 </template>
                                 <template x-if="prob.approved != 1">
-                                    <span class="text-slate-400 text-xs">TBD</span>
+                                    <span class="text-[#9ca3af] text-xs">TBD</span>
                                 </template>
                             </td>
-                            <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-300" x-text="prob.topic_tags"></td>
+                            <td class="px-6 py-4 text-sm text-[#9ca3af]" x-text="prob.topic_tags"></td>
                             <td class="px-6 py-4 text-sm">
                                 <template x-if="prob.approved == 1">
                                     <span class="px-2.5 py-0.5 rounded text-xs font-bold bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">Approved</span>
@@ -180,19 +205,19 @@
                             <td class="px-6 py-4 text-sm flex space-x-2">
                                 <template x-if="prob.approved == 0">
                                     <button @click="viewProblem(prob.id)" 
-                                            class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-3 py-1 rounded text-xs transition-all">
+                                            class="bg-[#ffa116] hover:bg-[#ffb340] text-[#1a1a1a] font-semibold px-3 py-1 rounded text-xs transition-all">
                                         View
                                     </button>
                                 </template>
                                 <template x-if="prob.approved == 0">
                                     <button @click="openApproveModal(prob.id)" 
-                                            class="bg-green-600 hover:bg-green-700 text-white font-semibold px-3 py-1 rounded text-xs transition-all">
+                                            class="bg-[#2cbb5d] hover:bg-[#27a853] text-white font-semibold px-3 py-1 rounded text-xs transition-all">
                                         Approve
                                     </button>
                                 </template>
                                 <template x-if="prob.approved == 0">
                                     <button @click="openRejectModal(prob.id)" 
-                                            class="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-3 py-1 rounded text-xs transition-all">
+                                            class="bg-[#ff375f] hover:bg-[#ff5477] text-white font-semibold px-3 py-1 rounded text-xs transition-all">
                                         Reject
                                     </button>
                                 </template>
@@ -203,7 +228,7 @@
                                     </button>
                                 </template>
                                 <button @click="deleteProblem(prob.id)" 
-                                        class="bg-red-600 hover:bg-red-700 text-white font-semibold px-3 py-1 rounded text-xs transition-all">
+                                        class="bg-[#ff375f] hover:bg-[#ff5477] text-white font-semibold px-3 py-1 rounded text-xs transition-all">
                                     Delete
                                 </button>
                             </td>
@@ -211,7 +236,7 @@
                     </template>
                     <template x-if="problems.length === 0">
                         <tr>
-                            <td colspan="7" class="px-6 py-10 text-center text-slate-400 text-sm">No problems exist. Create one using the button above.</td>
+                            <td colspan="7" class="px-6 py-10 text-center text-[#9ca3af] text-sm">No problems exist. Create one using the button above.</td>
                         </tr>
                     </template>
                 </tbody>
@@ -223,41 +248,41 @@
         <!-- Faculty Requests Tab -->
         <div x-show="adminTab === 'faculty'">
             <template x-if="loadingFaculty">
-                <div class="text-center py-16 text-slate-400">Loading faculty requests...</div>
+                <div class="text-center py-16 text-[#9ca3af]">Loading faculty requests...</div>
             </template>
             <template x-if="!loadingFaculty && facultyRequests.length === 0">
-                <div class="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-12 text-center">
+                <div class="rounded-xl border border-[rgba(255,255,255,0.08)] bg-[#282828] p-12 text-center">
                     <div class="text-5xl mb-4">🎓</div>
-                    <p class="text-slate-500 dark:text-slate-400 font-medium">No pending faculty requests.</p>
+                    <p class="text-[#9ca3af] font-medium">No pending faculty requests.</p>
                 </div>
             </template>
             <div class="space-y-4">
                 <template x-for="req in facultyRequests" :key="req.id">
-                    <div class="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6">
+                    <div class="rounded-xl border border-[rgba(255,255,255,0.08)] bg-[#282828] p-6">
                         <div class="flex items-start justify-between gap-4">
                             <div class="flex-1">
                                 <div class="flex items-center gap-3 flex-wrap mb-1">
-                                    <span class="font-bold text-slate-800 dark:text-slate-100 text-lg" x-text="req.full_name"></span>
+                                    <span class="font-bold text-[#eff1f6] text-lg" x-text="req.full_name"></span>
                                     <span class="text-xs bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 px-2 py-0.5 rounded font-semibold" x-text="req.designation"></span>
                                 </div>
-                                <p class="text-sm text-slate-500 mb-3">
+                                <p class="text-sm text-[#9ca3af] mb-3">
                                     <span class="font-semibold text-blue-600 dark:text-blue-400" x-text="req.username"></span> ·
                                     <span x-text="req.email"></span> ·
                                     <span x-text="req.institution"></span>, <span x-text="req.department"></span>
                                 </p>
-                                <div class="bg-slate-50 dark:bg-slate-800 rounded-lg p-3 text-sm text-slate-600 dark:text-slate-400">
-                                    <p class="font-semibold text-xs text-slate-500 uppercase tracking-wider mb-1">Reason</p>
+                                <div class="bg-[#323232] rounded-lg p-3 text-sm text-[#9ca3af]">
+                                    <p class="font-semibold text-xs text-[#9ca3af] uppercase tracking-wider mb-1">Reason</p>
                                     <p x-text="req.reason"></p>
                                 </div>
-                                <p class="text-xs text-slate-400 mt-2" x-text="'Submitted: ' + formatDate(req.created_at)"></p>
+                                <p class="text-xs text-[#9ca3af] mt-2" x-text="'Submitted: ' + formatDate(req.created_at)"></p>
                             </div>
                             <div class="flex gap-2 shrink-0">
                                 <button @click="approveFacultyReq(req)"
-                                        class="text-sm bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors">
+                                        class="text-sm bg-[#2cbb5d] hover:bg-[#27a853] text-white px-4 py-2 rounded-lg font-semibold transition-colors">
                                     Approve
                                 </button>
                                 <button @click="rejectFacultyReq(req)"
-                                        class="text-sm bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors">
+                                        class="text-sm bg-[#ff375f] hover:bg-[#ff5477] text-white px-4 py-2 rounded-lg font-semibold transition-colors">
                                     Reject
                                 </button>
                             </div>
@@ -267,19 +292,19 @@
             </div>
 
             <!-- Faculty Approve Note Modal -->
-            <div x-show="facultyApproveModal.show" x-transition class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-6 w-full max-w-md shadow-2xl">
-                    <h3 class="font-bold text-lg text-slate-800 dark:text-slate-100 mb-2">Approve Faculty Request</h3>
-                    <p class="text-sm text-slate-500 mb-4">Approving <strong x-text="facultyApproveModal.req?.full_name"></strong>. They will be notified and can log in immediately.</p>
+            <div x-show="facultyApproveModal.show" x-transition class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                <div class="bg-[#282828] border border-[rgba(255,255,255,0.08)] rounded-xl p-6 w-full max-w-md shadow-2xl">
+                    <h3 class="font-bold text-lg text-[#eff1f6] mb-2">Approve Faculty Request</h3>
+                    <p class="text-sm text-[#9ca3af] mb-4">Approving <strong x-text="facultyApproveModal.req?.full_name"></strong>. They will be notified and can log in immediately.</p>
                     <div class="mb-5">
-                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Note (optional)</label>
+                        <label class="block text-xs font-semibold text-[#9ca3af] uppercase tracking-wider mb-2">Note (optional)</label>
                         <textarea x-model="facultyApproveModal.note" rows="3" placeholder="Welcome message or instructions..."
-                                  class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg py-2.5 px-4 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"></textarea>
+                                  class="w-full bg-[#323232] border border-[rgba(255,255,255,0.1)] rounded-lg py-2.5 px-4 text-[#eff1f6] focus:outline-none focus:border-[#2cbb5d] focus:ring-1 focus:ring-[#2cbb5d] resize-none"></textarea>
                     </div>
                     <div class="flex gap-3">
-                        <button @click="facultyApproveModal.show = false" class="flex-1 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 py-2.5 rounded-lg font-semibold">Cancel</button>
+                        <button @click="facultyApproveModal.show = false" class="flex-1 bg-[#323232] text-[#eff1f6] py-2.5 rounded-lg font-semibold">Cancel</button>
                         <button @click="confirmFacultyApprove()" :disabled="facultyApproveModal.loading"
-                                class="flex-1 bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-lg font-semibold disabled:opacity-50">
+                                class="flex-1 bg-[#2cbb5d] hover:bg-[#27a853] text-white py-2.5 rounded-lg font-semibold disabled:opacity-50">
                             <span x-show="!facultyApproveModal.loading">Approve 🎓</span>
                             <span x-show="facultyApproveModal.loading">Approving...</span>
                         </button>
@@ -288,19 +313,19 @@
             </div>
 
             <!-- Faculty Reject Note Modal -->
-            <div x-show="facultyRejectModal.show" x-transition class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-6 w-full max-w-md shadow-2xl">
-                    <h3 class="font-bold text-lg text-slate-800 dark:text-slate-100 mb-2">Reject Faculty Request</h3>
-                    <p class="text-sm text-slate-500 mb-4">Rejecting <strong x-text="facultyRejectModal.req?.full_name"></strong>. They will be notified and their account reverted to a regular user.</p>
+            <div x-show="facultyRejectModal.show" x-transition class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                <div class="bg-[#282828] border border-[rgba(255,255,255,0.08)] rounded-xl p-6 w-full max-w-md shadow-2xl">
+                    <h3 class="font-bold text-lg text-[#eff1f6] mb-2">Reject Faculty Request</h3>
+                    <p class="text-sm text-[#9ca3af] mb-4">Rejecting <strong x-text="facultyRejectModal.req?.full_name"></strong>. They will be notified and their account reverted to a regular user.</p>
                     <div class="mb-5">
-                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Reason</label>
+                        <label class="block text-xs font-semibold text-[#9ca3af] uppercase tracking-wider mb-2">Reason</label>
                         <textarea x-model="facultyRejectModal.note" rows="3" placeholder="Reason for rejection..."
-                                  class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg py-2.5 px-4 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-red-500 resize-none"></textarea>
+                                  class="w-full bg-[#323232] border border-[rgba(255,255,255,0.1)] rounded-lg py-2.5 px-4 text-[#eff1f6] focus:outline-none focus:border-[#ff375f] focus:ring-1 focus:ring-[#ff375f] resize-none"></textarea>
                     </div>
                     <div class="flex gap-3">
-                        <button @click="facultyRejectModal.show = false" class="flex-1 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 py-2.5 rounded-lg font-semibold">Cancel</button>
+                        <button @click="facultyRejectModal.show = false" class="flex-1 bg-[#323232] text-[#eff1f6] py-2.5 rounded-lg font-semibold">Cancel</button>
                         <button @click="confirmFacultyReject()" :disabled="facultyRejectModal.loading"
-                                class="flex-1 bg-red-600 hover:bg-red-700 text-white py-2.5 rounded-lg font-semibold disabled:opacity-50">
+                                class="flex-1 bg-[#ff375f] hover:bg-[#ff5477] text-white py-2.5 rounded-lg font-semibold disabled:opacity-50">
                             <span x-show="!facultyRejectModal.loading">Reject</span>
                             <span x-show="facultyRejectModal.loading">Rejecting...</span>
                         </button>
@@ -315,9 +340,9 @@
             <div class="flex flex-col sm:flex-row gap-3 mb-5">
                 <input type="text" x-model="userSearch" @input.debounce.400ms="loadUsers()"
                        placeholder="Search by username or email…"
-                       class="flex-1 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg py-2 px-4 text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                       class="flex-1 bg-[#282828] border border-[rgba(255,255,255,0.1)] rounded-lg py-2 px-4 text-sm text-[#eff1f6] placeholder-slate-400 focus:outline-none focus:border-[#ffa116] focus:ring-1 focus:ring-[#ffa116]">
                 <select x-model="userRoleFilter" @change="loadUsers()"
-                        class="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg py-2 px-4 text-sm text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        class="bg-[#282828] border border-[rgba(255,255,255,0.1)] rounded-lg py-2 px-4 text-sm text-[#eff1f6] focus:outline-none focus:border-[#ffa116] focus:ring-1 focus:ring-[#ffa116]">
                     <option value="">All Roles</option>
                     <option value="user">User</option>
                     <option value="faculty">Faculty</option>
@@ -328,45 +353,45 @@
             </div>
 
             <!-- Table -->
-            <div class="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden">
-                <table class="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
-                    <thead class="bg-slate-50 dark:bg-slate-800">
+            <div class="rounded-xl border border-[rgba(255,255,255,0.08)] bg-[#282828] overflow-hidden">
+                <table class="min-w-full divide-y divide-[rgba(255,255,255,0.08)]">
+                    <thead class="bg-[#323232]">
                         <tr>
-                            <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">#</th>
-                            <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">User</th>
-                            <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Email</th>
-                            <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Role</th>
-                            <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Joined</th>
-                            <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Actions</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-[#9ca3af] uppercase tracking-wider">#</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-[#9ca3af] uppercase tracking-wider">User</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-[#9ca3af] uppercase tracking-wider">Email</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-[#9ca3af] uppercase tracking-wider">Role</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-[#9ca3af] uppercase tracking-wider">Joined</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-[#9ca3af] uppercase tracking-wider">Actions</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
+                    <tbody class="divide-y divide-[rgba(255,255,255,0.08)]">
                         <template x-if="loadingUsers">
                             <tr>
-                                <td colspan="6" class="px-6 py-10 text-center text-slate-400 text-sm">Loading users…</td>
+                                <td colspan="6" class="px-6 py-10 text-center text-[#9ca3af] text-sm">Loading users…</td>
                             </tr>
                         </template>
                         <template x-if="!loadingUsers && users.length === 0">
                             <tr>
-                                <td colspan="6" class="px-6 py-10 text-center text-slate-400 text-sm">No users found.</td>
+                                <td colspan="6" class="px-6 py-10 text-center text-[#9ca3af] text-sm">No users found.</td>
                             </tr>
                         </template>
                         <template x-for="(u, idx) in users" :key="u.id">
-                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-                                <td class="px-6 py-4 text-sm font-semibold text-slate-500" x-text="idx + 1"></td>
+                            <tr class="hover:bg-[#323232]/50 transition-colors">
+                                <td class="px-6 py-4 text-sm font-semibold text-[#9ca3af]" x-text="idx + 1"></td>
                                 <td class="px-6 py-4">
                                     <div class="flex items-center gap-3">
                                         <template x-if="u.avatar_url">
                                             <img :src="API_BASE_URL.replace('/api', '') + u.avatar_url" class="w-8 h-8 rounded-full object-cover flex-shrink-0">
                                         </template>
                                         <template x-if="!u.avatar_url">
-                                            <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-xs flex-shrink-0"
+                                            <div class="w-8 h-8 rounded-full bg-[#ffa116] flex items-center justify-center text-white font-bold text-xs flex-shrink-0"
                                                  x-text="u.username.charAt(0).toUpperCase()"></div>
                                         </template>
-                                        <span class="text-sm font-semibold text-slate-800 dark:text-slate-100" x-text="u.username"></span>
+                                        <span class="text-sm font-semibold text-[#eff1f6]" x-text="u.username"></span>
                                     </div>
                                 </td>
-                                <td class="px-6 py-4 text-sm text-slate-500 dark:text-slate-400" x-text="u.email"></td>
+                                <td class="px-6 py-4 text-sm text-[#9ca3af]" x-text="u.email"></td>
                                 <td class="px-6 py-4">
                                     <span class="px-2.5 py-0.5 rounded text-xs font-bold"
                                           :class="{
@@ -378,25 +403,25 @@
                                           }"
                                           x-text="u.role.replaceAll('_', ' ')"></span>
                                 </td>
-                                <td class="px-6 py-4 text-sm text-slate-500 dark:text-slate-400" x-text="formatDate(u.created_at)"></td>
+                                <td class="px-6 py-4 text-sm text-[#9ca3af]" x-text="formatDate(u.created_at)"></td>
                                 <td class="px-6 py-4">
                                     <div class="flex items-center gap-2">
                                         <!-- Role change — hidden for admin rows -->
                                         <template x-if="u.role !== 'admin'">
                                             <button @click="openRoleModal(u)"
-                                                    class="text-xs bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-semibold px-3 py-1.5 rounded transition-all">
+                                                    class="text-xs bg-[#323232] hover:bg-[#373737] text-[#eff1f6] font-semibold px-3 py-1.5 rounded transition-all">
                                                 Change Role
                                             </button>
                                         </template>
                                         <!-- Delete — hidden for admin rows and self -->
                                         <template x-if="u.role !== 'admin' && u.id !== (user && user.id)">
                                             <button @click="deleteUser(u)"
-                                                    class="text-xs bg-red-600 hover:bg-red-700 text-white font-semibold px-3 py-1.5 rounded transition-all">
+                                                    class="text-xs bg-[#ff375f] hover:bg-[#ff5477] text-white font-semibold px-3 py-1.5 rounded transition-all">
                                                 Delete
                                             </button>
                                         </template>
                                         <template x-if="u.role === 'admin'">
-                                            <span class="text-xs text-slate-400 italic">Protected</span>
+                                            <span class="text-xs text-[#9ca3af] italic">Protected</span>
                                         </template>
                                     </div>
                                 </td>
@@ -412,50 +437,50 @@
             <!-- Filter bar -->
             <div class="flex flex-wrap gap-3 mb-5">
                 <button @click="supportFilter = 'all'; loadSupportMessages()"
-                        :class="supportFilter === 'all' ? 'bg-slate-700 text-white' : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300'"
-                        class="border border-slate-300 dark:border-slate-600 px-4 py-1.5 rounded-lg text-sm font-semibold transition-all">All</button>
+                        :class="supportFilter === 'all' ? 'bg-[#ffa116] text-[#1a1a1a]' : 'bg-[#282828] text-[#9ca3af]'"
+                        class="border border-[rgba(255,255,255,0.1)] px-4 py-1.5 rounded-lg text-sm font-semibold transition-all">All</button>
                 <button @click="supportFilter = 'open'; loadSupportMessages()"
-                        :class="supportFilter === 'open' ? 'bg-yellow-500 text-white' : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300'"
-                        class="border border-slate-300 dark:border-slate-600 px-4 py-1.5 rounded-lg text-sm font-semibold transition-all">Open</button>
+                        :class="supportFilter === 'open' ? 'bg-yellow-500 text-white' : 'bg-[#282828] text-[#9ca3af]'"
+                        class="border border-[rgba(255,255,255,0.1)] px-4 py-1.5 rounded-lg text-sm font-semibold transition-all">Open</button>
                 <button @click="supportFilter = 'replied'; loadSupportMessages()"
-                        :class="supportFilter === 'replied' ? 'bg-green-600 text-white' : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300'"
-                        class="border border-slate-300 dark:border-slate-600 px-4 py-1.5 rounded-lg text-sm font-semibold transition-all">Replied</button>
+                        :class="supportFilter === 'replied' ? 'bg-green-600 text-white' : 'bg-[#282828] text-[#9ca3af]'"
+                        class="border border-[rgba(255,255,255,0.1)] px-4 py-1.5 rounded-lg text-sm font-semibold transition-all">Replied</button>
                 <button @click="supportFilter = 'closed'; loadSupportMessages()"
-                        :class="supportFilter === 'closed' ? 'bg-slate-500 text-white' : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300'"
-                        class="border border-slate-300 dark:border-slate-600 px-4 py-1.5 rounded-lg text-sm font-semibold transition-all">Closed</button>
+                        :class="supportFilter === 'closed' ? 'bg-[#373737] text-[#eff1f6]' : 'bg-[#282828] text-[#9ca3af]'"
+                        class="border border-[rgba(255,255,255,0.1)] px-4 py-1.5 rounded-lg text-sm font-semibold transition-all">Closed</button>
             </div>
 
             <!-- Loading -->
             <template x-if="loadingSupport">
-                <div class="text-center py-16 text-slate-400">Loading messages…</div>
+                <div class="text-center py-16 text-[#9ca3af]">Loading messages…</div>
             </template>
 
             <!-- Empty state -->
             <template x-if="!loadingSupport && supportMessages.length === 0">
-                <div class="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-12 text-center">
+                <div class="rounded-xl border border-[rgba(255,255,255,0.08)] bg-[#282828] p-12 text-center">
                     <div class="text-5xl mb-4">📭</div>
-                    <p class="text-slate-500 dark:text-slate-400 font-medium">No messages found.</p>
+                    <p class="text-[#9ca3af] font-medium">No messages found.</p>
                 </div>
             </template>
 
             <!-- Message list -->
             <div class="space-y-3" x-show="!loadingSupport && supportMessages.length > 0">
                 <template x-for="msg in supportMessages" :key="msg.id">
-                    <div class="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden">
+                    <div class="rounded-xl border border-[rgba(255,255,255,0.08)] bg-[#282828] overflow-hidden">
                         <!-- Row header — click to expand -->
-                        <button class="w-full flex items-center justify-between gap-4 px-6 py-4 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-left"
+                        <button class="w-full flex items-center justify-between gap-4 px-6 py-4 hover:bg-[#323232]/50 transition-colors text-left"
                                 @click="toggleSupportMsg(msg.id)">
                             <div class="flex items-center gap-3 min-w-0 flex-1">
                                 <template x-if="msg.sender_avatar_url">
                                     <img :src="API_BASE_URL.replace('/api', '') + msg.sender_avatar_url" class="w-8 h-8 rounded-full object-cover shrink-0">
                                 </template>
                                 <template x-if="!msg.sender_avatar_url">
-                                    <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-xs shrink-0"
+                                    <div class="w-8 h-8 rounded-full bg-[#ffa116] flex items-center justify-center text-white font-bold text-xs shrink-0"
                                          x-text="msg.sender_name.charAt(0).toUpperCase()"></div>
                                 </template>
                                 <div class="min-w-0">
-                                    <p class="font-semibold text-slate-800 dark:text-slate-100 truncate" x-text="msg.subject"></p>
-                                    <p class="text-xs text-slate-400 truncate" x-text="msg.sender_name + ' · ' + msg.sender_email"></p>
+                                    <p class="font-semibold text-[#eff1f6] truncate" x-text="msg.subject"></p>
+                                    <p class="text-xs text-[#9ca3af] truncate" x-text="msg.sender_name + ' · ' + msg.sender_email"></p>
                                 </div>
                             </div>
                             <div class="flex items-center gap-2 shrink-0">
@@ -465,62 +490,62 @@
                                           'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400': msg.category === 'suggestion',
                                           'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400': msg.category === 'question',
                                           'bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400': msg.category === 'content',
-                                          'bg-slate-100 text-slate-500 dark:bg-slate-700 dark:text-slate-400': msg.category === 'other'
+                                          'bg-[#323232] text-[#9ca3af]': msg.category === 'other'
                                       }"
                                       x-text="msg.category"></span>
                                 <span class="text-xs px-2.5 py-0.5 rounded-full font-semibold"
                                       :class="{
                                           'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400': msg.status === 'open',
                                           'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400': msg.status === 'replied',
-                                          'bg-slate-200 text-slate-500 dark:bg-slate-700 dark:text-slate-400': msg.status === 'closed'
+                                          'bg-[#323232] text-[#9ca3af]': msg.status === 'closed'
                                       }"
                                       x-text="msg.status"></span>
-                                <span class="text-xs text-slate-400" x-text="formatDate(msg.created_at)"></span>
-                                <svg class="w-4 h-4 text-slate-400 transition-transform" :class="expandedSupportId === msg.id ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                                <span class="text-xs text-[#9ca3af]" x-text="formatDate(msg.created_at)"></span>
+                                <svg class="w-4 h-4 text-[#9ca3af] transition-transform" :class="expandedSupportId === msg.id ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                             </div>
                         </button>
 
                         <!-- Expanded thread -->
-                        <div x-show="expandedSupportId === msg.id" x-transition class="border-t border-slate-100 dark:border-slate-800 px-6 py-5">
+                        <div x-show="expandedSupportId === msg.id" x-transition class="border-t border-[rgba(255,255,255,0.08)] px-6 py-5">
                             <!-- Original message -->
                             <div class="mb-4">
-                                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Message</p>
-                                <div class="bg-slate-50 dark:bg-slate-800 rounded-lg px-4 py-3 text-sm text-slate-700 dark:text-slate-300 whitespace-pre-wrap" x-text="msg.message"></div>
+                                <p class="text-xs font-semibold text-[#9ca3af] uppercase tracking-wider mb-2">Message</p>
+                                <div class="bg-[#323232] rounded-lg px-4 py-3 text-sm text-[#eff1f6] whitespace-pre-wrap" x-text="msg.message"></div>
                             </div>
 
                             <!-- Existing reply if any -->
                             <template x-if="msg.admin_reply">
                                 <div class="mb-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 rounded-lg px-4 py-3">
                                     <p class="text-xs font-semibold text-green-600 dark:text-green-400 mb-1">Your reply
-                                        <span class="font-normal text-slate-400 ml-1" x-text="msg.replied_at ? '· ' + formatDate(msg.replied_at) : ''"></span>
+                                        <span class="font-normal text-[#9ca3af] ml-1" x-text="msg.replied_at ? '· ' + formatDate(msg.replied_at) : ''"></span>
                                     </p>
-                                    <p class="text-sm text-slate-700 dark:text-slate-200 whitespace-pre-wrap" x-text="msg.admin_reply"></p>
+                                    <p class="text-sm text-[#eff1f6] whitespace-pre-wrap" x-text="msg.admin_reply"></p>
                                 </div>
                             </template>
 
                             <!-- Reply textarea -->
                             <div class="mb-3">
-                                <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2"
+                                <label class="block text-xs font-semibold text-[#9ca3af] uppercase tracking-wider mb-2"
                                        x-text="msg.admin_reply ? 'Update Reply' : 'Write a Reply'"></label>
                                 <textarea :x-model="'supportReply_' + msg.id"
                                           x-ref="'replyBox_' + msg.id"
                                           @input="supportDraft[msg.id] = $event.target.value"
                                           :value="supportDraft[msg.id] || ''"
                                           rows="3" placeholder="Type your reply here…"
-                                          class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg py-2.5 px-4 text-sm text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"></textarea>
+                                          class="w-full bg-[#323232] border border-[rgba(255,255,255,0.1)] rounded-lg py-2.5 px-4 text-sm text-[#eff1f6] focus:outline-none focus:border-[#ffa116] focus:ring-1 focus:ring-[#ffa116] resize-none"></textarea>
                             </div>
 
                             <!-- Actions -->
                             <div class="flex flex-wrap items-center gap-2">
                                 <button @click="sendSupportReply(msg)"
                                         :disabled="!supportDraft[msg.id] || supportDraft[msg.id].trim() === ''"
-                                        class="bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-all flex items-center gap-2">
+                                        class="bg-[#ffa116] hover:bg-blue-700 disabled:opacity-40 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-all flex items-center gap-2">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
                                     Send Reply
                                 </button>
                                 <template x-if="msg.status !== 'closed'">
                                     <button @click="closeSupportMsg(msg)"
-                                            class="bg-slate-500 hover:bg-slate-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-all">
+                                            class="bg-[#323232] hover:bg-[#373737] text-[#eff1f6] text-sm font-semibold px-4 py-2 rounded-lg transition-all">
                                         Mark Closed
                                     </button>
                                 </template>
@@ -538,16 +563,16 @@
         </div><!-- end support tab -->
 
         <!-- Change Role Modal -->
-        <div x-show="roleModal.show" x-cloak x-transition class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-6 w-full max-w-sm shadow-2xl">
-                <h3 class="font-bold text-lg text-slate-800 dark:text-slate-100 mb-1">Change Role</h3>
-                <p class="text-sm text-slate-500 mb-5">
+        <div x-show="roleModal.show" x-cloak x-transition class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <div class="bg-[#282828] border border-[rgba(255,255,255,0.08)] rounded-xl p-6 w-full max-w-sm shadow-2xl">
+                <h3 class="font-bold text-lg text-[#eff1f6] mb-1">Change Role</h3>
+                <p class="text-sm text-[#9ca3af] mb-5">
                     Updating role for <strong x-text="roleModal.user?.username"></strong>
                     (currently <span class="font-semibold" x-text="roleModal.user?.role?.replace('_',' ')"></span>).
                 </p>
-                <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">New Role</label>
+                <label class="block text-xs font-semibold text-[#9ca3af] uppercase tracking-wider mb-2">New Role</label>
                 <select x-model="roleModal.newRole"
-                        class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg py-2.5 px-4 text-sm text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-5">
+                        class="w-full bg-[#323232] border border-[rgba(255,255,255,0.1)] rounded-lg py-2.5 px-4 text-sm text-[#eff1f6] focus:outline-none focus:border-[#ffa116] focus:ring-1 focus:ring-[#ffa116] mb-5">
                     <option value="user">User</option>
                     <option value="faculty">Faculty</option>
                     <option value="pending_faculty">Pending Faculty</option>
@@ -555,11 +580,11 @@
                 </select>
                 <div class="flex gap-3">
                     <button @click="roleModal.show = false"
-                            class="flex-1 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 py-2.5 rounded-lg font-semibold">
+                            class="flex-1 bg-[#323232] text-[#eff1f6] py-2.5 rounded-lg font-semibold">
                         Cancel
                     </button>
                     <button @click="confirmRoleChange()" :disabled="roleModal.loading"
-                            class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-lg font-semibold disabled:opacity-50">
+                            class="flex-1 bg-[#ffa116] hover:bg-[#ffb340] text-[#1a1a1a] py-2.5 rounded-lg font-semibold disabled:opacity-50">
                         <span x-show="!roleModal.loading">Save</span>
                         <span x-show="roleModal.loading">Saving…</span>
                     </button>
@@ -568,45 +593,45 @@
         </div>
 
         <!-- View Problem Modal -->
-        <div x-show="showViewModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 overflow-y-auto" x-transition>
-            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl max-w-3xl w-full p-8 shadow-xl">
-                <h2 class="text-2xl font-bold mb-4 text-slate-800 dark:text-slate-100" x-text="viewingProblem.title"></h2>
+        <div x-show="showViewModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 overflow-y-auto" x-transition>
+            <div class="bg-[#282828] border border-[rgba(255,255,255,0.08)] rounded-xl max-w-3xl w-full p-8 shadow-xl">
+                <h2 class="text-2xl font-bold mb-4 text-[#eff1f6]" x-text="viewingProblem.title"></h2>
                 
                 <!-- Topic tags -->
                 <div class="flex flex-wrap gap-2 mb-4">
                     <template x-for="tag in (viewingProblem.topic_tags ? viewingProblem.topic_tags.split(',') : [])" :key="tag">
-                        <span class="bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400 text-xs px-2.5 py-0.5 rounded font-medium" x-text="tag.trim()"></span>
+                        <span class="bg-[#323232] text-[#9ca3af] text-xs px-2.5 py-0.5 rounded font-medium" x-text="tag.trim()"></span>
                     </template>
                 </div>
 
                 <!-- Description -->
                 <div class="mb-6">
-                    <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-500 mb-2">Description</h3>
-                    <div class="bg-slate-50 dark:bg-slate-800 p-4 rounded-lg text-sm text-slate-700 dark:text-slate-300 whitespace-pre-wrap font-sans" x-text="viewingProblem.description"></div>
+                    <h3 class="text-sm font-semibold uppercase tracking-wider text-[#9ca3af] mb-2">Description</h3>
+                    <div class="bg-[#323232] p-4 rounded-lg text-sm text-[#eff1f6] whitespace-pre-wrap font-sans" x-text="viewingProblem.description"></div>
                 </div>
 
                 <!-- Constraints -->
                 <div class="mb-6">
-                    <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-500 mb-2">Constraints</h3>
-                    <div class="bg-slate-50 dark:bg-slate-800 p-4 rounded-lg text-sm text-slate-700 dark:text-slate-300 whitespace-pre-wrap font-mono" x-text="viewingProblem.constraints"></div>
+                    <h3 class="text-sm font-semibold uppercase tracking-wider text-[#9ca3af] mb-2">Constraints</h3>
+                    <div class="bg-[#323232] p-4 rounded-lg text-sm text-[#eff1f6] whitespace-pre-wrap font-mono" x-text="viewingProblem.constraints"></div>
                 </div>
 
                 <!-- Sample Test Cases -->
                 <div class="mb-6">
-                    <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-500 mb-3">Sample Test Cases</h3>
+                    <h3 class="text-sm font-semibold uppercase tracking-wider text-[#9ca3af] mb-3">Sample Test Cases</h3>
                     <template x-for="(sample, idx) in viewingSamples" :key="sample.id">
-                        <div class="border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden mb-3">
-                            <div class="bg-slate-100 dark:bg-slate-700 px-4 py-2 text-xs font-bold text-slate-500">
+                        <div class="border border-[rgba(255,255,255,0.08)] rounded-lg overflow-hidden mb-3">
+                            <div class="bg-[#323232] px-4 py-2 text-xs font-bold text-[#9ca3af]">
                                 <span x-text="`Example ${idx + 1}`"></span>
                             </div>
                             <div class="p-4 grid grid-cols-2 gap-4">
                                 <div>
-                                    <span class="text-xs text-slate-500 font-semibold block mb-2">Input</span>
-                                    <pre class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 p-2 rounded text-xs text-slate-700 dark:text-slate-300 overflow-x-auto" x-text="sample.input"></pre>
+                                    <span class="text-xs text-[#9ca3af] font-semibold block mb-2">Input</span>
+                                    <pre class="bg-[#282828] border border-[rgba(255,255,255,0.08)] p-2 rounded text-xs text-[#eff1f6] overflow-x-auto" x-text="sample.input"></pre>
                                 </div>
                                 <div>
-                                    <span class="text-xs text-slate-500 font-semibold block mb-2">Expected Output</span>
-                                    <pre class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 p-2 rounded text-xs text-slate-700 dark:text-slate-300 overflow-x-auto" x-text="sample.expected"></pre>
+                                    <span class="text-xs text-[#9ca3af] font-semibold block mb-2">Expected Output</span>
+                                    <pre class="bg-[#282828] border border-[rgba(255,255,255,0.08)] p-2 rounded text-xs text-[#eff1f6] overflow-x-auto" x-text="sample.expected"></pre>
                                 </div>
                             </div>
                         </div>
@@ -614,8 +639,8 @@
                 </div>
 
                 <!-- Author Info -->
-                <div class="mb-6 p-4 bg-slate-50 dark:bg-slate-800 rounded-lg">
-                    <p class="text-sm text-slate-600 dark:text-slate-400">
+                <div class="mb-6 p-4 bg-[#323232] rounded-lg">
+                    <p class="text-sm text-[#9ca3af]">
                         <span class="font-semibold">Submitted by:</span>
                         <span x-text="viewingProblem.author"></span>
                     </p>
@@ -623,123 +648,123 @@
 
                 <!-- Actions -->
                 <div class="flex justify-end space-x-3">
-                    <button @click="showViewModal = false" class="bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 font-semibold py-2 px-4 rounded-lg text-sm">Close</button>
-                    <button @click="showViewModal = false; openApproveModal(viewingProblem.id)" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg text-sm">Approve</button>
-                    <button @click="showViewModal = false; openRejectModal(viewingProblem.id)" class="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded-lg text-sm">Reject</button>
+                    <button @click="showViewModal = false" class="bg-[#323232] hover:bg-[#373737] text-[#eff1f6] font-semibold py-2 px-4 rounded-lg text-sm">Close</button>
+                    <button @click="showViewModal = false; openApproveModal(viewingProblem.id)" class="bg-[#2cbb5d] hover:bg-[#27a853] text-white font-semibold py-2 px-4 rounded-lg text-sm">Approve</button>
+                    <button @click="showViewModal = false; openRejectModal(viewingProblem.id)" class="bg-[#ff375f] hover:bg-[#ff5477] text-white font-semibold py-2 px-4 rounded-lg text-sm">Reject</button>
                 </div>
             </div>
         </div>
 
         <!-- Approve Modal -->
-        <div x-show="showApproveModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-black/40" x-transition>
-            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl w-96 p-6 shadow-xl">
-                <h3 class="text-lg font-bold mb-1 text-slate-800 dark:text-slate-100">Approve Problem</h3>
-                <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Set the difficulty and optionally leave a comment for the submitter.</p>
-                <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Difficulty</label>
+        <div x-show="showApproveModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm" x-transition>
+            <div class="bg-[#282828] border border-[rgba(255,255,255,0.08)] rounded-xl w-96 p-6 shadow-xl">
+                <h3 class="text-lg font-bold mb-1 text-[#eff1f6]">Approve Problem</h3>
+                <p class="text-xs text-[#9ca3af] mb-4">Set the difficulty and optionally leave a comment for the submitter.</p>
+                <label class="block text-xs font-semibold text-[#9ca3af] uppercase tracking-wider mb-2">Difficulty</label>
                 <select x-model="approveForm.difficulty"
-                        class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg py-2 px-3 text-sm text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4">
+                        class="w-full bg-[#323232] border border-[rgba(255,255,255,0.1)] rounded-lg py-2 px-3 text-sm text-[#eff1f6] focus:outline-none focus:border-[#ffa116] focus:ring-1 focus:ring-[#ffa116] mb-4">
                     <option value="Easy">Easy</option>
                     <option value="Medium">Medium</option>
                     <option value="Hard">Hard</option>
                 </select>
-                <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Comment for Submitter <span class="normal-case font-normal text-slate-400">(optional)</span></label>
+                <label class="block text-xs font-semibold text-[#9ca3af] uppercase tracking-wider mb-2">Comment for Submitter <span class="normal-case font-normal text-[#9ca3af]">(optional)</span></label>
                 <textarea x-model="approveForm.comment" rows="3" placeholder="e.g. Great problem! Minor edits were made to the constraints..."
-                          class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg py-2 px-3 text-sm text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4"></textarea>
+                          class="w-full bg-[#323232] border border-[rgba(255,255,255,0.1)] rounded-lg py-2 px-3 text-sm text-[#eff1f6] focus:outline-none focus:border-[#ffa116] focus:ring-1 focus:ring-[#ffa116] mb-4"></textarea>
                 <div class="flex justify-end space-x-3">
-                    <button @click="showApproveModal = false" class="bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 font-semibold py-2 px-4 rounded-lg text-sm">Cancel</button>
-                    <button @click="confirmApprove()" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg text-sm">Approve</button>
+                    <button @click="showApproveModal = false" class="bg-[#323232] hover:bg-[#373737] text-[#eff1f6] font-semibold py-2 px-4 rounded-lg text-sm">Cancel</button>
+                    <button @click="confirmApprove()" class="bg-[#2cbb5d] hover:bg-[#27a853] text-white font-semibold py-2 px-4 rounded-lg text-sm">Approve</button>
                 </div>
             </div>
         </div>
 
         <!-- Reject Modal -->
-        <div x-show="showRejectModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-black/40" x-transition>
-            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl w-96 p-6 shadow-xl">
-                <h3 class="text-lg font-bold mb-4 text-slate-800 dark:text-slate-100">Reason for Rejection</h3>
+        <div x-show="showRejectModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm" x-transition>
+            <div class="bg-[#282828] border border-[rgba(255,255,255,0.08)] rounded-xl w-96 p-6 shadow-xl">
+                <h3 class="text-lg font-bold mb-4 text-[#eff1f6]">Reason for Rejection</h3>
                 <textarea x-model="rejectForm.reason" rows="4" placeholder="Explain why this problem is being rejected..."
-                          class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg py-2 px-3 text-sm text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-red-500 mb-4"></textarea>
+                          class="w-full bg-[#323232] border border-[rgba(255,255,255,0.1)] rounded-lg py-2 px-3 text-sm text-[#eff1f6] focus:outline-none focus:border-[#ff375f] focus:ring-1 focus:ring-[#ff375f] mb-4"></textarea>
                 <div class="flex justify-end space-x-3">
-                    <button @click="showRejectModal = false" class="bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 font-semibold py-2 px-4 rounded-lg text-sm">Cancel</button>
-                    <button @click="confirmReject()" class="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded-lg text-sm">Reject</button>
+                    <button @click="showRejectModal = false" class="bg-[#323232] hover:bg-[#373737] text-[#eff1f6] font-semibold py-2 px-4 rounded-lg text-sm">Cancel</button>
+                    <button @click="confirmReject()" class="bg-[#ff375f] hover:bg-[#ff5477] text-white font-semibold py-2 px-4 rounded-lg text-sm">Reject</button>
                 </div>
             </div>
         </div>
 
         <!-- Edit Approved Problem Modal -->
-        <div x-show="showEditModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 overflow-y-auto" x-transition>
-            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl max-w-2xl w-full p-8 shadow-xl overflow-y-auto max-h-[90vh]">
-                <h2 class="text-2xl font-bold mb-1 text-slate-800 dark:text-slate-100">Edit Problem</h2>
-                <p class="text-xs text-slate-500 dark:text-slate-400 mb-6">Problem stays approved. Changes apply immediately.</p>
+        <div x-show="showEditModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 overflow-y-auto" x-transition>
+            <div class="bg-[#282828] border border-[rgba(255,255,255,0.08)] rounded-xl max-w-2xl w-full p-8 shadow-xl overflow-y-auto max-h-[90vh]">
+                <h2 class="text-2xl font-bold mb-1 text-[#eff1f6]">Edit Problem</h2>
+                <p class="text-xs text-[#9ca3af] mb-6">Problem stays approved. Changes apply immediately.</p>
 
                 <form @submit.prevent="submitEdit()">
                     <!-- Title -->
                     <div class="mb-4">
-                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Title</label>
+                        <label class="block text-xs font-semibold text-[#9ca3af] uppercase tracking-wider mb-2">Title</label>
                         <input type="text" x-model="editForm.title" required
-                               class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg py-2 px-3 text-sm text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                               class="w-full bg-[#323232] border border-[rgba(255,255,255,0.1)] rounded-lg py-2 px-3 text-sm text-[#eff1f6] focus:outline-none focus:border-[#ffa116] focus:ring-1 focus:ring-[#ffa116]">
                     </div>
 
                     <!-- Difficulty + Tags -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                         <div>
-                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Difficulty</label>
+                            <label class="block text-xs font-semibold text-[#9ca3af] uppercase tracking-wider mb-2">Difficulty</label>
                             <select x-model="editForm.difficulty" required
-                                    class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg py-2 px-3 text-sm text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                    class="w-full bg-[#323232] border border-[rgba(255,255,255,0.1)] rounded-lg py-2 px-3 text-sm text-[#eff1f6] focus:outline-none focus:border-[#ffa116] focus:ring-1 focus:ring-[#ffa116]">
                                 <option value="Easy">Easy</option>
                                 <option value="Medium">Medium</option>
                                 <option value="Hard">Hard</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Topic Tags <span class="normal-case font-normal">(comma-separated)</span></label>
+                            <label class="block text-xs font-semibold text-[#9ca3af] uppercase tracking-wider mb-2">Topic Tags <span class="normal-case font-normal">(comma-separated)</span></label>
                             <input type="text" x-model="editForm.topic_tags" required
-                                   class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg py-2 px-3 text-sm text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                   class="w-full bg-[#323232] border border-[rgba(255,255,255,0.1)] rounded-lg py-2 px-3 text-sm text-[#eff1f6] focus:outline-none focus:border-[#ffa116] focus:ring-1 focus:ring-[#ffa116]">
                         </div>
                     </div>
 
                     <!-- Description -->
                     <div class="mb-4">
-                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Description</label>
+                        <label class="block text-xs font-semibold text-[#9ca3af] uppercase tracking-wider mb-2">Description</label>
                         <textarea x-model="editForm.description" rows="5" required
-                                  class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg py-2 px-3 text-sm text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono"></textarea>
+                                  class="w-full bg-[#323232] border border-[rgba(255,255,255,0.1)] rounded-lg py-2 px-3 text-sm text-[#eff1f6] focus:outline-none focus:border-[#ffa116] focus:ring-1 focus:ring-[#ffa116] font-mono"></textarea>
                     </div>
 
                     <!-- Constraints -->
                     <div class="mb-4">
-                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Constraints</label>
+                        <label class="block text-xs font-semibold text-[#9ca3af] uppercase tracking-wider mb-2">Constraints</label>
                         <textarea x-model="editForm.constraints" rows="3" required
-                                  class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg py-2 px-3 text-sm text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono"></textarea>
+                                  class="w-full bg-[#323232] border border-[rgba(255,255,255,0.1)] rounded-lg py-2 px-3 text-sm text-[#eff1f6] focus:outline-none focus:border-[#ffa116] focus:ring-1 focus:ring-[#ffa116] font-mono"></textarea>
                     </div>
 
                     <!-- Test Cases -->
-                    <div class="mb-6 border-t border-slate-200 dark:border-slate-700 pt-4">
+                    <div class="mb-6 border-t border-[rgba(255,255,255,0.08)] pt-4">
                         <!-- Sample TCs -->
                         <div class="mb-5">
                             <div class="flex items-center justify-between mb-3">
-                                <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider">Sample Test Cases</h4>
+                                <h4 class="text-xs font-bold text-[#9ca3af] uppercase tracking-wider">Sample Test Cases</h4>
                                 <button type="button" @click="editForm.sampleTCs.push({input:'',expected:''})"
-                                        class="text-xs bg-blue-600 hover:bg-blue-700 text-white px-2.5 py-1 rounded font-semibold flex items-center gap-1 transition-all">
+                                        class="text-xs bg-[#ffa116] hover:bg-[#ffb340] text-[#1a1a1a] px-2.5 py-1 rounded font-semibold flex items-center gap-1 transition-all">
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                                     Add
                                 </button>
                             </div>
                             <div class="space-y-3">
                                 <template x-for="(tc, i) in editForm.sampleTCs" :key="'es'+i">
-                                    <div class="p-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg">
+                                    <div class="p-3 bg-[#323232] border border-[rgba(255,255,255,0.08)] rounded-lg">
                                         <div class="flex justify-between items-center mb-2">
-                                            <span class="text-xs font-semibold text-slate-500" x-text="`Sample #${i+1}`"></span>
+                                            <span class="text-xs font-semibold text-[#9ca3af]" x-text="`Sample #${i+1}`"></span>
                                             <button type="button" @click="editForm.sampleTCs.splice(i,1)" x-show="editForm.sampleTCs.length > 1" class="text-red-500 hover:text-red-700">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                                             </button>
                                         </div>
                                         <div class="grid grid-cols-2 gap-3">
                                             <div>
-                                                <label class="block text-[10px] font-semibold text-slate-500 mb-1">Input</label>
-                                                <textarea x-model="tc.input" rows="2" required class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded p-2 text-xs font-mono text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-500"></textarea>
+                                                <label class="block text-[10px] font-semibold text-[#9ca3af] mb-1">Input</label>
+                                                <textarea x-model="tc.input" rows="2" required class="w-full bg-[#282828] border border-[rgba(255,255,255,0.1)] rounded p-2 text-xs font-mono text-[#eff1f6] focus:outline-none focus:border-[#ffa116] focus:ring-1 focus:ring-[#ffa116]"></textarea>
                                             </div>
                                             <div>
-                                                <label class="block text-[10px] font-semibold text-slate-500 mb-1">Expected Output</label>
-                                                <textarea x-model="tc.expected" rows="2" required class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded p-2 text-xs font-mono text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-500"></textarea>
+                                                <label class="block text-[10px] font-semibold text-[#9ca3af] mb-1">Expected Output</label>
+                                                <textarea x-model="tc.expected" rows="2" required class="w-full bg-[#282828] border border-[rgba(255,255,255,0.1)] rounded p-2 text-xs font-mono text-[#eff1f6] focus:outline-none focus:border-[#ffa116] focus:ring-1 focus:ring-[#ffa116]"></textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -750,30 +775,30 @@
                         <!-- Hidden TCs -->
                         <div>
                             <div class="flex items-center justify-between mb-3">
-                                <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider">Hidden Test Cases</h4>
+                                <h4 class="text-xs font-bold text-[#9ca3af] uppercase tracking-wider">Hidden Test Cases</h4>
                                 <button type="button" @click="editForm.hiddenTCs.push({input:'',expected:''})"
-                                        class="text-xs bg-slate-600 hover:bg-slate-700 text-white px-2.5 py-1 rounded font-semibold flex items-center gap-1 transition-all">
+                                        class="text-xs bg-[#323232] hover:bg-[#373737] text-[#eff1f6] px-2.5 py-1 rounded font-semibold flex items-center gap-1 transition-all">
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                                     Add
                                 </button>
                             </div>
                             <div class="space-y-3">
                                 <template x-for="(tc, i) in editForm.hiddenTCs" :key="'eh'+i">
-                                    <div class="p-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg">
+                                    <div class="p-3 bg-[#323232] border border-[rgba(255,255,255,0.08)] rounded-lg">
                                         <div class="flex justify-between items-center mb-2">
-                                            <span class="text-xs font-semibold text-slate-500" x-text="`Hidden #${i+1}`"></span>
+                                            <span class="text-xs font-semibold text-[#9ca3af]" x-text="`Hidden #${i+1}`"></span>
                                             <button type="button" @click="editForm.hiddenTCs.splice(i,1)" x-show="editForm.hiddenTCs.length > 1" class="text-red-500 hover:text-red-700">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                                             </button>
                                         </div>
                                         <div class="grid grid-cols-2 gap-3">
                                             <div>
-                                                <label class="block text-[10px] font-semibold text-slate-500 mb-1">Input</label>
-                                                <textarea x-model="tc.input" rows="2" required class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded p-2 text-xs font-mono text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-500"></textarea>
+                                                <label class="block text-[10px] font-semibold text-[#9ca3af] mb-1">Input</label>
+                                                <textarea x-model="tc.input" rows="2" required class="w-full bg-[#282828] border border-[rgba(255,255,255,0.1)] rounded p-2 text-xs font-mono text-[#eff1f6] focus:outline-none focus:border-[#ffa116] focus:ring-1 focus:ring-[#ffa116]"></textarea>
                                             </div>
                                             <div>
-                                                <label class="block text-[10px] font-semibold text-slate-500 mb-1">Expected Output</label>
-                                                <textarea x-model="tc.expected" rows="2" required class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded p-2 text-xs font-mono text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-500"></textarea>
+                                                <label class="block text-[10px] font-semibold text-[#9ca3af] mb-1">Expected Output</label>
+                                                <textarea x-model="tc.expected" rows="2" required class="w-full bg-[#282828] border border-[rgba(255,255,255,0.1)] rounded p-2 text-xs font-mono text-[#eff1f6] focus:outline-none focus:border-[#ffa116] focus:ring-1 focus:ring-[#ffa116]"></textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -783,13 +808,13 @@
                     </div>
 
                     <!-- Actions -->
-                    <div class="flex justify-end space-x-3 border-t border-slate-200 dark:border-slate-700 pt-4">
+                    <div class="flex justify-end space-x-3 border-t border-[rgba(255,255,255,0.08)] pt-4">
                         <button type="button" @click="showEditModal = false"
-                                class="bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 font-semibold py-2 px-5 rounded-lg text-sm transition-all">
+                                class="bg-[#323232] hover:bg-[#373737] text-[#eff1f6] font-semibold py-2 px-5 rounded-lg text-sm transition-all">
                             Cancel
                         </button>
                         <button type="submit" :disabled="editForm.saving"
-                                class="bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-400 text-white font-semibold py-2 px-5 rounded-lg text-sm transition-all">
+                                class="bg-[#ffa116] hover:bg-[#ffb340] disabled:opacity-50 text-[#1a1a1a] font-semibold py-2 px-5 rounded-lg text-sm transition-all">
                             <span x-show="!editForm.saving">Save Changes</span>
                             <span x-show="editForm.saving">Saving…</span>
                         </button>
@@ -799,61 +824,61 @@
         </div>
 
         <!-- Add Problem Modal -->
-        <div x-show="showModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 overflow-y-auto" x-transition x-cloak>
-            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl max-w-2xl w-full p-8 relative shadow-xl overflow-y-auto max-h-[90vh]">
-                <h2 class="text-2xl font-bold mb-6 text-slate-800 dark:text-slate-100">Add New DSA Problem</h2>
+        <div x-show="showModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 overflow-y-auto" x-transition x-cloak>
+            <div class="bg-[#282828] border border-[rgba(255,255,255,0.08)] rounded-xl max-w-2xl w-full p-8 relative shadow-xl overflow-y-auto max-h-[90vh]">
+                <h2 class="text-2xl font-bold mb-6 text-[#eff1f6]">Add New DSA Problem</h2>
                 
                 <form @submit.prevent="submitProblem">
                     <!-- Title -->
                     <div class="mb-4">
-                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Problem Title</label>
+                        <label class="block text-xs font-semibold text-[#9ca3af] uppercase tracking-wider mb-2">Problem Title</label>
                         <input type="text" x-model="form.title" required
-                               class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg py-2 px-3 text-sm text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                               class="w-full bg-[#323232] border border-[rgba(255,255,255,0.1)] rounded-lg py-2 px-3 text-sm text-[#eff1f6] focus:outline-none focus:border-[#ffa116] focus:ring-1 focus:ring-[#ffa116]">
                     </div>
 
                     <!-- Grid for Difficulty & Tags -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                         <div>
-                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Difficulty</label>
+                            <label class="block text-xs font-semibold text-[#9ca3af] uppercase tracking-wider mb-2">Difficulty</label>
                             <select x-model="form.difficulty" required
-                                    class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg py-2 px-3 text-sm text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    class="w-full bg-[#323232] border border-[rgba(255,255,255,0.1)] rounded-lg py-2 px-3 text-sm text-[#eff1f6] focus:outline-none focus:border-[#ffa116] focus:ring-1 focus:ring-[#ffa116]">
                                 <option value="Easy">Easy</option>
                                 <option value="Medium">Medium</option>
                                 <option value="Hard">Hard</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Topic Tags (Comma Separated)</label>
+                            <label class="block text-xs font-semibold text-[#9ca3af] uppercase tracking-wider mb-2">Topic Tags (Comma Separated)</label>
                             <input type="text" x-model="form.topic_tags" placeholder="e.g. Arrays, Sorting, Hash Map" required
-                                   class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg py-2 px-3 text-sm text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                   class="w-full bg-[#323232] border border-[rgba(255,255,255,0.1)] rounded-lg py-2 px-3 text-sm text-[#eff1f6] focus:outline-none focus:border-[#ffa116] focus:ring-1 focus:ring-[#ffa116]">
                         </div>
                     </div>
 
                     <!-- Description -->
                     <div class="mb-4">
-                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Problem Description (Markdown supported)</label>
+                        <label class="block text-xs font-semibold text-[#9ca3af] uppercase tracking-wider mb-2">Problem Description (Markdown supported)</label>
                         <textarea x-model="form.description" rows="5" required
-                                  class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg py-2 px-3 text-sm text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono"></textarea>
+                                  class="w-full bg-[#323232] border border-[rgba(255,255,255,0.1)] rounded-lg py-2 px-3 text-sm text-[#eff1f6] focus:outline-none focus:border-[#ffa116] focus:ring-1 focus:ring-[#ffa116] font-mono"></textarea>
                     </div>
 
                     <!-- Constraints -->
                     <div class="mb-4">
-                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Constraints</label>
+                        <label class="block text-xs font-semibold text-[#9ca3af] uppercase tracking-wider mb-2">Constraints</label>
                         <textarea x-model="form.constraints" rows="3" required
-                                  class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg py-2 px-3 text-sm text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono" placeholder="e.g. - 1 <= nums.length <= 10^5"></textarea>
+                                  class="w-full bg-[#323232] border border-[rgba(255,255,255,0.1)] rounded-lg py-2 px-3 text-sm text-[#eff1f6] focus:outline-none focus:border-[#ffa116] focus:ring-1 focus:ring-[#ffa116] font-mono" placeholder="e.g. - 1 <= nums.length <= 10^5"></textarea>
                     </div>
 
                     <!-- Test Case Setup (Dynamic) -->
-                    <div class="mb-6 border-t border-slate-200 dark:border-slate-700 pt-4">
-                        <h3 class="text-sm font-bold text-slate-700 dark:text-slate-300 mb-4 flex items-center justify-between">
+                    <div class="mb-6 border-t border-[rgba(255,255,255,0.08)] pt-4">
+                        <h3 class="text-sm font-bold text-[#eff1f6] mb-4 flex items-center justify-between">
                             <span>Test Case Configuration</span>
                         </h3>
                         
                         <!-- Sample Test Cases Section -->
                         <div class="mb-6">
                             <div class="flex items-center justify-between mb-3">
-                                <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider">Sample (Shown) Test Cases</h4>
-                                <button type="button" @click="addSampleTC()" class="text-xs bg-blue-600 hover:bg-blue-700 text-white px-2.5 py-1 rounded font-semibold flex items-center transition-all">
+                                <h4 class="text-xs font-bold text-[#9ca3af] uppercase tracking-wider">Sample (Shown) Test Cases</h4>
+                                <button type="button" @click="addSampleTC()" class="text-xs bg-[#ffa116] hover:bg-[#ffb340] text-[#1a1a1a] px-2.5 py-1 rounded font-semibold flex items-center transition-all">
                                     <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                                     Add Sample
                                 </button>
@@ -861,21 +886,21 @@
                             
                             <div class="space-y-4">
                                 <template x-for="(tc, index) in sampleTCs" :key="index">
-                                    <div class="p-4 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg relative">
+                                    <div class="p-4 bg-[#323232] border border-[rgba(255,255,255,0.08)] rounded-lg relative">
                                         <div class="flex justify-between items-center mb-2">
-                                            <span class="text-xs font-semibold text-slate-500" x-text="`Sample #${index + 1}`"></span>
+                                            <span class="text-xs font-semibold text-[#9ca3af]" x-text="`Sample #${index + 1}`"></span>
                                             <button type="button" @click="removeSampleTC(index)" x-show="sampleTCs.length > 1" class="text-red-500 hover:text-red-700 transition-colors">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                             </button>
                                         </div>
                                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <div>
-                                                <label class="block text-[10px] font-semibold text-slate-500 mb-1">Input</label>
-                                                <textarea x-model="tc.input" rows="2" required class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded p-2 text-xs font-mono text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-blue-500"></textarea>
+                                                <label class="block text-[10px] font-semibold text-[#9ca3af] mb-1">Input</label>
+                                                <textarea x-model="tc.input" rows="2" required class="w-full bg-[#282828] border border-[rgba(255,255,255,0.1)] rounded p-2 text-xs font-mono text-[#eff1f6] focus:outline-none focus:border-[#ffa116] focus:ring-1 focus:ring-[#ffa116]"></textarea>
                                             </div>
                                             <div>
-                                                <label class="block text-[10px] font-semibold text-slate-500 mb-1">Expected Output</label>
-                                                <textarea x-model="tc.expected" rows="2" required class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded p-2 text-xs font-mono text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-blue-500"></textarea>
+                                                <label class="block text-[10px] font-semibold text-[#9ca3af] mb-1">Expected Output</label>
+                                                <textarea x-model="tc.expected" rows="2" required class="w-full bg-[#282828] border border-[rgba(255,255,255,0.1)] rounded p-2 text-xs font-mono text-[#eff1f6] focus:outline-none focus:border-[#ffa116] focus:ring-1 focus:ring-[#ffa116]"></textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -886,8 +911,8 @@
                         <!-- Hidden Test Cases Section -->
                         <div>
                             <div class="flex items-center justify-between mb-3">
-                                <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider">Hidden Test Cases</h4>
-                                <button type="button" @click="addHiddenTC()" class="text-xs bg-slate-600 hover:bg-slate-700 text-white px-2.5 py-1 rounded font-semibold flex items-center transition-all">
+                                <h4 class="text-xs font-bold text-[#9ca3af] uppercase tracking-wider">Hidden Test Cases</h4>
+                                <button type="button" @click="addHiddenTC()" class="text-xs bg-[#323232] hover:bg-[#373737] text-[#eff1f6] px-2.5 py-1 rounded font-semibold flex items-center transition-all">
                                     <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                                     Add Hidden
                                 </button>
@@ -895,21 +920,21 @@
                             
                             <div class="space-y-4">
                                 <template x-for="(tc, index) in hiddenTCs" :key="index">
-                                    <div class="p-4 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg relative">
+                                    <div class="p-4 bg-[#323232] border border-[rgba(255,255,255,0.08)] rounded-lg relative">
                                         <div class="flex justify-between items-center mb-2">
-                                            <span class="text-xs font-semibold text-slate-500" x-text="`Hidden #${index + 1}`"></span>
+                                            <span class="text-xs font-semibold text-[#9ca3af]" x-text="`Hidden #${index + 1}`"></span>
                                             <button type="button" @click="removeHiddenTC(index)" x-show="hiddenTCs.length > 1" class="text-red-500 hover:text-red-700 transition-colors">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                             </button>
                                         </div>
                                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <div>
-                                                <label class="block text-[10px] font-semibold text-slate-500 mb-1">Input</label>
-                                                <textarea x-model="tc.input" rows="2" required class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded p-2 text-xs font-mono text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-blue-500"></textarea>
+                                                <label class="block text-[10px] font-semibold text-[#9ca3af] mb-1">Input</label>
+                                                <textarea x-model="tc.input" rows="2" required class="w-full bg-[#282828] border border-[rgba(255,255,255,0.1)] rounded p-2 text-xs font-mono text-[#eff1f6] focus:outline-none focus:border-[#ffa116] focus:ring-1 focus:ring-[#ffa116]"></textarea>
                                             </div>
                                             <div>
-                                                <label class="block text-[10px] font-semibold text-slate-500 mb-1">Expected Output</label>
-                                                <textarea x-model="tc.expected" rows="2" required class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded p-2 text-xs font-mono text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-blue-500"></textarea>
+                                                <label class="block text-[10px] font-semibold text-[#9ca3af] mb-1">Expected Output</label>
+                                                <textarea x-model="tc.expected" rows="2" required class="w-full bg-[#282828] border border-[rgba(255,255,255,0.1)] rounded p-2 text-xs font-mono text-[#eff1f6] focus:outline-none focus:border-[#ffa116] focus:ring-1 focus:ring-[#ffa116]"></textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -919,13 +944,13 @@
                     </div>
 
                     <!-- Actions -->
-                    <div class="flex justify-end space-x-3 border-t border-slate-200 dark:border-slate-700 pt-4">
+                    <div class="flex justify-end space-x-3 border-t border-[rgba(255,255,255,0.08)] pt-4">
                         <button type="button" @click="showModal = false"
-                                class="bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 font-semibold py-2 px-4 rounded-lg text-sm transition-all">
+                                class="bg-[#323232] hover:bg-[#373737] text-[#eff1f6] font-semibold py-2 px-4 rounded-lg text-sm transition-all">
                             Cancel
                         </button>
                         <button type="submit" 
-                                class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg text-sm transition-all">
+                                class="bg-[#ffa116] hover:bg-[#ffb340] text-[#1a1a1a] font-semibold py-2 px-4 rounded-lg text-sm transition-all">
                             Create Problem
                         </button>
                     </div>
@@ -940,7 +965,7 @@
     <script>
         function adminApp() {
             return {
-                user: null,
+                user: typeof Auth !== 'undefined' ? Auth.getUser() : null,
                 profile: null,
                 problems: [],
                 adminTab: 'problems',
@@ -992,7 +1017,7 @@
                     Auth.checkAuthGuard();
                     this.user = Auth.getUser();
                     
-                    if (this.user.role !== 'admin') {
+                    if (!this.user || this.user.role !== 'admin') {
                         window.location.href = 'index.html';
                         return;
                     }

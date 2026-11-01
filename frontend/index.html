@@ -8,75 +8,109 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" crossorigin>
     <link rel="stylesheet" href="assets/css/tailwind.min.css">
-    <link rel="stylesheet" href="assets/css/styles.css?v=10">
+    <link rel="stylesheet" href="assets/css/styles.css?v=14">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              lc: {
+                bg: '#1a1a1a',
+                surface: '#282828',
+                elevated: '#323232',
+                hover: '#373737',
+                border: 'rgba(255, 255, 255, 0.08)',
+                brand: '#ffa116',
+                easy: '#00b8a3',
+                medium: '#ffc01e',
+                hard: '#ff375f',
+                submit: '#2cbb5d'
+              }
+            }
+          }
+        }
+      }
+    </script>
     <script>
       window.__ENV__ = { API_BASE_URL: "http://localhost:8080/api" };
     </script>
+    <script src="assets/js/app.js"></script>
+    <script src="assets/js/auth.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
-<body class="bg-[var(--bg)] text-[var(--text)] min-h-screen flex flex-col font-sans transition-colors duration-150" x-data="dashboardApp()" x-init="init()">
+<body class="bg-[#1a1a1a] text-[#eff1f6] min-h-screen flex flex-col font-sans transition-colors duration-150" x-data="dashboardApp()" x-init="init()">
     
     <!-- Top LeetCode Navigation Bar -->
-    <nav class="h-14 bg-[var(--bg-surface)] border-b border-[var(--border)] sticky top-0 z-50 shrink-0">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
+    <nav class="lc-navbar">
+        <div class="lc-navbar-inner">
             <!-- Left: Logo & Nav Links -->
-            <div class="flex items-center space-x-8">
-                <a href="index.html" class="flex items-center gap-2 shrink-0 group">
-                    <div class="w-8 h-8 rounded-lg bg-[#ffa116] flex items-center justify-center text-[#1a1a1a] shadow-sm">
-                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <div class="flex items-center space-x-6">
+                <a href="index.html" class="lc-brand">
+                    <div class="lc-brand-icon">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <polyline points="16 18 22 12 16 6"></polyline>
                             <polyline points="8 6 2 12 8 18"></polyline>
                         </svg>
                     </div>
-                    <span class="text-lg font-bold tracking-tight text-[var(--text)]">Big-O</span>
+                    <span>Big-O</span>
                 </a>
 
                 <div class="hidden md:flex items-center space-x-1">
-                    <a href="index.html" class="px-3 py-1.5 rounded-md text-sm font-semibold text-[var(--text)] border-b-2 border-[#ffa116]">Dashboard</a>
-                    <a href="problems.html" class="px-3 py-1.5 rounded-md text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text)] hover:bg-[var(--bg-hover)] transition-colors">Problems</a>
-                    <a href="leaderboard.html" class="px-3 py-1.5 rounded-md text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text)] hover:bg-[var(--bg-hover)] transition-colors">Leaderboard</a>
+                    <a href="index.html" class="lc-nav-link active">Dashboard</a>
+                    <a href="problems.html" class="lc-nav-link">Problems</a>
+                    <a href="leaderboard.html" class="lc-nav-link">Leaderboard</a>
                     
                     <template x-if="user && user.role === 'faculty'">
-                        <a href="faculty.html" class="px-3 py-1.5 rounded-md text-sm font-medium text-[#10b981] hover:bg-[#10b981]/10 transition-colors">Faculty</a>
+                        <a href="faculty.html" class="lc-nav-link text-[#10b981]">Faculty</a>
                     </template>
                     <template x-if="user && user.role === 'admin'">
-                        <a href="admin.html" class="px-3 py-1.5 rounded-md text-sm font-medium text-[#ff375f] hover:bg-[#ff375f]/10 transition-colors">Admin</a>
+                        <a href="admin.html" class="lc-nav-link text-[#ff375f]">Admin</a>
                     </template>
                 </div>
             </div>
 
-            <!-- Right: Theme & User Account -->
+            <!-- Right: Streak, Theme & User Account -->
             <div class="flex items-center space-x-3">
+                <!-- Streak Badge (LeetCode Style) -->
+                <template x-if="user">
+                    <div class="flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#323232] border border-[rgba(255,255,255,0.08)] text-xs font-semibold text-[#ffa116]" title="Daily Streak">
+                        <span>🔥</span>
+                        <span x-text="user.streak_count || 0"></span>
+                    </div>
+                </template>
+
                 <!-- Theme Switch -->
                 <div class="relative" x-data="{ open: false, current: localStorage.getItem('theme') || 'dark', setTheme(t) { this.current = t; const h = document.documentElement; h.classList.remove('dark'); if (t === 'dark') h.classList.add('dark'); localStorage.setItem('theme', t); this.open = false; } }" @keydown.escape.window="open = false">
-                    <button @click="open = !open" class="p-2 rounded-lg bg-[var(--bg-elevated)] border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text)] transition-colors" title="Theme">
+                    <button @click="open = !open" class="p-1.5 rounded-md bg-[#323232] hover:bg-[#3e3e3e] border border-[rgba(255,255,255,0.08)] text-[#9ca3af] hover:text-[#eff1f6] transition-colors" title="Theme">
                         <svg x-show="current === 'dark'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
                         <svg x-show="current === 'light'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
                     </button>
-                    <div x-show="open" @click.outside="open = false" x-transition class="absolute right-0 mt-2 w-36 bg-[var(--bg-surface)] border border-[var(--border)] rounded-lg shadow-xl z-50 py-1 text-xs">
-                        <button @click="setTheme('dark')" class="w-full flex items-center gap-2 px-3 py-2 text-[var(--text-secondary)] hover:text-[var(--text)] hover:bg-[var(--bg-hover)]" :class="current === 'dark' ? 'font-semibold text-[#ffa116]' : ''">Dark</button>
-                        <button @click="setTheme('light')" class="w-full flex items-center gap-2 px-3 py-2 text-[var(--text-secondary)] hover:text-[var(--text)] hover:bg-[var(--bg-hover)]" :class="current === 'light' ? 'font-semibold text-[#ffa116]' : ''">Light</button>
+                    <div x-show="open" @click.outside="open = false" x-transition class="absolute right-0 mt-2 w-32 bg-[#282828] border border-[rgba(255,255,255,0.1)] rounded-lg shadow-2xl z-50 py-1 text-xs">
+                        <button @click="setTheme('dark')" class="w-full flex items-center gap-2 px-3 py-2 text-[#9ca3af] hover:text-[#eff1f6] hover:bg-[#373737]" :class="current === 'dark' ? 'font-semibold text-[#ffa116]' : ''">Dark</button>
+                        <button @click="setTheme('light')" class="w-full flex items-center gap-2 px-3 py-2 text-[#9ca3af] hover:text-[#eff1f6] hover:bg-[#373737]" :class="current === 'light' ? 'font-semibold text-[#ffa116]' : ''">Light</button>
                     </div>
                 </div>
 
-                <template x-if="user">
+                <template x-if="user && user.username">
                     <div class="flex items-center space-x-3">
                         <a href="profile.html" class="flex items-center gap-2 hover:opacity-90 transition-opacity">
                             <template x-if="user.avatar_url">
-                                <img :src="API_BASE_URL.replace('/api', '') + user.avatar_url" alt="Profile" class="w-8 h-8 rounded-full object-cover border border-[var(--border)]">
+                                <img :src="API_BASE_URL.replace('/api', '') + user.avatar_url" alt="Profile" class="w-7 h-7 rounded-full object-cover border border-[rgba(255,255,255,0.15)]">
                             </template>
                             <template x-if="!user.avatar_url">
-                                <div class="w-8 h-8 rounded-full bg-[#ffa116] flex items-center justify-center text-[#1a1a1a] font-bold text-xs" x-text="user.username ? user.username.charAt(0).toUpperCase() : '?'"></div>
+                                <div class="w-7 h-7 rounded-full bg-[#ffa116] flex items-center justify-center text-[#1a1a1a] font-bold text-xs" x-text="user.username ? user.username.charAt(0).toUpperCase() : '?'"></div>
                             </template>
-                            <span class="text-sm font-semibold text-[var(--text)] hidden sm:inline" x-text="user.username"></span>
+                            <span class="text-sm font-semibold text-[#eff1f6] hidden sm:inline" x-text="user.username"></span>
                         </a>
-                        <button @click="logout()" class="text-xs bg-[var(--bg-elevated)] hover:bg-[var(--danger-soft)] text-[var(--text-secondary)] hover:text-[var(--danger)] border border-[var(--border)] px-3 py-1.5 rounded-lg font-medium transition-colors">Sign Out</button>
+                        <button @click="logout()" class="lc-btn-signout">Sign Out</button>
                     </div>
                 </template>
-                <template x-if="!user">
+                <template x-if="!user || !user.username">
                     <div class="flex items-center space-x-2">
-                        <a href="landing.html?login" class="lc-btn-run text-xs py-1.5 px-3">Sign In</a>
-                        <a href="landing.html?register" class="lc-btn-submit text-xs py-1.5 px-3">Register</a>
+                        <a href="landing.html?login" class="lc-btn-signin">Sign In</a>
+                        <a href="landing.html?register" class="lc-btn-register">Register</a>
                     </div>
                 </template>
             </div>
@@ -256,12 +290,16 @@
     <script>
         function dashboardApp() {
             return {
-                user: null,
+                user: typeof Auth !== 'undefined' ? Auth.getUser() : null,
                 stats: null,
                 recentSubmissions: [],
                 loading: true,
 
                 async init() {
+                    // Instantly sync user state so UI renders correct auth status
+                    if (typeof Auth !== 'undefined') {
+                        this.user = Auth.getUser();
+                    }
                     await this.loadUser();
                     await this.loadStats();
                     await this.loadRecentSubmissions();
@@ -269,20 +307,32 @@
 
                 async loadUser() {
                     try {
-                        const token = localStorage.getItem('token');
-                        if (!token) return;
+                        const token = Auth.getToken();
+                        if (!token) {
+                            this.user = null;
+                            return;
+                        }
+                        this.user = Auth.getUser();
                         const res = await fetch(`${API_BASE_URL}/auth/profile`, {
-                            headers: { 'Authorization': `Bearer ${token}` }
+                            headers: Auth.getAuthHeader()
                         });
-                        if (res.ok) this.user = await res.json();
-                    } catch (e) { console.error(e); }
+                        if (res.ok) {
+                            const profileData = await res.json();
+                            this.user = { ...(this.user || {}), ...profileData };
+                            Auth.setUser(this.user);
+                        } else if (res.status === 401) {
+                            Auth.logout();
+                        }
+                    } catch (e) {
+                        console.error('Error loading user profile:', e);
+                    }
                 },
 
                 async loadStats() {
-                    if (!this.user) return;
+                    if (!this.user || !this.user.id) return;
                     try {
                         const res = await fetch(`${API_BASE_URL}/users/${this.user.id}/stats`, {
-                            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+                            headers: Auth.getAuthHeader()
                         });
                         if (res.ok) {
                             const data = await res.json();
@@ -298,7 +348,7 @@
                     if (!this.user) { this.loading = false; return; }
                     try {
                         const res = await fetch(`${API_BASE_URL}/submissions/history`, {
-                            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+                            headers: Auth.getAuthHeader()
                         });
                         if (res.ok) {
                             const data = await res.json();
@@ -309,8 +359,7 @@
                 },
 
                 logout() {
-                    localStorage.removeItem('token');
-                    window.location.href = 'index.html';
+                    Auth.logout();
                 },
 
                 formatDate(dateString) {

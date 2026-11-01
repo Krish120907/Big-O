@@ -452,3 +452,219 @@ a:hover { color: var(--accent-hover); text-decoration: underline; }
 .mt-4 { margin-top: 16px; }
 .mb-4 { margin-bottom: 16px; }
 .w-full { width: 100%; }
+
+/* ══════════════════════════════════════════════════════════════════
+   LEETCODE CORE COMPONENTS & UTILITY FALLBACKS
+   ══════════════════════════════════════════════════════════════════ */
+
+/* LeetCode Navbar */
+.lc-navbar {
+    height: 50px !important;
+    background-color: var(--bg-surface) !important;
+    border-bottom: 1px solid var(--border) !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 100 !important;
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.25) !important;
+}
+
+.lc-navbar-inner {
+    max-width: 1400px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+}
+
+.lc-nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 14px;
+    height: 50px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary) !important;
+    text-decoration: none !important;
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.lc-nav-link:hover {
+    color: var(--text) !important;
+    background: transparent !important;
+}
+
+.lc-nav-link.active {
+    color: var(--text) !important;
+    font-weight: 600 !important;
+    border-bottom: 2px solid #ffa116 !important;
+}
+
+.lc-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none !important;
+    color: var(--text) !important;
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: -0.02em;
+}
+
+.lc-brand-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    background: #ffa116;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #1a1a1a;
+    font-weight: 800;
+    box-shadow: 0 1px 3px rgba(255, 161, 22, 0.35);
+}
+
+/* LeetCode Cards & Panels */
+.lc-card {
+    background-color: var(--bg-surface) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 8px !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2) !important;
+}
+
+.lc-panel {
+    background-color: var(--bg-surface) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.lc-panel-header {
+    height: 38px !important;
+    background-color: var(--bg-surface) !important;
+    border-bottom: 1px solid var(--border) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 0 12px !important;
+    user-select: none !important;
+    flex-shrink: 0 !important;
+}
+
+/* LeetCode Button Utilities */
+.lc-btn-signin {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 6px 14px !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    border-radius: 6px !important;
+    background-color: #323232 !important;
+    color: #eff1f6 !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    cursor: pointer !important;
+    text-decoration: none !important;
+    transition: background-color 0.15s ease, border-color 0.15s ease !important;
+    line-height: 1.2 !important;
+}
+.lc-btn-signin:hover {
+    background-color: #3e3e3e !important;
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.lc-btn-register {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 6px 14px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    border-radius: 6px !important;
+    background-color: #ffa116 !important;
+    color: #1a1a1a !important;
+    border: 1px solid transparent !important;
+    cursor: pointer !important;
+    text-decoration: none !important;
+    transition: background-color 0.15s ease !important;
+    line-height: 1.2 !important;
+}
+.lc-btn-register:hover {
+    background-color: #ffb84d !important;
+}
+
+.lc-btn-signout {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 5px 12px !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    border-radius: 6px !important;
+    background-color: #323232 !important;
+    color: #9ca3af !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    cursor: pointer !important;
+    text-decoration: none !important;
+    transition: all 0.15s ease !important;
+    line-height: 1.2 !important;
+}
+.lc-btn-signout:hover {
+    background-color: rgba(255, 55, 95, 0.15) !important;
+    color: #ff375f !important;
+    border-color: rgba(255, 55, 95, 0.3) !important;
+}
+
+.lc-streak-badge {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    padding: 4px 10px !important;
+    border-radius: 6px !important;
+    background-color: #323232 !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    color: #ffa116 !important;
+}
+
+/* Fallback utilities for arbitrary classes */
+[class*="bg-[var(--bg)]"] { background-color: var(--bg) !important; }
+[class*="bg-[var(--bg-surface)]"] { background-color: var(--bg-surface) !important; }
+[class*="bg-[var(--bg-elevated)]"] { background-color: var(--bg-elevated) !important; }
+[class*="bg-[var(--bg-hover)]"]:hover { background-color: var(--bg-hover) !important; }
+[class*="border-[var(--border)]"] { border-color: var(--border) !important; }
+[class*="border-b-[var(--border)]"] { border-bottom-color: var(--border) !important; }
+[class*="border-t-[var(--border)]"] { border-top-color: var(--border) !important; }
+[class*="text-[var(--text)]"] { color: var(--text) !important; }
+[class*="text-[var(--text-secondary)]"] { color: var(--text-secondary) !important; }
+[class*="text-[var(--text-muted)]"] { color: var(--text-muted) !important; }
+[class*="bg-[#ffa116]"] { background-color: #ffa116 !important; }
+[class*="bg-[#282828]"] { background-color: #282828 !important; }
+[class*="bg-[#1a1a1a]"] { background-color: #1a1a1a !important; }
+[class*="bg-[#323232]"] { background-color: #323232 !important; }
+[class*="bg-[#373737]"] { background-color: #373737 !important; }
+[class*="bg-[#2cbb5d]"] { background-color: #2cbb5d !important; }
+[class*="bg-[#00b8a3]"] { background-color: #00b8a3 !important; }
+[class*="bg-[#ffc01e]"] { background-color: #ffc01e !important; }
+[class*="bg-[#ff375f]"] { background-color: #ff375f !important; }
+[class*="text-[#ffa116]"] { color: #ffa116 !important; }
+[class*="text-[#2cbb5d]"] { color: #2cbb5d !important; }
+[class*="text-[#00b8a3]"] { color: #00b8a3 !important; }
+[class*="text-[#ffc01e]"] { color: #ffc01e !important; }
+[class*="text-[#ff375f]"] { color: #ff375f !important; }
+[class*="text-[#eff1f6]"] { color: #eff1f6 !important; }
+[class*="text-[#9ca3af]"] { color: #9ca3af !important; }
+[class*="border-[#ffa116]"] { border-color: #ffa116 !important; }
+[class*="border-[rgba(255,255,255,0.08)]"] { border-color: rgba(255, 255, 255, 0.08) !important; }
+[class*="border-[rgba(255,255,255,0.1)]"] { border-color: rgba(255, 255, 255, 0.1) !important; }

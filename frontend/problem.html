@@ -8,20 +8,46 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" crossorigin>
     <link rel="stylesheet" href="assets/css/tailwind.min.css">
-    <link rel="stylesheet" href="assets/css/styles.css?v=10">
+    <link rel="stylesheet" href="assets/css/styles.css?v=14">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              lc: {
+                bg: '#1a1a1a',
+                surface: '#282828',
+                elevated: '#323232',
+                hover: '#373737',
+                border: 'rgba(255, 255, 255, 0.08)',
+                brand: '#ffa116',
+                easy: '#00b8a3',
+                medium: '#ffc01e',
+                hard: '#ff375f',
+                submit: '#2cbb5d'
+              }
+            }
+          }
+        }
+      }
+    </script>
     <script>
       window.__ENV__ = {
         API_BASE_URL: "http://localhost:8080/api"
       };
     </script>
+    <script src="assets/js/app.js"></script>
+    <script src="assets/js/auth.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <!-- Monaco Editor AMD Loader -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script>
 </head>
-<body class="bg-[var(--bg)] text-[var(--text)] min-h-screen flex flex-col font-sans transition-colors duration-150 select-none overflow-hidden" x-data="workspaceApp()" x-init="init()">
+<body class="bg-[#1a1a1a] text-[#eff1f6] min-h-screen flex flex-col font-sans transition-colors duration-150 select-none overflow-hidden" x-data="workspaceApp()" x-init="init()">
     
-    <!-- Top LeetCode Navigation Bar -->
-    <header class="h-12 bg-[var(--bg-surface)] border-b border-[var(--border)] flex items-center justify-between px-4 z-50 shrink-0">
+    <!-- Top LeetCode Workspace Bar -->
+    <header class="h-12 bg-[#282828] border-b border-[rgba(255,255,255,0.08)] flex items-center justify-between px-4 z-50 shrink-0">
         <!-- Left: Logo & Problem Title Navigation -->
         <div class="flex items-center space-x-3 min-w-0">
             <!-- Brand Logo -->
@@ -124,28 +150,36 @@
                 </div>
             </div>
 
-            <!-- User Avatar & Dropdown -->
-            <div class="relative" x-data="{ userMenu: false }">
-                <button @click="userMenu = !userMenu" class="flex items-center gap-2 hover:opacity-90 transition-opacity">
-                    <template x-if="profile && profile.avatar_url">
-                        <img :src="API_BASE_URL.replace('/api', '') + profile.avatar_url" alt="Profile" class="w-7 h-7 rounded-full object-cover border border-[var(--border)]">
-                    </template>
-                    <template x-if="!profile || !profile.avatar_url">
-                        <div class="w-7 h-7 rounded-full bg-[#ffa116] flex items-center justify-center text-[#1a1a1a] font-bold text-xs shrink-0" x-text="user ? user.username.charAt(0).toUpperCase() : '?'"></div>
-                    </template>
-                </button>
-                <div x-show="userMenu" @click.outside="userMenu = false" x-transition class="absolute right-0 mt-2 w-44 bg-[var(--bg-surface)] border border-[var(--border)] rounded-lg shadow-xl z-50 py-1 text-xs">
-                    <div class="px-3 py-2 border-b border-[var(--border)]">
-                        <p class="font-semibold text-[var(--text)] truncate" x-text="user ? user.username : 'Guest'"></p>
-                        <p class="text-[var(--text-muted)] truncate" x-text="user ? user.email : ''"></p>
+            <!-- User Avatar & Dropdown / Sign in -->
+            <template x-if="user && user.username">
+                <div class="relative" x-data="{ userMenu: false }">
+                    <button @click="userMenu = !userMenu" class="flex items-center gap-2 hover:opacity-90 transition-opacity">
+                        <template x-if="profile && profile.avatar_url">
+                            <img :src="API_BASE_URL.replace('/api', '') + profile.avatar_url" alt="Profile" class="w-7 h-7 rounded-full object-cover border border-[rgba(255,255,255,0.15)]">
+                        </template>
+                        <template x-if="!profile || !profile.avatar_url">
+                            <div class="w-7 h-7 rounded-full bg-[#ffa116] flex items-center justify-center text-[#1a1a1a] font-bold text-xs shrink-0" x-text="user ? user.username.charAt(0).toUpperCase() : '?'"></div>
+                        </template>
+                    </button>
+                    <div x-show="userMenu" @click.outside="userMenu = false" x-transition class="absolute right-0 mt-2 w-44 bg-[#282828] border border-[rgba(255,255,255,0.1)] rounded-lg shadow-xl z-50 py-1 text-xs">
+                        <div class="px-3 py-2 border-b border-[rgba(255,255,255,0.08)]">
+                            <p class="font-semibold text-[#eff1f6] truncate" x-text="user ? user.username : 'User'"></p>
+                            <p class="text-[#9ca3af] truncate" x-text="user ? user.email : ''"></p>
+                        </div>
+                        <a href="profile.html" class="flex items-center gap-2 px-3 py-2 text-[#9ca3af] hover:text-[#eff1f6] hover:bg-[#373737]">Profile</a>
+                        <a href="problems.html" class="flex items-center gap-2 px-3 py-2 text-[#9ca3af] hover:text-[#eff1f6] hover:bg-[#373737]">Problems</a>
+                        <a href="leaderboard.html" class="flex items-center gap-2 px-3 py-2 text-[#9ca3af] hover:text-[#eff1f6] hover:bg-[#373737]">Leaderboard</a>
+                        <div class="border-t border-[rgba(255,255,255,0.08)] my-1"></div>
+                        <button @click="Auth.logout()" class="w-full text-left px-3 py-2 text-[#ff375f] hover:bg-[#ff375f]/15">Sign Out</button>
                     </div>
-                    <a href="profile.html" class="flex items-center gap-2 px-3 py-2 text-[var(--text-secondary)] hover:text-[var(--text)] hover:bg-[var(--bg-hover)]">Profile</a>
-                    <a href="problems.html" class="flex items-center gap-2 px-3 py-2 text-[var(--text-secondary)] hover:text-[var(--text)] hover:bg-[var(--bg-hover)]">Problems</a>
-                    <a href="leaderboard.html" class="flex items-center gap-2 px-3 py-2 text-[var(--text-secondary)] hover:text-[var(--text)] hover:bg-[var(--bg-hover)]">Leaderboard</a>
-                    <div class="border-t border-[var(--border)] my-1"></div>
-                    <button @click="Auth.logout()" class="w-full text-left px-3 py-2 text-[var(--danger)] hover:bg-[var(--danger-soft)]">Sign Out</button>
                 </div>
-            </div>
+            </template>
+            <template x-if="!user || !user.username">
+                <div class="flex items-center space-x-2">
+                    <a href="landing.html?login" class="lc-btn-signin">Sign In</a>
+                    <a href="landing.html?register" class="lc-btn-register">Register</a>
+                </div>
+            </template>
         </div>
     </header>
 
@@ -553,7 +587,7 @@
     <script>
         function workspaceApp() {
             return {
-                user: null,
+                user: typeof Auth !== 'undefined' ? Auth.getUser() : null,
                 profile: null,
                 problemId: null,
                 problem: {},
@@ -578,7 +612,6 @@
                 editContent: '',
 
                 async init() {
-                    Auth.checkAuthGuard();
                     this.user = Auth.getUser();
                     
                     const urlParams = new URLSearchParams(window.location.search);
@@ -589,7 +622,9 @@
                         return;
                     }
 
-                    await this.fetchProfile();
+                    if (this.user) {
+                        await this.fetchProfile();
+                    }
                     await this.fetchProblemDetails();
                     await this.fetchSampleCases();
                     await this.fetchComments();
@@ -631,7 +666,8 @@
                         if (response.ok) {
                             this.profile = await response.json();
                             if (this.user) {
-                                this.user.username = this.profile.username;
+                                this.user = { ...this.user, ...this.profile };
+                                Auth.setUser(this.user);
                             }
                         }
                     } catch (e) {

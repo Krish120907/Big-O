@@ -8,11 +8,38 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" crossorigin>
     <link rel="stylesheet" href="assets/css/tailwind.min.css">
+    <link rel="stylesheet" href="assets/css/styles.css?v=14">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              lc: {
+                bg: '#1a1a1a',
+                surface: '#282828',
+                elevated: '#323232',
+                hover: '#373737',
+                border: 'rgba(255, 255, 255, 0.08)',
+                brand: '#ffa116',
+                easy: '#00b8a3',
+                medium: '#ffc01e',
+                hard: '#ff375f',
+                submit: '#2cbb5d'
+              }
+            }
+          }
+        }
+      }
+    </script>
     <script>
       window.__ENV__ = {
         API_BASE_URL: "http://localhost:8080/api"
       };
     </script>
+    <script src="assets/js/app.js"></script>
+    <script src="assets/js/auth.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -33,92 +60,30 @@
             --sky:       #00b8a3;
         }
 
-        html { scroll-behavior: smooth; }
+        html { scroll-behavior: smooth; background: #1a1a1a; }
 
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background-color: #1a1a1a;
+            color: #eff1f6;
             min-height: 100vh;
             overflow-x: hidden;
         }
 
-        /* ══════════════════════════════════════
-           MESH BACKGROUND
-        ══════════════════════════════════════ */
         .mesh-bg {
-            position: fixed;
-            inset: 0;
-            z-index: 0;
-            background:
-                /* top-center blue glow */
-                radial-gradient(ellipse 70% 45% at 50% 0%,   rgba(37,99,235,0.32)  0%, transparent 60%),
-                /* left violet */
-                radial-gradient(ellipse 45% 35% at 0%   40%, rgba(109,40,217,0.22) 0%, transparent 55%),
-                /* right teal */
-                radial-gradient(ellipse 40% 30% at 100% 55%, rgba(6,182,212,0.16)  0%, transparent 50%),
-                /* bottom-left purple */
-                radial-gradient(ellipse 50% 35% at 20%  90%, rgba(139,92,246,0.18) 0%, transparent 55%),
-                /* base */
-                #060d1f;
-            pointer-events: none;
+            display: none !important;
         }
 
-        /* animated floating blobs */
         .blob {
-            position: fixed;
-            border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.35;
-            pointer-events: none;
-            z-index: 0;
-        }
-        .blob1 {
-            width: 520px; height: 520px;
-            background: radial-gradient(circle, #2563eb, transparent 70%);
-            top: -120px; left: -100px;
-            animation: drift1 14s ease-in-out infinite;
-        }
-        .blob2 {
-            width: 440px; height: 440px;
-            background: radial-gradient(circle, #7c3aed, transparent 70%);
-            top: 30%; right: -100px;
-            animation: drift2 18s ease-in-out infinite;
-        }
-        .blob3 {
-            width: 360px; height: 360px;
-            background: radial-gradient(circle, #0891b2, transparent 70%);
-            bottom: 10%; left: 30%;
-            animation: drift1 22s ease-in-out infinite reverse;
+            display: none !important;
         }
 
-        @keyframes drift1 {
-            0%,100% { transform: translate(0,0) scale(1); }
-            33%      { transform: translate(40px,-30px) scale(1.05); }
-            66%      { transform: translate(-20px,20px) scale(0.97); }
-        }
-        @keyframes drift2 {
-            0%,100% { transform: translate(0,0) scale(1); }
-            50%      { transform: translate(-50px,40px) scale(1.08); }
-        }
-
-        /* grid overlay */
         .grid-overlay {
-            position: fixed;
-            inset: 0;
-            z-index: 0;
-            pointer-events: none;
-            background-image:
-                linear-gradient(rgba(99,130,200,0.04) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(99,130,200,0.04) 1px, transparent 1px);
-            background-size: 48px 48px;
+            display: none !important;
         }
 
-        /* ══════════════════════════════════════
-           LAYOUT
-        ══════════════════════════════════════ */
         .container {
-            max-width: 1100px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 0 24px;
             position: relative;
@@ -127,75 +92,37 @@
 
         /* ══════════════════════════════════════
            NAVBAR
+        /* ══════════════════════════════════════
+           LEETCODE NAVBAR
         ══════════════════════════════════════ */
-        nav {
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            background: rgba(6,11,24,0.75);
-            border-bottom: 1px solid rgba(99,130,200,0.1);
+        .lc-navbar {
+            height: 50px !important;
+            background-color: #282828 !important;
+            border-bottom: 1px solid rgba(255,255,255,0.08) !important;
+            position: sticky !important;
+            top: 0 !important;
+            z-index: 100 !important;
+            width: 100% !important;
+            display: flex !important;
+            align-items: center !important;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25) !important;
         }
-        .nav-inner {
-            max-width: 1100px;
+        .lc-navbar-inner {
+            max-width: 1200px;
+            width: 100%;
             margin: 0 auto;
             padding: 0 24px;
-            height: 64px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-        }
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            text-decoration: none;
-        }
-        .logo-icon {
-            width: 34px; height: 34px;
-            border-radius: 9px;
-            background: linear-gradient(135deg, #3b82f6, #6d28d9);
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 0 18px rgba(99,102,241,0.5);
-            flex-shrink: 0;
-        }
-        .logo-text {
-            font-size: 1.15rem;
-            font-weight: 800;
-            letter-spacing: -0.03em;
-            background: linear-gradient(135deg, #60a5fa, #a78bfa);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        .btn-nav {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 8px 20px;
-            border-radius: 10px;
-            border: 1px solid rgba(99,102,241,0.4);
-            background: rgba(99,102,241,0.1);
-            color: #c7d2fe;
-            font-size: 0.85rem;
-            font-weight: 600;
-            text-decoration: none;
-            transition: background 0.2s, border-color 0.2s, transform 0.2s, box-shadow 0.2s;
-            white-space: nowrap;
-        }
-        .btn-nav:hover {
-            background: rgba(99,102,241,0.22);
-            border-color: rgba(99,102,241,0.7);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 16px rgba(99,102,241,0.28);
+            height: 100%;
         }
 
         /* ══════════════════════════════════════
            HERO
         ══════════════════════════════════════ */
         .hero {
-            padding: 90px 0 80px;
+            padding: 80px 0 70px;
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 48px;
@@ -229,9 +156,9 @@
             gap: 8px;
             padding: 6px 16px;
             border-radius: 999px;
-            border: 1px solid rgba(59,130,246,0.3);
-            background: rgba(59,130,246,0.08);
-            color: #93c5fd;
+            border: 1px solid rgba(255,161,22,0.3);
+            background: rgba(255,161,22,0.1);
+            color: #ffa116;
             font-size: 0.78rem;
             font-weight: 600;
             margin-bottom: 32px;
@@ -240,7 +167,7 @@
         .badge-dot {
             width: 7px; height: 7px;
             border-radius: 50%;
-            background: #60a5fa;
+            background: #ffa116;
             animation: blink 2s ease-in-out infinite;
         }
         @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.35} }
@@ -301,18 +228,18 @@
             align-items: center;
             gap: 8px;
             padding: 13px 28px;
-            border-radius: 12px;
-            border: 1px solid rgba(99,102,241,0.35);
-            background: transparent;
-            color: #a5b4fc;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.12);
+            background: #323232;
+            color: #eff1f6;
             font-size: 0.9rem;
             font-weight: 600;
             text-decoration: none;
             transition: background 0.2s, border-color 0.2s, transform 0.2s;
         }
         .btn-ghost:hover {
-            background: rgba(99,102,241,0.1);
-            border-color: rgba(99,102,241,0.6);
+            background: #3c3c3c;
+            border-color: rgba(255,255,255,0.25);
             transform: translateY(-1px);
         }
 
@@ -325,17 +252,18 @@
             flex-wrap: wrap;
         }
         .stat-pill {
-            padding: 12px 24px;
-            border-radius: 14px;
-            background: rgba(13,21,38,0.9);
-            border: 1px solid rgba(99,130,200,0.18);
+            padding: 14px 24px;
+            border-radius: 10px;
+            background: #282828;
+            border: 1px solid rgba(255,255,255,0.08);
             text-align: center;
             min-width: 110px;
-            transition: transform 0.25s, box-shadow 0.25s;
+            transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
         }
         .stat-pill:hover {
             transform: translateY(-3px);
-            box-shadow: 0 12px 32px rgba(0,0,0,0.4);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+            border-color: rgba(255,161,22,0.4);
         }
         .stat-val {
             font-size: 1.45rem;
@@ -355,7 +283,7 @@
         ══════════════════════════════════════ */
         .divider {
             height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(99,130,200,0.2), transparent);
+            background: rgba(255,255,255,0.08);
             margin: 0 24px;
             position: relative;
             z-index: 1;
@@ -524,37 +452,38 @@
         ══════════════════════════════════════ */
         .modal-backdrop {
             position: fixed; inset: 0; z-index: 200;
-            background: rgba(4,8,20,0.55);
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(4px);
             display: flex; align-items: center; justify-content: center;
             padding: 16px;
             box-sizing: border-box;
         }
         .modal-card {
-            background: rgba(8,15,36,0.98);
-            border: 1px solid rgba(99,130,200,0.22);
-            box-shadow: 0 0 0 1px rgba(255,255,255,0.04), 0 32px 72px rgba(0,0,0,0.75);
-            border-radius: 22px;
-            padding: 40px 40px 36px;
+            background: #282828;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 24px 60px rgba(0,0,0,0.75);
+            border-radius: 12px;
+            padding: 36px 36px 32px;
             width: 100%; max-width: 440px;
             position: relative; z-index: 201;
             box-sizing: border-box;
             overflow: hidden;
         }
         @media (max-width: 500px) {
-            .modal-card { padding: 28px 20px 24px; border-radius: 16px; }
+            .modal-card { padding: 24px 20px 20px; border-radius: 10px; }
         }
         .modal-header {
             text-align: center;
-            padding-bottom: 28px;
-            margin-bottom: 28px;
-            border-bottom: 1px solid rgba(99,130,200,0.12);
+            padding-bottom: 20px;
+            margin-bottom: 22px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
         }
         .modal-header h1 {
-            font-size: 1.55rem; font-weight: 800; color: #fff;
-            letter-spacing: -0.4px; margin-bottom: 8px;
+            font-size: 1.6rem; font-weight: 800; color: #ffa116;
+            letter-spacing: -0.4px; margin-bottom: 6px;
         }
         .modal-header p {
-            font-size: 13.5px; font-weight: 500; color: #64748b;
+            font-size: 13.5px; font-weight: 500; color: #9ca3af;
             line-height: 1.5;
         }
 
@@ -562,57 +491,55 @@
         .field-group {
             display: flex;
             flex-direction: column;
-            gap: 5px;        /* label → input: tight */
+            gap: 5px;
         }
 
         .login-divider {
             display: flex; align-items: center; gap: 12px;
-            color: #475569; font-size: 11px; font-weight: 700;
+            color: #6b7280; font-size: 11px; font-weight: 700;
             letter-spacing: 0.06em; text-transform: uppercase;
             margin: 6px 0;
         }
         .login-divider::before, .login-divider::after {
             content: ''; flex: 1; height: 1px;
-            background: rgba(99,130,200,0.15);
+            background: rgba(255,255,255,0.08);
         }
         .btn-faculty {
-            border: 1px solid rgba(59,130,246,0.4);
-            color: #7dd3fc;
-            background: rgba(59,130,246,0.06);
+            border: 1px solid rgba(255,255,255,0.12);
+            color: #eff1f6;
+            background: #323232;
             transition: background 0.15s, border-color 0.15s;
             font-size: 13px; font-weight: 600;
-            width: 100%; padding: 12px; border-radius: 10px; cursor: pointer;
+            width: 100%; padding: 11px; border-radius: 8px; cursor: pointer;
             letter-spacing: 0.01em;
             margin-top: 4px;
         }
-        .btn-faculty:hover { background: rgba(59,130,246,0.13); border-color: rgba(59,130,246,0.7); }
+        .btn-faculty:hover { background: #3c3c3c; border-color: rgba(255,255,255,0.25); }
         .btn-login-primary {
             background: #ffa116;
             color: #1a1a1a;
             border: none;
-            box-shadow: 0 4px 20px rgba(255,161,22,0.3);
-            transition: opacity 0.15s, transform 0.1s, box-shadow 0.15s;
+            box-shadow: 0 4px 16px rgba(255,161,22,0.3);
+            transition: opacity 0.15s, transform 0.1s, background-color 0.15s;
             font-size: 14px; font-weight: 700;
-            width: 100%; padding: 13px; border-radius: 10px;
+            width: 100%; padding: 12px; border-radius: 8px;
             cursor: pointer;
             display: flex; align-items: center; justify-content: center; gap: 8px;
             letter-spacing: 0.01em;
             margin-top: 6px;
         }
         .btn-login-primary:hover:not(:disabled) {
-            opacity: 0.92;
+            background: #ffb84d;
             transform: translateY(-1px);
-            box-shadow: 0 8px 28px rgba(255,161,22,0.45);
         }
         .btn-login-primary:disabled { opacity: 0.4; cursor: not-allowed; }
         .login-input {
-            background: rgba(4,10,26,0.9);
-            border: 1px solid rgba(99,130,200,0.2);
-            color: #e2e8f0; font-size: 14.5px; line-height: 1.5;
-            width: 100%; padding: 12px 14px; border-radius: 10px;
+            background: #323232;
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #eff1f6; font-size: 14px; line-height: 1.5;
+            width: 100%; padding: 11px 14px; border-radius: 8px;
             transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
-            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-            letter-spacing: normal;
+            font-family: inherit;
             margin-bottom: 10px;
         }
         input[type="password"].login-input {
@@ -623,23 +550,23 @@
         input[type="email"].login-input,
         textarea.login-input,
         select.login-input {
-            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            font-family: inherit;
             letter-spacing: normal;
         }
-        .login-input::placeholder { color: #6b7fa3; opacity: 1; }
-        textarea.login-input::placeholder { color: #6b7fa3; opacity: 1; }
+        .login-input::placeholder { color: #6b7280; opacity: 1; }
+        textarea.login-input::placeholder { color: #6b7280; opacity: 1; }
         textarea.login-input {
             font-size: 14px;
             line-height: 1.6;
         }
         .login-input:focus {
             outline: none;
-            border-color: rgba(59,130,246,0.7);
-            background: rgba(4,10,26,1);
-            box-shadow: 0 0 0 3px rgba(59,130,246,0.12);
+            border-color: #ffa116;
+            background: #383838;
+            box-shadow: 0 0 0 2px rgba(255,161,22,0.25);
         }
         .login-label {
-            font-size: 11.5px; font-weight: 700; color: #64748b;
+            font-size: 11.5px; font-weight: 700; color: #9ca3af;
             letter-spacing: 0.07em; text-transform: uppercase;
             display: flex; align-items: center; gap: 6px;
         }
@@ -648,13 +575,13 @@
         .pw-toggle {
             position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
             background: none; border: none; padding: 0; cursor: pointer;
-            color: #475569; transition: color 0.15s; line-height: 0;
+            color: #6b7280; transition: color 0.15s; line-height: 0;
         }
-        .pw-toggle:hover { color: #94a3b8; }
+        .pw-toggle:hover { color: #eff1f6; }
         .login-spinner {
             width: 15px; height: 15px;
             border: 2px solid rgba(255,255,255,0.25);
-            border-top-color: #fff; border-radius: 50%;
+            border-top-color: #1a1a1a; border-radius: 50%;
             animation: lspin 0.65s linear infinite; display: inline-block;
         }
         @keyframes lspin { to { transform: rotate(360deg); } }
@@ -665,12 +592,12 @@
             align-items: center;
             justify-content: center;
             gap: 0;
-            margin-bottom: 28px;
+            margin-bottom: 24px;
             margin-top: 4px;
         }
         .step-bubble {
             position: relative;
-            width: 38px; height: 38px;
+            width: 36px; height: 36px;
             border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
             font-size: 13px; font-weight: 800;
@@ -679,20 +606,20 @@
             z-index: 1;
         }
         .step-bubble.inactive {
-            background: rgba(15,23,42,0.9);
-            border: 2px solid rgba(71,85,105,0.6);
-            color: #475569;
+            background: #323232;
+            border: 2px solid rgba(255,255,255,0.1);
+            color: #6b7280;
         }
         .step-bubble.active {
-            background: linear-gradient(135deg, #2563eb, #6d28d9);
-            border: 2px solid transparent;
-            color: #fff;
-            box-shadow: 0 0 0 4px rgba(37,99,235,0.2), 0 4px 16px rgba(37,99,235,0.35);
+            background: #ffa116;
+            border: 2px solid #ffa116;
+            color: #1a1a1a;
+            box-shadow: 0 0 0 3px rgba(255,161,22,0.25);
         }
         .step-bubble.done {
-            background: rgba(16,185,129,0.15);
-            border: 2px solid rgba(16,185,129,0.5);
-            color: #34d399;
+            background: rgba(44,187,93,0.15);
+            border: 2px solid #2cbb5d;
+            color: #2cbb5d;
         }
         .step-connector {
             height: 2px;
@@ -701,52 +628,68 @@
             transition: background 0.3s ease;
             flex-shrink: 0;
         }
-        .step-connector.done { background: linear-gradient(90deg, #10b981, #3b82f6); }
-        .step-connector.inactive { background: rgba(71,85,105,0.35); }
+        .step-connector.done { background: #2cbb5d; }
+        .step-connector.inactive { background: rgba(255,255,255,0.1); }
         .step-label {
-            font-size: 11px; font-weight: 700; color: #64748b;
+            font-size: 11px; font-weight: 700; color: #6b7280;
             letter-spacing: 0.04em;
         }
-        .step-label.active { color: #93c5fd; }
+        .step-label.active { color: #ffa116; }
 
         /* OTP box focus */
         #otp-0:focus, #otp-1:focus, #otp-2:focus,
         #otp-3:focus, #otp-4:focus, #otp-5:focus {
-            border-color: rgba(59,130,246,0.7) !important;
-            box-shadow: 0 0 0 3px rgba(59,130,246,0.15) !important;
+            border-color: #ffa116 !important;
+            box-shadow: 0 0 0 2px rgba(255,161,22,0.25) !important;
             outline: none;
         }
     </style>
 </head>
 
-<body>
-
-    <!-- background layers -->
-    <div class="mesh-bg"></div>
-    <div class="grid-overlay"></div>
-    <div class="blob blob1"></div>
-    <div class="blob blob2"></div>
-    <div class="blob blob3"></div>
+<body x-data="landingApp()" x-init="init()" class="bg-[#1a1a1a] text-[#eff1f6] min-h-screen">
 
     <!-- ══════════════════════════════════════
-         NAVBAR
+         LEETCODE TOP NAVBAR
     ══════════════════════════════════════ -->
-    <nav>
-        <div class="nav-inner">
-            <span class="logo" style="cursor:default;">
-                <div class="logo-icon">
-                    <svg width="18" height="18" fill="white" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
-                    </svg>
+    <nav class="lc-navbar">
+        <div class="lc-navbar-inner">
+            <div class="flex items-center space-x-6">
+                <a href="landing.html" class="lc-brand">
+                    <div class="lc-brand-icon">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="16 18 22 12 16 6"></polyline>
+                            <polyline points="8 6 2 12 8 18"></polyline>
+                        </svg>
+                    </div>
+                    <span>Big-O</span>
+                </a>
+                <div class="hidden md:flex items-center space-x-1">
+                    <template x-if="isLoggedIn">
+                        <a href="index.html" class="lc-nav-link">Dashboard</a>
+                    </template>
+                    <a href="problems.html" class="lc-nav-link">Problems</a>
+                    <a href="leaderboard.html" class="lc-nav-link">Leaderboard</a>
                 </div>
-                <span class="logo-text">Big-O</span>
-            </span>
-            <button onclick="window.dispatchEvent(new Event('open-login'))" class="btn-nav" style="cursor:pointer;">
-                Login / Sign Up
-                <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
-                </svg>
-            </button>
+            </div>
+
+            <div class="flex items-center space-x-3">
+                <template x-if="user && user.username">
+                    <div class="flex items-center space-x-3">
+                        <a href="index.html" class="lc-btn-signin">Dashboard</a>
+                        <a href="profile.html" class="flex items-center gap-2 hover:opacity-90">
+                            <div class="w-7 h-7 rounded-full bg-[#ffa116] flex items-center justify-center text-[#1a1a1a] font-bold text-xs" x-text="user.username ? user.username.charAt(0).toUpperCase() : '?'"></div>
+                            <span class="text-xs font-semibold text-[#eff1f6] hidden sm:inline" x-text="user.username"></span>
+                        </a>
+                        <button @click="logout()" class="lc-btn-signout">Sign Out</button>
+                    </div>
+                </template>
+                <template x-if="!user || !user.username">
+                    <div class="flex items-center space-x-2">
+                        <button @click="openLogin('login')" class="lc-btn-signin">Sign In</button>
+                        <button @click="openLogin('register')" class="lc-btn-register">Register</button>
+                    </div>
+                </template>
+            </div>
         </div>
     </nav>
 
@@ -775,13 +718,25 @@
                 </p>
 
                 <div class="hero-btns reveal d3">
-                    <a href="#" onclick="window.dispatchEvent(new Event('open-login'));return false;" class="btn-primary">
-                        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                        </svg>
-                        Get Started Free
+                    <template x-if="user && user.username">
+                        <a href="index.html" class="btn-primary">
+                            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                            </svg>
+                            Go to Dashboard
+                        </a>
+                    </template>
+                    <template x-if="!user || !user.username">
+                        <button @click="openLogin('register')" class="btn-primary">
+                            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                            </svg>
+                            Get Started Free
+                        </button>
+                    </template>
+                    <a href="problems.html" class="btn-ghost">
+                        Explore Problems
                     </a>
-
                 </div>
             </div>
 
@@ -789,19 +744,19 @@
             <div class="hero-right">
                 <div class="stats reveal d4">
                     <div class="stat-pill">
-                        <span class="stat-val" style="color:#60a5fa">Multi</span>
+                        <span class="stat-val" style="color:#00b8a3">Multi</span>
                         <span class="stat-lbl">Languages</span>
                     </div>
                     <div class="stat-pill">
-                        <span class="stat-val" style="color:#34d399">Fast</span>
+                        <span class="stat-val" style="color:#2cbb5d">Fast</span>
                         <span class="stat-lbl">Execution</span>
                     </div>
                     <div class="stat-pill">
-                        <span class="stat-val" style="color:#a78bfa">JWT</span>
-                        <span class="stat-lbl">Secure auth</span>
+                        <span class="stat-val" style="color:#ffa116">JWT</span>
+                        <span class="stat-lbl">Secure Auth</span>
                     </div>
                     <div class="stat-pill">
-                        <span class="stat-val" style="color:#f472b6">Free</span>
+                        <span class="stat-val" style="color:#ff375f">Free</span>
                         <span class="stat-lbl">Forever</span>
                     </div>
                 </div>
@@ -988,7 +943,7 @@
     <!-- ══════════════════════════════════════
          LOGIN MODAL OVERLAY
     ══════════════════════════════════════ -->
-    <div x-data="loginModal()" x-cloak>
+    <div x-cloak>
         <!-- backdrop — click outside closes -->
         <div x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="modal-backdrop" @click.self="close()">
             <!-- card -->
@@ -1308,11 +1263,13 @@
     <script src="assets/js/app.js"></script>
     <script src="assets/js/auth.js"></script>
     <script>
-        function loginModal() {
+        function landingApp() {
             return {
                 open: false,
                 // modes: 'login' | 'register' | 'register-otp' | 'faculty' | 'forgot' | 'forgot-otp' | 'reset-password'
                 mode: 'login',
+                isLoggedIn: typeof Auth !== 'undefined' && Auth.isAuthenticated(),
+                user: typeof Auth !== 'undefined' ? Auth.getUser() : null,
                 facultyStep: 1,
                 loading: false,
                 showPassword: false,
@@ -1340,14 +1297,42 @@
                 showResetPassword: false,
 
                 init() {
-                    if (window.location.search.includes('login')) this.open = true;
                     if (typeof Auth !== 'undefined') {
-                        const user = Auth.getUser();
-                        if (user && user.role !== 'pending_faculty' && user.role !== 'declined_faculty' && Auth.isAuthenticated()) {
+                        this.isLoggedIn = Auth.isAuthenticated();
+                        this.user = Auth.getUser();
+                    }
+                    if (this.isLoggedIn && this.user && (this.user.id || this.user.username)) {
+                        if (this.user.role !== 'pending_faculty' && this.user.role !== 'declined_faculty') {
                             window.location.href = 'index.html';
+                            return;
                         }
                     }
-                    window.addEventListener('open-login', () => { this.open = true; this.mode = 'login'; });
+
+                    if (window.location.search.includes('login')) {
+                        this.open = true;
+                        this.mode = 'login';
+                    } else if (window.location.search.includes('register')) {
+                        this.open = true;
+                        this.mode = 'register';
+                    }
+
+                    window.addEventListener('open-login', (e) => {
+                        this.open = true;
+                        this.mode = (e && e.detail && e.detail.mode) || 'login';
+                    });
+                },
+
+                openLogin(mode = 'login') {
+                    this.setMode(mode);
+                    this.open = true;
+                },
+
+                logout() {
+                    if (typeof Auth !== 'undefined') {
+                        Auth.logout();
+                    }
+                    this.isLoggedIn = false;
+                    this.user = null;
                 },
 
                 close() { this.open = false; },
@@ -1472,6 +1457,7 @@
                         const data = await res.json();
                         if (!res.ok) throw new Error(data.message || 'Authentication failed');
                         Auth.setToken(data.token);
+                        if (data.user) Auth.setUser(data.user);
                         window.location.href = 'index.html';
                     } catch(err) { this.showAlert('error', err.message); }
                     finally { this.loading = false; }

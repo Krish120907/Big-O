@@ -9,70 +9,116 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" crossorigin>
     <link rel="stylesheet" href="assets/css/tailwind.min.css">
-    <link rel="stylesheet" href="assets/css/styles.css?v=3">
-    <!-- Alpine.js -->
+    <link rel="stylesheet" href="assets/css/styles.css?v=14">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              lc: {
+                bg: '#1a1a1a',
+                surface: '#282828',
+                elevated: '#323232',
+                hover: '#373737',
+                border: 'rgba(255, 255, 255, 0.08)',
+                brand: '#ffa116',
+                easy: '#00b8a3',
+                medium: '#ffc01e',
+                hard: '#ff375f',
+                submit: '#2cbb5d'
+              }
+            }
+          }
+        }
+      }
+    </script>
     <script>
       window.__ENV__ = {
         API_BASE_URL: "http://localhost:8080/api"
       };
     </script>
+    <script src="assets/js/app.js"></script>
+    <script src="assets/js/auth.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
-<body class="bg-[var(--bg)] text-[var(--text)] min-h-screen flex flex-col font-sans transition-colors duration-150" x-data="profileApp()">
+<body class="bg-[#1a1a1a] text-[#eff1f6] min-h-screen flex flex-col font-sans transition-colors duration-150" x-data="profileApp()" x-init="init()">
     
     <!-- Top LeetCode Navigation Bar -->
-    <nav class="h-14 bg-[var(--bg-surface)] border-b border-[var(--border)] sticky top-0 z-50 shrink-0">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
+    <nav class="lc-navbar">
+        <div class="lc-navbar-inner">
             <!-- Left: Logo & Nav Links -->
-            <div class="flex items-center space-x-8">
-                <a href="index.html" class="flex items-center gap-2 shrink-0 group">
-                    <div class="w-8 h-8 rounded-lg bg-[#ffa116] flex items-center justify-center text-[#1a1a1a] shadow-sm">
-                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <div class="flex items-center space-x-6">
+                <a href="index.html" class="lc-brand">
+                    <div class="lc-brand-icon">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <polyline points="16 18 22 12 16 6"></polyline>
                             <polyline points="8 6 2 12 8 18"></polyline>
                         </svg>
                     </div>
-                    <span class="text-lg font-bold tracking-tight text-[var(--text)]">Big-O</span>
+                    <span>Big-O</span>
                 </a>
 
                 <div class="hidden md:flex items-center space-x-1">
-                    <a href="index.html" class="px-3 py-1.5 rounded-md text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text)] hover:bg-[var(--bg-hover)] transition-colors">Dashboard</a>
-                    <a href="problems.html" class="px-3 py-1.5 rounded-md text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text)] hover:bg-[var(--bg-hover)] transition-colors">Problems</a>
-                    <a href="leaderboard.html" class="px-3 py-1.5 rounded-md text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text)] hover:bg-[var(--bg-hover)] transition-colors">Leaderboard</a>
+                    <template x-if="user && user.username">
+                        <a href="index.html" class="lc-nav-link">Dashboard</a>
+                    </template>
+                    <a href="problems.html" class="lc-nav-link">Problems</a>
+                    <a href="leaderboard.html" class="lc-nav-link">Leaderboard</a>
                     
                     <template x-if="user && user.role === 'faculty'">
-                        <a href="faculty.html" class="px-3 py-1.5 rounded-md text-sm font-medium text-[#10b981] hover:bg-[#10b981]/10 transition-colors">Faculty</a>
+                        <a href="faculty.html" class="lc-nav-link text-[#10b981]">Faculty</a>
                     </template>
                     <template x-if="user && user.role === 'admin'">
-                        <a href="admin.html" class="px-3 py-1.5 rounded-md text-sm font-medium text-[#ff375f] hover:bg-[#ff375f]/10 transition-colors">Admin</a>
+                        <a href="admin.html" class="lc-nav-link text-[#ff375f]">Admin</a>
                     </template>
                 </div>
             </div>
 
-            <!-- Right: Theme & User Avatar -->
+            <!-- Right: Streak, Theme & User Actions -->
             <div class="flex items-center space-x-3">
+                <!-- Streak Badge -->
+                <template x-if="user && user.username">
+                    <div class="flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#323232] border border-[rgba(255,255,255,0.08)] text-xs font-semibold text-[#ffa116]" title="Daily Streak">
+                        <span>🔥</span>
+                        <span x-text="user.streak_count || 0"></span>
+                    </div>
+                </template>
+
+                <!-- Theme Switch -->
                 <div class="relative" x-data="{ open: false, current: localStorage.getItem('theme') || 'dark', setTheme(t) { this.current = t; const h = document.documentElement; h.classList.remove('dark'); if (t === 'dark') h.classList.add('dark'); localStorage.setItem('theme', t); this.open = false; } }" @keydown.escape.window="open = false">
-                    <button @click="open = !open" class="p-2 rounded-lg bg-[var(--bg-elevated)] border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text)] transition-colors" title="Theme">
+                    <button @click="open = !open" class="p-1.5 rounded-md bg-[#323232] hover:bg-[#3e3e3e] border border-[rgba(255,255,255,0.08)] text-[#9ca3af] hover:text-[#eff1f6] transition-colors" title="Theme">
                         <svg x-show="current === 'dark'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
                         <svg x-show="current === 'light'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
                     </button>
-                    <div x-show="open" @click.outside="open = false" x-transition class="absolute right-0 mt-2 w-36 bg-[var(--bg-surface)] border border-[var(--border)] rounded-lg shadow-xl z-50 py-1 text-xs">
-                        <button @click="setTheme('dark')" class="w-full flex items-center gap-2 px-3 py-2 text-[var(--text-secondary)] hover:text-[var(--text)] hover:bg-[var(--bg-hover)]" :class="current === 'dark' ? 'font-semibold text-[#ffa116]' : ''">Dark</button>
-                        <button @click="setTheme('light')" class="w-full flex items-center gap-2 px-3 py-2 text-[var(--text-secondary)] hover:text-[var(--text)] hover:bg-[var(--bg-hover)]" :class="current === 'light' ? 'font-semibold text-[#ffa116]' : ''">Light</button>
+                    <div x-show="open" @click.outside="open = false" x-transition class="absolute right-0 mt-2 w-32 bg-[#282828] border border-[rgba(255,255,255,0.1)] rounded-lg shadow-2xl z-50 py-1 text-xs">
+                        <button @click="setTheme('dark')" class="w-full flex items-center gap-2 px-3 py-2 text-[#9ca3af] hover:text-[#eff1f6] hover:bg-[#373737]" :class="current === 'dark' ? 'font-semibold text-[#ffa116]' : ''">Dark</button>
+                        <button @click="setTheme('light')" class="w-full flex items-center gap-2 px-3 py-2 text-[#9ca3af] hover:text-[#eff1f6] hover:bg-[#373737]" :class="current === 'light' ? 'font-semibold text-[#ffa116]' : ''">Light</button>
                     </div>
                 </div>
 
-                <a href="profile.html" class="flex items-center gap-2 border-b-2 border-[#ffa116] pb-1">
-                    <template x-if="profile && profile.avatar_url">
-                        <img :src="API_BASE_URL.replace('/api', '') + profile.avatar_url" alt="Profile" class="w-8 h-8 rounded-full object-cover border border-[var(--border)]">
-                    </template>
-                    <template x-if="!profile || !profile.avatar_url">
-                        <div class="w-8 h-8 rounded-full bg-[#ffa116] flex items-center justify-center text-[#1a1a1a] font-bold text-xs" x-text="user ? user.username.charAt(0).toUpperCase() : '?'"></div>
-                    </template>
-                    <span class="text-sm font-semibold text-[var(--text)] hidden sm:inline" x-text="user ? user.username : ''"></span>
-                </a>
-
-                <button @click="Auth.logout()" class="text-xs bg-[var(--bg-elevated)] hover:bg-[var(--danger-soft)] text-[var(--text-secondary)] hover:text-[var(--danger)] border border-[var(--border)] px-3 py-1.5 rounded-lg font-medium transition-colors">Sign Out</button>
+                <!-- User Profile / Auth Actions -->
+                <template x-if="user && user.username">
+                    <div class="flex items-center space-x-3">
+                        <a href="profile.html" class="flex items-center gap-2 hover:opacity-90 transition-opacity">
+                            <template x-if="profile && profile.avatar_url">
+                                <img :src="API_BASE_URL.replace('/api', '') + profile.avatar_url" alt="Profile" class="w-7 h-7 rounded-full object-cover border border-[rgba(255,255,255,0.15)]">
+                            </template>
+                            <template x-if="!profile || !profile.avatar_url">
+                                <div class="w-7 h-7 rounded-full bg-[#ffa116] flex items-center justify-center text-[#1a1a1a] font-bold text-xs" x-text="user.username ? user.username.charAt(0).toUpperCase() : '?'"></div>
+                            </template>
+                            <span class="text-sm font-semibold text-[#eff1f6] hidden sm:inline" x-text="user.username"></span>
+                        </a>
+                        <button @click="Auth.logout()" class="lc-btn-signout">Sign Out</button>
+                    </div>
+                </template>
+                <template x-if="!user || !user.username">
+                    <div class="flex items-center space-x-2">
+                        <a href="landing.html?login" class="lc-btn-signin">Sign In</a>
+                        <a href="landing.html?register" class="lc-btn-register">Register</a>
+                    </div>
+                </template>
             </div>
         </div>
     </nav>
@@ -186,36 +232,38 @@
         </div>
 
         <!-- Recent Submissions -->
-        <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
-            <div class="p-6 border-b border-slate-200 dark:border-slate-700">
-                <h2 class="text-lg font-bold text-slate-800 dark:text-slate-100">Recent Submissions</h2>
+        <div class="bg-[#282828] rounded-xl border border-[rgba(255,255,255,0.08)] overflow-hidden shadow-sm">
+            <div class="p-5 border-b border-[rgba(255,255,255,0.08)]">
+                <h2 class="text-base font-bold text-[#eff1f6]">Recent Submissions</h2>
             </div>
             <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
-                    <thead class="bg-slate-50 dark:bg-slate-800">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Problem</th>
-                            <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Status</th>
-                            <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Runtime</th>
-                            <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Submitted</th>
+                <table class="w-full text-left text-xs border-collapse">
+                    <thead>
+                        <tr class="border-b border-[rgba(255,255,255,0.08)] bg-[#282828] text-[#9ca3af] font-semibold uppercase tracking-wider text-[11px]">
+                            <th class="py-3 px-6">Problem</th>
+                            <th class="py-3 px-6 w-36">Status</th>
+                            <th class="py-3 px-6 w-28">Runtime</th>
+                            <th class="py-3 px-6 w-36 text-right">Submitted</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
+                    <tbody class="divide-y divide-[rgba(255,255,255,0.06)]">
                         <template x-for="sub in recentSubmissions" :key="sub.id">
-                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-                                <td class="px-6 py-4 text-sm font-semibold text-slate-700 dark:text-slate-300" x-text="sub.problem_title"></td>
-                                <td class="px-6 py-4 text-sm">
-                                    <span class="px-2.5 py-0.5 rounded text-xs font-bold"
-                                          :class="sub.status === 'Accepted' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'"
+                            <tr class="hover:bg-[#323232] transition-colors">
+                                <td class="py-3.5 px-6 font-medium text-sm text-[#eff1f6]">
+                                    <a :href="'problem.html?id=' + sub.problem_id" class="hover:text-[#ffa116] transition-colors" x-text="sub.problem_title"></a>
+                                </td>
+                                <td class="py-3.5 px-6">
+                                    <span class="text-xs font-semibold"
+                                          :class="sub.status === 'Accepted' ? 'text-[#2cbb5d]' : 'text-[#ff375f]'"
                                           x-text="sub.status"></span>
                                 </td>
-                                <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400" x-text="sub.runtime_ms + ' ms'"></td>
-                                <td class="px-6 py-4 text-sm text-slate-500 dark:text-slate-400" x-text="formatDate(sub.created_at)"></td>
+                                <td class="py-3.5 px-6 text-xs font-mono text-[#9ca3af]" x-text="sub.runtime_ms + ' ms'"></td>
+                                <td class="py-3.5 px-6 text-xs text-[#9ca3af] text-right" x-text="formatDate(sub.created_at)"></td>
                             </tr>
                         </template>
                         <template x-if="recentSubmissions.length === 0">
                             <tr>
-                                <td colspan="4" class="px-6 py-10 text-center text-slate-400 text-sm">No submissions yet.</td>
+                                <td colspan="4" class="py-10 text-center text-[#9ca3af] text-xs">No submissions yet.</td>
                             </tr>
                         </template>
                     </tbody>
@@ -226,118 +274,109 @@
     </main>
 
     <!-- Image Upload Modal -->
-    <div x-show="showImageUploadModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" x-transition>
-        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl w-96 p-6 shadow-xl">
-            <h3 class="text-lg font-bold mb-4 text-slate-800 dark:text-slate-100">Upload Profile Picture</h3>
+    <div x-show="showImageUploadModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4" x-transition>
+        <div class="bg-[#282828] border border-[rgba(255,255,255,0.1)] rounded-xl w-full max-w-md p-6 shadow-2xl">
+            <h3 class="text-base font-bold mb-4 text-[#eff1f6]">Upload Profile Picture</h3>
             
-            <!-- File specifications - IMPORTANT -->
-            <div class="mb-4 p-4 bg-amber-50 dark:bg-amber-900/20 border-2 border-amber-300 dark:border-amber-700 rounded-lg">
-                <p class="text-sm font-bold text-amber-900 dark:text-amber-200 mb-3">⚠️ Important Requirements:</p>
-                
-                <div class="mb-3">
-                    <p class="text-xs font-semibold text-amber-900 dark:text-amber-200">Supported Formats:</p>
-                    <p class="text-xs text-amber-800 dark:text-amber-300">JPG, PNG, GIF, WebP</p>
-                </div>
-                
-                <div class="mb-0">
-                    <p class="text-xs font-semibold text-amber-900 dark:text-amber-200">Maximum File Size:</p>
-                    <p class="text-sm font-bold text-amber-900 dark:text-amber-200">2 MB (2,097,152 bytes)</p>
-                    <p class="text-xs text-amber-700 dark:text-amber-400 mt-1">Files larger than 2 MB will be rejected</p>
-                </div>
+            <!-- File specifications -->
+            <div class="mb-4 p-3.5 bg-[#ffa116]/10 border border-[#ffa116]/30 rounded-lg text-xs">
+                <p class="font-bold text-[#ffa116] mb-1.5">Requirements</p>
+                <p class="text-[#eff1f6]/90 mb-1">Formats: <span class="text-[#9ca3af]">JPG, PNG, GIF, WebP</span></p>
+                <p class="text-[#eff1f6]/90">Max Size: <span class="text-[#ffa116] font-semibold">2 MB</span></p>
             </div>
             
             <input type="file" @change="handleImageUpload($event)" accept=".jpg,.jpeg,.png,.gif,.webp,image/jpeg,image/png,image/gif,image/webp" 
-                   class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg py-2 px-3 text-sm text-slate-800 dark:text-slate-100 mb-4">
+                   class="w-full bg-[#323232] border border-[rgba(255,255,255,0.1)] rounded-lg py-2 px-3 text-sm text-[#eff1f6] mb-4 file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-[#ffa116] file:text-[#1a1a1a] hover:file:bg-[#ffb84d] file:cursor-pointer">
             
             <!-- Selected file info -->
             <template x-if="selectedImage">
-                <div class="mb-4 p-3 bg-slate-50 dark:bg-slate-800 rounded-lg">
-                    <p class="text-xs text-slate-600 dark:text-slate-400 mb-1">Selected file:</p>
-                    <p class="text-sm font-semibold text-slate-700 dark:text-slate-300" x-text="selectedImage.name"></p>
-                    <p class="text-xs text-slate-500 dark:text-slate-400" x-text="`${(selectedImage.size / (1024 * 1024)).toFixed(2)} MB`"></p>
+                <div class="mb-4 p-3 bg-[#323232] rounded-lg border border-[rgba(255,255,255,0.08)]">
+                    <p class="text-xs text-[#9ca3af] mb-0.5">Selected file:</p>
+                    <p class="text-sm font-semibold text-[#eff1f6]" x-text="selectedImage.name"></p>
+                    <p class="text-xs text-[#ffa116]" x-text="`${(selectedImage.size / (1024 * 1024)).toFixed(2)} MB`"></p>
                 </div>
             </template>
             
             <div class="flex justify-end space-x-3">
-                <button @click="showImageUploadModal = false" class="bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 font-semibold py-2 px-4 rounded-lg text-sm">Cancel</button>
-                <button @click="uploadImage()" :disabled="!selectedImage" class="bg-blue-600 hover:bg-blue-700 disabled:bg-slate-400 text-white font-semibold py-2 px-4 rounded-lg text-sm transition-colors">Upload</button>
+                <button @click="showImageUploadModal = false" class="lc-btn-signin">Cancel</button>
+                <button @click="uploadImage()" :disabled="!selectedImage" class="lc-btn-register disabled:opacity-50">Upload</button>
             </div>
         </div>
     </div>
 
     <!-- Edit Username Modal -->
-    <div x-show="editingUsername" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" x-transition>
-        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl w-96 p-6 shadow-xl">
-            <h3 class="text-lg font-bold mb-4 text-slate-800 dark:text-slate-100">Edit Username</h3>
+    <div x-show="editingUsername" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4" x-transition>
+        <div class="bg-[#282828] border border-[rgba(255,255,255,0.1)] rounded-xl w-full max-w-md p-6 shadow-2xl">
+            <h3 class="text-base font-bold mb-4 text-[#eff1f6]">Edit Username</h3>
             
-            <div class="mb-4">
-                <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">New Username</label>
+            <div class="mb-5">
+                <label class="block text-xs font-semibold text-[#9ca3af] uppercase tracking-wider mb-2">New Username</label>
                 <input 
                     x-model="editUsernameValue"
                     type="text"
                     placeholder="Enter new username"
-                    class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg py-2 px-3 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                    class="w-full bg-[#323232] border border-[rgba(255,255,255,0.1)] rounded-lg py-2.5 px-3 text-sm text-[#eff1f6] focus:outline-none focus:border-[#ffa116] focus:ring-1 focus:ring-[#ffa116]"
                     @keyup.enter="saveUsername()"
                     @keyup.escape="editingUsername = false"
                 >
-                <p class="text-xs text-slate-500 dark:text-slate-400 mt-2">
+                <p class="text-xs text-[#9ca3af] mt-1.5">
                     Username must be 3-50 characters long
                 </p>
             </div>
 
             <div class="flex justify-end space-x-3">
-                <button @click="editingUsername = false" class="bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 font-semibold py-2 px-4 rounded-lg text-sm">Cancel</button>
-                <button @click="saveUsername()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg text-sm transition-colors">Save</button>
+                <button @click="editingUsername = false" class="lc-btn-signin">Cancel</button>
+                <button @click="saveUsername()" class="lc-btn-register">Save</button>
             </div>
         </div>
     </div>
 
     <!-- Change Password Modal -->
-    <div x-show="showChangePasswordModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" x-transition>
-        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl w-96 p-6 shadow-xl">
-            <h3 class="text-lg font-bold mb-4 text-slate-800 dark:text-slate-100">Change Password</h3>
+    <div x-show="showChangePasswordModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4" x-transition>
+        <div class="bg-[#282828] border border-[rgba(255,255,255,0.1)] rounded-xl w-full max-w-md p-6 shadow-2xl">
+            <h3 class="text-base font-bold mb-4 text-[#eff1f6]">Change Password</h3>
 
             <div class="space-y-4 mb-6">
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Current Password</label>
+                    <label class="block text-xs font-semibold text-[#9ca3af] uppercase tracking-wider mb-1.5">Current Password</label>
                     <input
                         x-model="passwordForm.current"
                         type="password"
                         placeholder="Enter current password"
-                        class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg py-2 px-3 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                        class="w-full bg-[#323232] border border-[rgba(255,255,255,0.1)] rounded-lg py-2.5 px-3 text-sm text-[#eff1f6] focus:outline-none focus:border-[#ffa116] focus:ring-1 focus:ring-[#ffa116]"
                         @keyup.escape="closePasswordModal()"
                     >
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">New Password</label>
+                    <label class="block text-xs font-semibold text-[#9ca3af] uppercase tracking-wider mb-1.5">New Password</label>
                     <input
                         x-model="passwordForm.newPass"
                         type="password"
                         placeholder="Enter new password"
-                        class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg py-2 px-3 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                        class="w-full bg-[#323232] border border-[rgba(255,255,255,0.1)] rounded-lg py-2.5 px-3 text-sm text-[#eff1f6] focus:outline-none focus:border-[#ffa116] focus:ring-1 focus:ring-[#ffa116]"
                         @keyup.escape="closePasswordModal()"
                     >
-                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Minimum 6 characters</p>
+                    <p class="text-xs text-[#9ca3af] mt-1">Minimum 6 characters</p>
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Confirm New Password</label>
+                    <label class="block text-xs font-semibold text-[#9ca3af] uppercase tracking-wider mb-1.5">Confirm New Password</label>
                     <input
                         x-model="passwordForm.confirm"
                         type="password"
                         placeholder="Confirm new password"
-                        class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg py-2 px-3 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                        class="w-full bg-[#323232] border border-[rgba(255,255,255,0.1)] rounded-lg py-2.5 px-3 text-sm text-[#eff1f6] focus:outline-none focus:border-[#ffa116] focus:ring-1 focus:ring-[#ffa116]"
                         @keyup.enter="changePassword()"
                         @keyup.escape="closePasswordModal()"
                     >
                 </div>
                 <template x-if="passwordError">
-                    <p class="text-sm text-red-500 dark:text-red-400" x-text="passwordError"></p>
+                    <p class="text-xs text-[#ff375f]" x-text="passwordError"></p>
                 </template>
             </div>
 
             <div class="flex justify-end space-x-3">
-                <button @click="closePasswordModal()" class="bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 font-semibold py-2 px-4 rounded-lg text-sm">Cancel</button>
-                <button @click="changePassword()" :disabled="changingPassword" class="bg-blue-600 hover:bg-blue-700 disabled:bg-slate-400 text-white font-semibold py-2 px-4 rounded-lg text-sm transition-colors" x-text="changingPassword ? 'Saving...' : 'Change Password'"></button>
+                <button @click="closePasswordModal()" class="lc-btn-signin">Cancel</button>
+                <button @click="changePassword()" :disabled="changingPassword" class="lc-btn-register disabled:opacity-50" x-text="changingPassword ? 'Saving...' : 'Change Password'"></button>
             </div>
         </div>
     </div>
@@ -362,7 +401,7 @@
 
         function profileApp() {
             return {
-                user: null,
+                user: typeof Auth !== 'undefined' ? Auth.getUser() : null,
                 profile: {},
                 stats: { 
                     total_solved: 0, 
