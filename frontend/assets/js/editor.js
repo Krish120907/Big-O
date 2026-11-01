@@ -32,28 +32,10 @@ function initMonacoEditor(containerId, initialCode = '') {
                 }
             });
 
-            // LeetCode Light Theme
-            monaco.editor.defineTheme('leetcode-light', {
-                base: 'vs',
-                inherit: true,
-                rules: [],
-                colors: {
-                    'editor.background': '#ffffff',
-                    'editor.foreground': '#262626',
-                    'editorCursor.foreground': '#ffa116',
-                    'editor.lineHighlightBackground': '#f7f7f8',
-                    'editorLineNumber.foreground': '#a3a3a3',
-                    'editorLineNumber.activeForeground': '#262626',
-                    'editorIndentGuide.background': '#e5e5e5'
-                }
-            });
-
-            const isDark = document.documentElement.classList.contains('dark') || !document.documentElement.classList.contains('light');
-
             editor = monaco.editor.create(document.getElementById(containerId), {
                 value: initialCode || `#include <iostream>\n\nusing namespace std;\n\nint main() {\n    // Write your C++ code here\n    cout << "Hello World!" << endl;\n    return 0;\n}`,
                 language: 'cpp',
-                theme: isDark ? 'leetcode-dark' : 'leetcode-light',
+                theme: 'leetcode-dark',
                 fontSize: 14,
                 fontFamily: `'Fira Code', 'Menlo', 'Monaco', 'Courier New', monospace`,
                 automaticLayout: true,
@@ -71,17 +53,6 @@ function initMonacoEditor(containerId, initialCode = '') {
                     horizontalScrollbarSize: 8
                 }
             });
-
-            // Listen for theme changes and adjust Monaco
-            const observer = new MutationObserver((mutations) => {
-                mutations.forEach((mutation) => {
-                    if (mutation.attributeName === 'class') {
-                        const isDarkMode = document.documentElement.classList.contains('dark');
-                        monaco.editor.setTheme(isDarkMode ? 'leetcode-dark' : 'leetcode-light');
-                    }
-                });
-            });
-            observer.observe(document.documentElement, { attributes: true });
 
             resolve(editor);
         });

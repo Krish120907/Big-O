@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" crossorigin>
     <link rel="stylesheet" href="assets/css/tailwind.min.css">
-    <link rel="stylesheet" href="assets/css/styles.css?v=14">
+    <link rel="stylesheet" href="assets/css/styles.css?v=15">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -75,19 +75,8 @@
                 </div>
             </div>
 
-            <!-- Right: Theme Switch & Actions -->
+            <!-- Right: User Actions -->
             <div class="flex items-center space-x-3">
-                <!-- Theme Switch -->
-                <div class="relative" x-data="{ open: false, current: localStorage.getItem('theme') || 'dark', setTheme(t) { this.current = t; const h = document.documentElement; h.classList.remove('dark'); if (t === 'dark') h.classList.add('dark'); localStorage.setItem('theme', t); this.open = false; } }" @keydown.escape.window="open = false">
-                    <button @click="open = !open" class="p-1.5 rounded-md bg-[#323232] hover:bg-[#3e3e3e] border border-[rgba(255,255,255,0.08)] text-[#9ca3af] hover:text-[#eff1f6] transition-colors" title="Theme">
-                        <svg x-show="current === 'dark'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
-                        <svg x-show="current === 'light'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                    </button>
-                    <div x-show="open" @click.outside="open = false" x-transition class="absolute right-0 mt-2 w-32 bg-[#282828] border border-[rgba(255,255,255,0.1)] rounded-lg shadow-2xl z-50 py-1 text-xs">
-                        <button @click="setTheme('dark')" class="w-full flex items-center gap-2 px-3 py-2 text-[#9ca3af] hover:text-[#eff1f6] hover:bg-[#373737]" :class="current === 'dark' ? 'font-semibold text-[#ffa116]' : ''">Dark</button>
-                        <button @click="setTheme('light')" class="w-full flex items-center gap-2 px-3 py-2 text-[#9ca3af] hover:text-[#eff1f6] hover:bg-[#373737]" :class="current === 'light' ? 'font-semibold text-[#ffa116]' : ''">Light</button>
-                    </div>
-                </div>
 
                 <!-- User / Auth Actions -->
                 <template x-if="user && user.username">
@@ -271,10 +260,7 @@
                 loadingMine: false,
 
                 init() {
-                    // apply saved theme
-                    const t = localStorage.getItem('theme') || 'dark';
-                    if (t === 'dark') document.documentElement.classList.add('dark');
-                    else document.documentElement.classList.remove('dark');
+                    document.documentElement.classList.add('dark');
 
                     // try to get logged-in user (optional)
                     this.user = (typeof Auth !== 'undefined' && Auth.isAuthenticated()) ? Auth.getUser() : null;

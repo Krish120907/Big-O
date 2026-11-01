@@ -2,28 +2,13 @@
 const API_BASE_URL = (window.__ENV__?.API_BASE_URL || 'http://localhost:8080/api').replace(/\/$/, '');
 const RUNNER_URL   = `${API_BASE_URL}/run`;
 
-// Theme system (3 themes: dark, light, earth)
+// Theme: Permanent Dark Mode
 function initTheme() {
-    const theme = localStorage.theme || 'dark';
-    setTheme(theme);
-}
-
-function setTheme(theme) {
-    document.documentElement.classList.remove('dark', 'earth', 'ember', 'ocean', 'gold');
-
-    if (theme === 'dark')       document.documentElement.classList.add('dark');
-    else if (theme === 'earth') document.documentElement.classList.add('earth');
-    // light theme = no class
-
-    localStorage.theme = theme;
-}
-
-function toggleTheme() {
-    const currentTheme = localStorage.theme || 'dark';
-    const themes = ['dark', 'light', 'earth'];
-    const currentIndex = themes.indexOf(currentTheme);
-    const nextIndex = (currentIndex + 1) % themes.length;
-    setTheme(themes[nextIndex]);
+    document.documentElement.classList.add('dark');
+    try {
+        localStorage.removeItem('theme');
+        localStorage.removeItem('currentTheme');
+    } catch (e) {}
 }
 
 // Format date strings helper
