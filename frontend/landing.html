@@ -91,8 +91,6 @@
         }
 
         /* ══════════════════════════════════════
-           NAVBAR
-        /* ══════════════════════════════════════
            LEETCODE NAVBAR
         ══════════════════════════════════════ */
         .lc-navbar {
@@ -108,10 +106,10 @@
             box-shadow: 0 1px 3px rgba(0,0,0,0.25) !important;
         }
         .lc-navbar-inner {
-            max-width: 1200px;
+            max-width: 1400px;
             width: 100%;
             margin: 0 auto;
-            padding: 0 24px;
+            padding: 0 20px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -122,9 +120,9 @@
            HERO
         ══════════════════════════════════════ */
         .hero {
-            padding: 80px 0 70px;
+            padding: 72px 0 64px;
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1.15fr 0.85fr;
             gap: 48px;
             align-items: center;
         }
@@ -138,12 +136,13 @@
             display: flex;
             flex-direction: column;
             align-items: flex-end;
-            text-align: right;
+            text-align: left;
+            width: 100%;
         }
-        @media (max-width: 768px) {
+        @media (max-width: 900px) {
             .hero {
                 grid-template-columns: 1fr;
-                text-align: center;
+                gap: 40px;
             }
             .hero-left, .hero-right {
                 align-items: center;
@@ -154,14 +153,14 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            padding: 6px 16px;
+            padding: 6px 14px;
             border-radius: 999px;
             border: 1px solid rgba(255,161,22,0.3);
             background: rgba(255,161,22,0.1);
             color: #ffa116;
             font-size: 0.78rem;
             font-weight: 600;
-            margin-bottom: 32px;
+            margin-bottom: 24px;
             letter-spacing: 0.01em;
         }
         .badge-dot {
@@ -173,12 +172,12 @@
         @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.35} }
 
         h1 {
-            font-size: clamp(2.4rem, 6vw, 4.2rem);
+            font-size: clamp(2.2rem, 5vw, 3.6rem);
             font-weight: 800;
-            line-height: 1.1;
-            letter-spacing: -0.035em;
-            margin-bottom: 24px;
-            color: #f1f5f9;
+            line-height: 1.15;
+            letter-spacing: -0.03em;
+            margin-bottom: 20px;
+            color: #eff1f6;
         }
         .grad-text {
             background: linear-gradient(130deg, #ffa116 0%, #ffc01e 60%, #ffffff 100%);
@@ -187,27 +186,27 @@
             background-clip: text;
         }
         .hero-sub {
-            font-size: 1.1rem;
-            line-height: 1.75;
+            font-size: 1.05rem;
+            line-height: 1.7;
             color: var(--muted);
-            max-width: 480px;
-            margin: 0 0 40px;
+            max-width: 520px;
+            margin: 0 0 32px;
         }
-        .hero-sub strong { color: #cbd5e1; font-weight: 600; }
+        .hero-sub strong { color: #eff1f6; font-weight: 600; }
 
         .hero-btns {
             display: flex;
             align-items: center;
             justify-content: flex-start;
-            gap: 14px;
+            gap: 12px;
             flex-wrap: wrap;
         }
         .btn-primary {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            padding: 13px 28px;
-            border-radius: 10px;
+            padding: 11px 24px;
+            border-radius: 8px;
             background: #ffa116;
             color: #1a1a1a;
             font-size: 0.9rem;
@@ -215,67 +214,68 @@
             text-decoration: none;
             border: none;
             cursor: pointer;
-            transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
-            box-shadow: 0 4px 20px rgba(255,161,22,0.3);
+            transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+            box-shadow: 0 2px 10px rgba(255,161,22,0.3);
         }
         .btn-primary:hover {
             opacity: 0.92;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 28px rgba(255,161,22,0.45);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(255,161,22,0.45);
         }
         .btn-ghost {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            padding: 13px 28px;
-            border-radius: 10px;
+            padding: 11px 24px;
+            border-radius: 8px;
             border: 1px solid rgba(255,255,255,0.12);
-            background: #323232;
+            background: #282828;
             color: #eff1f6;
             font-size: 0.9rem;
             font-weight: 600;
             text-decoration: none;
-            transition: background 0.2s, border-color 0.2s, transform 0.2s;
+            transition: background 0.15s, border-color 0.15s, transform 0.15s;
         }
         .btn-ghost:hover {
-            background: #3c3c3c;
+            background: #323232;
             border-color: rgba(255,255,255,0.25);
             transform: translateY(-1px);
         }
 
         /* stats row */
         .stats {
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
             gap: 12px;
-            flex-wrap: wrap;
+            width: 100%;
+            max-width: 400px;
         }
         .stat-pill {
-            padding: 14px 24px;
+            padding: 14px 18px;
             border-radius: 10px;
             background: #282828;
             border: 1px solid rgba(255,255,255,0.08);
-            text-align: center;
-            min-width: 110px;
-            transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+            text-align: left;
+            transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
         }
         .stat-pill:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 32px rgba(0,0,0,0.5);
-            border-color: rgba(255,161,22,0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+            border-color: rgba(255,161,22,0.35);
         }
         .stat-val {
-            font-size: 1.45rem;
+            font-size: 1.35rem;
             font-weight: 800;
             display: block;
             line-height: 1;
-            margin-bottom: 4px;
+            margin-bottom: 5px;
         }
         .stat-lbl {
             font-size: 0.72rem;
             color: var(--muted);
-            font-weight: 500;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
         }
 
         /* ══════════════════════════════════════
@@ -392,48 +392,50 @@
            CTA BLOCK
         ══════════════════════════════════════ */
         .cta-block {
-            background: linear-gradient(135deg, rgba(37,99,235,0.12), rgba(109,40,217,0.12));
-            border: 1px solid rgba(99,102,241,0.25);
-            border-radius: 24px;
-            padding: 64px 40px;
+            background: linear-gradient(135deg, rgba(255,161,22,0.06), rgba(40,40,40,0.95));
+            border: 1px solid rgba(255,161,22,0.2);
+            border-radius: 16px;
+            padding: 56px 36px;
             text-align: center;
             position: relative;
             overflow: hidden;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.4);
         }
         .cta-block::before {
             content: '';
             position: absolute;
             top: -60px; left: 50%;
             transform: translateX(-50%);
-            width: 300px; height: 200px;
-            background: radial-gradient(ellipse, rgba(99,102,241,0.15), transparent 70%);
+            width: 320px; height: 180px;
+            background: radial-gradient(ellipse, rgba(255,161,22,0.12), transparent 70%);
             pointer-events: none;
         }
-        .cta-block h2 { font-size: clamp(1.6rem, 4vw, 2.2rem); font-weight: 800; color: #f1f5f9; letter-spacing: -0.03em; margin-bottom: 14px; line-height: 1.2; }
-        .cta-block p  { font-size: 0.95rem; color: var(--muted); max-width: 420px; margin: 0 auto 32px; line-height: 1.7; }
+        .cta-block h2 { font-size: clamp(1.6rem, 4vw, 2.2rem); font-weight: 800; color: #eff1f6; letter-spacing: -0.03em; margin-bottom: 14px; line-height: 1.2; }
+        .cta-block p  { font-size: 0.95rem; color: var(--muted); max-width: 480px; margin: 0 auto 32px; line-height: 1.7; }
 
         /* ══════════════════════════════════════
            FOOTER
         ══════════════════════════════════════ */
         footer {
-            border-top: 1px solid rgba(99,130,200,0.12);
+            border-top: 1px solid rgba(255,255,255,0.08);
+            background: #1a1a1a;
             position: relative;
             z-index: 1;
         }
         .footer-inner {
-            max-width: 1100px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 32px 24px;
+            padding: 28px 20px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             flex-wrap: wrap;
             gap: 16px;
         }
-        .footer-copy { font-size: 0.75rem; color: #334155; }
+        .footer-copy { font-size: 0.75rem; color: #6b7280; }
         .footer-links { display: flex; gap: 24px; }
-        .footer-links a { font-size: 0.78rem; color: var(--muted); text-decoration: none; transition: color 0.2s; }
-        .footer-links a:hover { color: #cbd5e1; }
+        .footer-links a { font-size: 0.8rem; color: var(--muted); text-decoration: none; transition: color 0.15s; }
+        .footer-links a:hover { color: #ffa116; }
 
         /* ══════════════════════════════════════
            REVEAL ANIMATIONS
@@ -654,7 +656,7 @@
     <nav class="lc-navbar">
         <div class="lc-navbar-inner">
             <div class="flex items-center space-x-6">
-                <a href="landing.html" class="lc-brand">
+                <a href="index.html" class="lc-brand">
                     <div class="lc-brand-icon">
                         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <polyline points="16 18 22 12 16 6"></polyline>
@@ -675,10 +677,14 @@
             <div class="flex items-center space-x-3">
                 <template x-if="user && user.username">
                     <div class="flex items-center space-x-3">
-                        <a href="index.html" class="lc-btn-signin">Dashboard</a>
-                        <a href="profile.html" class="flex items-center gap-2 hover:opacity-90">
-                            <div class="w-7 h-7 rounded-full bg-[#ffa116] flex items-center justify-center text-[#1a1a1a] font-bold text-xs" x-text="user.username ? user.username.charAt(0).toUpperCase() : '?'"></div>
-                            <span class="text-xs font-semibold text-[#eff1f6] hidden sm:inline" x-text="user.username"></span>
+                        <a href="profile.html" class="flex items-center gap-2 hover:opacity-90 transition-opacity">
+                            <template x-if="user.avatar_url">
+                                <img :src="API_BASE_URL.replace('/api', '') + user.avatar_url" alt="Profile" class="w-7 h-7 rounded-full object-cover border border-[rgba(255,255,255,0.15)]">
+                            </template>
+                            <template x-if="!user.avatar_url">
+                                <div class="w-7 h-7 rounded-full bg-[#ffa116] flex items-center justify-center text-[#1a1a1a] font-bold text-xs" x-text="user.username ? user.username.charAt(0).toUpperCase() : '?'"></div>
+                            </template>
+                            <span class="text-sm font-semibold text-[#eff1f6] hidden sm:inline" x-text="user.username"></span>
                         </a>
                         <button @click="logout()" class="lc-btn-signout">Sign Out</button>
                     </div>
@@ -762,8 +768,8 @@
                 </div>
 
                 <!-- decorative code snippet -->
-                <div class="reveal d5" style="margin-top:32px;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px 24px;font-family:'Fira Code',monospace;font-size:0.78rem;line-height:1.8;color:var(--muted);text-align:left;width:100%;max-width:340px">
-                    <div style="display:flex;gap:6px;margin-bottom:14px">
+                <div class="reveal d5" style="margin-top:20px;background:#282828;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:18px 22px;font-family:'Fira Code',monospace;font-size:0.8rem;line-height:1.75;color:#9ca3af;text-align:left;width:100%;max-width:400px;box-shadow: 0 4px 16px rgba(0,0,0,0.3);">
+                    <div style="display:flex;gap:6px;margin-bottom:12px">
                         <span style="width:10px;height:10px;border-radius:50%;background:#ff5f57;display:inline-block"></span>
                         <span style="width:10px;height:10px;border-radius:50%;background:#febc2e;display:inline-block"></span>
                         <span style="width:10px;height:10px;border-radius:50%;background:#28c840;display:inline-block"></span>
@@ -772,7 +778,9 @@
                     <div>&nbsp;&nbsp;<span style="color:#a78bfa">if</span> n &lt;= <span style="color:#f472b6">1</span>:</div>
                     <div>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a78bfa">return</span> n</div>
                     <div>&nbsp;&nbsp;<span style="color:#a78bfa">return</span> solve(n<span style="color:#f472b6">-1</span>) + solve(n<span style="color:#f472b6">-2</span>)</div>
-                    <div style="margin-top:10px;color:#34d399">✓ Accepted — 12ms</div>
+                    <div style="margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.06);color:#2cbb5d;font-weight:600;display:flex;align-items:center;gap:6px;">
+                        <span>✓</span> Accepted <span style="color:#9ca3af;font-size:0.75rem;font-weight:400;">— 12 ms, 41.2 MB</span>
+                    </div>
                 </div>
             </div>
 
@@ -914,13 +922,14 @@
     ══════════════════════════════════════ -->
     <footer>
         <div class="footer-inner">
-            <span class="logo" style="text-decoration:none;cursor:default;">
-                <div class="logo-icon" style="width:26px;height:26px;border-radius:7px;box-shadow:none">
-                    <svg width="14" height="14" fill="white" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
+            <a href="landing.html" class="lc-brand" style="opacity: 0.9;">
+                <div class="lc-brand-icon">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="16 18 22 12 16 6"></polyline>
+                        <polyline points="8 6 2 12 8 18"></polyline>
                     </svg>
                 </div>
-                <span class="logo-text" style="font-size:0.95rem">Big-O</span>
+                <span>Big-O</span>
             </a>
             <span class="footer-copy">© 2026 Big-O. All rights reserved.</span>
             <div class="footer-links">

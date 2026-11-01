@@ -66,14 +66,30 @@
                     </template>
                     <a href="problems.html" class="lc-nav-link">Problems</a>
                     <a href="leaderboard.html" class="lc-nav-link active">Leaderboard</a>
+                    <template x-if="user && user.role === 'faculty'">
+                        <a href="faculty.html" class="lc-nav-link text-[#10b981]">Faculty</a>
+                    </template>
+                    <template x-if="user && user.role === 'admin'">
+                        <a href="admin.html" class="lc-nav-link text-[#ff375f]">Admin</a>
+                    </template>
                 </div>
             </div>
 
             <!-- Right: User Actions -->
             <div class="flex items-center space-x-3">
-
                 <template x-if="user && user.username">
-                    <a href="profile.html" class="lc-btn-signin text-xs py-1.5 px-3">My Profile</a>
+                    <div class="flex items-center space-x-3">
+                        <a href="profile.html" class="flex items-center gap-2 hover:opacity-90 transition-opacity">
+                            <template x-if="user.avatar_url">
+                                <img :src="API_BASE_URL.replace('/api', '') + user.avatar_url" alt="Profile" class="w-7 h-7 rounded-full object-cover border border-[rgba(255,255,255,0.15)]">
+                            </template>
+                            <template x-if="!user.avatar_url">
+                                <div class="w-7 h-7 rounded-full bg-[#ffa116] flex items-center justify-center text-[#1a1a1a] font-bold text-xs" x-text="user.username ? user.username.charAt(0).toUpperCase() : '?'"></div>
+                            </template>
+                            <span class="text-sm font-semibold text-[#eff1f6] hidden sm:inline" x-text="user.username"></span>
+                        </a>
+                        <button @click="Auth.logout()" class="lc-btn-signout">Sign Out</button>
+                    </div>
                 </template>
                 <template x-if="!user || !user.username">
                     <div class="flex items-center space-x-2">

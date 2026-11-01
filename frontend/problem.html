@@ -150,9 +150,16 @@
                             <p class="font-semibold text-[#eff1f6] truncate" x-text="user ? user.username : 'User'"></p>
                             <p class="text-[#9ca3af] truncate" x-text="user ? user.email : ''"></p>
                         </div>
+                        <a href="index.html" class="flex items-center gap-2 px-3 py-2 text-[#9ca3af] hover:text-[#eff1f6] hover:bg-[#373737]">Dashboard</a>
                         <a href="profile.html" class="flex items-center gap-2 px-3 py-2 text-[#9ca3af] hover:text-[#eff1f6] hover:bg-[#373737]">Profile</a>
                         <a href="problems.html" class="flex items-center gap-2 px-3 py-2 text-[#9ca3af] hover:text-[#eff1f6] hover:bg-[#373737]">Problems</a>
                         <a href="leaderboard.html" class="flex items-center gap-2 px-3 py-2 text-[#9ca3af] hover:text-[#eff1f6] hover:bg-[#373737]">Leaderboard</a>
+                        <template x-if="user && user.role === 'faculty'">
+                            <a href="faculty.html" class="flex items-center gap-2 px-3 py-2 text-[#10b981] hover:bg-[#373737]">Faculty Console</a>
+                        </template>
+                        <template x-if="user && user.role === 'admin'">
+                            <a href="admin.html" class="flex items-center gap-2 px-3 py-2 text-[#ff375f] hover:bg-[#373737]">Admin Console</a>
+                        </template>
                         <div class="border-t border-[rgba(255,255,255,0.08)] my-1"></div>
                         <button @click="Auth.logout()" class="w-full text-left px-3 py-2 text-[#ff375f] hover:bg-[#ff375f]/15">Sign Out</button>
                     </div>

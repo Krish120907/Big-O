@@ -144,7 +144,7 @@
                 <tbody class="divide-y divide-[var(--border)]">
                     <template x-for="(row, idx) in leaderboard" :key="row.id">
                         <tr class="hover:bg-[var(--bg-hover)] transition-colors"
-                            :class="user && user.id === row.id ? 'bg-[#ffa116]/5 border-l-2 border-l-[#ffa116]' : ''">
+                            :class="user && user.id === row.id ? 'bg-[#ffa116]/10 border-l-4 border-l-[#ffa116]' : ''">
                             <!-- Rank Column -->
                             <td class="py-3.5 px-6 text-center font-bold">
                                 <template x-if="idx === 0">
@@ -163,7 +163,7 @@
 
                             <!-- User Info -->
                             <td class="py-3.5 px-6">
-                                <a :href="'public-profile.html?id=' + row.id" class="flex items-center gap-3 group">
+                                <a :href="'public-profile.html?id=' + row.id" class="flex items-center gap-3 group !text-[var(--text)]">
                                     <template x-if="row.avatar_url">
                                         <img :src="API_BASE_URL.replace('/api', '') + row.avatar_url" class="w-8 h-8 rounded-full object-cover border border-[var(--border)]">
                                     </template>
@@ -171,8 +171,10 @@
                                         <div class="w-8 h-8 rounded-full bg-[var(--bg-elevated)] text-[var(--text)] flex items-center justify-center font-bold text-xs" x-text="row.username.charAt(0).toUpperCase()"></div>
                                     </template>
                                     <div>
-                                        <div class="font-semibold text-sm text-[var(--text)] group-hover:text-[#ffa116] transition-colors" x-text="row.username"></div>
-                                        <div class="text-[11px] text-[var(--text-muted)]" x-show="user && user.id === row.id">(You)</div>
+                                        <div class="font-semibold text-sm transition-colors"
+                                             :class="user && user.id === row.id ? 'text-[#ffa116] font-bold' : 'text-[#eff1f6] group-hover:text-[#ffa116]'"
+                                             x-text="row.username"></div>
+                                        <div class="text-[11px] text-[#ffa116]/80 font-medium" x-show="user && user.id === row.id">(You)</div>
                                     </div>
                                 </a>
                             </td>
