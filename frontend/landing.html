@@ -38,8 +38,8 @@
         API_BASE_URL: "http://localhost:8080/api"
       };
     </script>
-    <script src="assets/js/app.js"></script>
-    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/app.js?v=2"></script>
+    <script src="assets/js/auth.js?v=2"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1462,9 +1462,27 @@
                             body: JSON.stringify({ email: this.formData.email, password: this.formData.password })
                         });
                         const data = await res.json();
-                        if (!res.ok) throw new Error(data.message || 'Authentication failed');
-                        Auth.setToken(data.token);
-                        if (data.user) Auth.setUser(data.user);
+                        if (typeof Auth !== 'undefined') {
+                            if (typeof Auth.setToken === 'function') Auth.setToken(data.token);
+                            else {
+                                localStorage.setItem('token', data.token);
+                                sessionStorage.setItem('token', data.token);
+                            }
+                            if (data.user) {
+                                if (typeof Auth.setUser === 'function') Auth.setUser(data.user);
+                                else {
+                                    localStorage.setItem('user', JSON.stringify(data.user));
+                                    sessionStorage.setItem('user', JSON.stringify(data.user));
+                                }
+                            }
+                        } else {
+                            localStorage.setItem('token', data.token);
+                            sessionStorage.setItem('token', data.token);
+                            if (data.user) {
+                                localStorage.setItem('user', JSON.stringify(data.user));
+                                sessionStorage.setItem('user', JSON.stringify(data.user));
+                            }
+                        }
                         window.location.href = 'index.html';
                     } catch(err) { this.showAlert('error', err.message); }
                     finally { this.loading = false; }

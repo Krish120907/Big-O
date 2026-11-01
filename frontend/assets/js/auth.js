@@ -111,3 +111,6 @@ const Auth = {
         window.location.href = 'landing.html';
     }
 };
+
+window.Auth = Auth;
+
